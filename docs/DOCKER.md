@@ -108,13 +108,24 @@ docker-compose logs -f
 ### 数据库配置
 
 ```env
-# Docker 部署使用此路径（数据持久化到 Docker 卷）
-DATABASE_URL=sqlite:////app/data/inkprompt.db
+# Docker 部署使用 PostgreSQL（推荐用于生产环境）
+DATABASE_URL=postgresql://inkprompt:inkprompt_password_change_in_production@localhost:5432/inkprompt
 
-# 本地开发可使用：sqlite:///./inkprompt.db
+# 本地开发可使用 SQLite：sqlite:///./inkprompt.db
 ```
 
-> **注意**：Docker 部署使用命名卷 `inkprompt-data` 来持久化数据库文件，路径为 `/app/data/inkprompt.db`（4 个斜杠表示绝对路径）。
+> **注意**：
+> - Docker Compose 已包含 PostgreSQL 15 容器，数据持久化到命名卷 `postgres-data`
+> - 使用 host 网络模式时，通过 `localhost:5432` 连接数据库
+> - **生产环境请务必修改默认密码 `inkprompt_password_change_in_production`**
+
+#### PostgreSQL 连接参数说明
+
+- **主机**: `localhost` (host 网络模式)
+- **端口**: `5432` (PostgreSQL 默认端口)
+- **数据库名**: `inkprompt`
+- **用户名**: `inkprompt`
+- **密码**: `inkprompt_password_change_in_production` (⚠️ 生产环境必须修改)
 
 ### Supabase 认证配置
 
@@ -184,6 +195,7 @@ docker-compose logs
 docker-compose logs -f
 
 # 查看特定服务日志
+docker-compose logs postgres
 docker-compose logs backend
 docker-compose logs frontend
 
@@ -207,6 +219,9 @@ docker-compose build backend
 ### 进入容器
 
 ```bash
+# 进入 PostgreSQL 容器
+docker-compose exec postgres /bin/sh
+
 # 进入后端容器
 docker-compose exec backend /bin/sh
 
@@ -214,41 +229,127 @@ docker-compose exec backend /bin/sh
 docker-compose exec frontend /bin/sh
 ```
 
+## PostgreSQL 数据库管理
+
+### 连接数据库
+
+```bash
+# 通过 psql 连接数据库
+docker exec -it inkprompt-postgres psql -U inkprompt -d inkprompt
+
+# 或使用 docker-compose
+docker-compose exec postgres psql -U inkprompt -d inkprompt
+```
+
+### 常用 PostgreSQL 命令
+
+进入 psql 后可以使用以下命令：
+
+```sql
+-- 列出所有数据库
+\l
+
+-- 列出所有表
+\dt
+
+-- 查看表结构
+\d table_name
+
+-- 查询示例
+SELECT * FROM prompts LIMIT 10;
+
+-- 退出 psql
+\q
+```
+
+### 数据库操作
+
+```bash
+# 查看数据库大小
+docker exec inkprompt-postgres psql -U inkprompt -d inkprompt -c "SELECT pg_size_pretty(pg_database_size('inkprompt'));"
+
+# 查看所有连接
+docker exec inkprompt-postgres psql -U inkprompt -d inkprompt -c "SELECT * FROM pg_stat_activity;"
+
+# 终止所有连接（谨慎使用）
+docker exec inkprompt-postgres psql -U inkprompt -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'inkprompt' AND pid <> pg_backend_pid();"
+
+# 重建数据库（会丢失所有数据！）
+docker exec inkprompt-postgres psql -U inkprompt -d postgres -c "DROP DATABASE inkprompt;"
+docker exec inkprompt-postgres psql -U inkprompt -d postgres -c "CREATE DATABASE inkprompt;"
+```
+
+### 修改数据库密码
+
+```bash
+# 进入 PostgreSQL
+docker exec -it inkprompt-postgres psql -U inkprompt -d inkprompt
+
+# 修改密码
+ALTER USER inkprompt WITH PASSWORD 'your_new_password';
+```
+
+**重要**：修改密码后，需要同步更新 `backend/.env` 中的 `DATABASE_URL`：
+
+```env
+DATABASE_URL=postgresql://inkprompt:your_new_password@localhost:5432/inkprompt
+```
+
 ## 常见问题
 
 ### 1. 端口冲突
 
-**问题**：启动时提示端口 3000 或 8000 已被占用
+**问题**：启动时提示端口 3000、8000 或 5432 已被占用
 
 **解决方案**：
 ```bash
 # 查看占用端口的进程
-lsof -ti:3000
-lsof -ti:8000
+lsof -ti:3000   # 前端 Nginx
+lsof -ti:8000   # 后端 API
+lsof -ti:5432   # PostgreSQL
 
 # 停止占用端口的进程
 lsof -ti:3000 | xargs kill -9
 lsof -ti:8000 | xargs kill -9
+lsof -ti:5432 | xargs kill -9
 ```
 
-> **注意**：本项目使用 `host` 网络模式，容器直接使用主机的网络栈。前端监听 3000 端口，后端监听 8000 端口。如需修改端口，请编辑：
-> - 前端：`frontend/nginx.conf` 中的 `listen` 指令
-> - 后端：`backend/Dockerfile` 中的 `uvicorn` 启动命令
+> **注意**：本项目使用 `host` 网络模式，容器直接使用主机的网络栈。服务端口：
+> - 前端：`3000` (Nginx) - 修改 `frontend/nginx.conf` 中的 `listen` 指令
+> - 后端：`8000` (Uvicorn) - 修改 `backend/Dockerfile` 中的 `uvicorn` 启动命令
+> - 数据库：`5432` (PostgreSQL) - 修改 `docker-compose.yml` 中的环境变量
 
-### 2. 数据库迁移失败
+### 2. 数据库连接失败
 
-**问题**：后端容器启动失败，日志显示数据库错误
+**问题**：后端容器启动失败，日志显示数据库连接错误
+
+**可能原因**：
+1. PostgreSQL 容器未完全启动
+2. 数据库密码配置不匹配
+3. 数据库不存在
 
 **解决方案**：
-```bash
-# 停止服务并删除数据卷
-docker-compose down -v
 
-# 重新启动服务（会创建新的数据库）
+```bash
+# 1. 检查 PostgreSQL 容器状态
+docker-compose ps postgres
+
+# 2. 查看 PostgreSQL 日志
+docker-compose logs postgres
+
+# 3. 验证数据库连接
+docker exec inkprompt-postgres psql -U inkprompt -d inkprompt -c "SELECT 1;"
+
+# 4. 如果数据库不存在，重建数据库
+docker-compose restart postgres
+docker-compose restart backend
+
+# 5. 如果问题持续，重置所有数据（谨慎！）
+docker-compose down -v
 docker-compose up -d
 ```
 
-> **警告**：使用 `-v` 参数会删除所有数据卷中的数据，请确保已备份重要数据。
+> **警告**：使用 `-v` 参数会删除所有数据卷中的数据，包括 PostgreSQL 中的所有表和记录。请确保已备份重要数据。
 
 ### 3. 前端无法连接后端
 
@@ -306,33 +407,54 @@ services:
 
 ## 数据备份和恢复
 
-### 备份数据库
+### 备份 PostgreSQL 数据库
 
 ```bash
 # 创建备份目录
 mkdir -p backups
 
-# 从 Docker 卷备份 SQLite 数据库
-docker cp inkprompt-backend:/app/data/inkprompt.db backups/inkprompt_$(date +%Y%m%d_%H%M%S).db
+# 备份 PostgreSQL 数据库
+docker exec inkprompt-postgres pg_dump -U inkprompt inkprompt > backups/inkprompt_$(date +%Y%m%d_%H%M%S).sql
+
+# 或者使用压缩格式（推荐）
+docker exec inkprompt-postgres pg_dump -U inkprompt -Fc inkprompt > backups/inkprompt_$(date +%Y%m%d_%H%M%S).dump
 
 # 验证备份文件
 ls -lh backups/
 ```
 
-> **注意**：数据库文件存储在 Docker 命名卷 `inkprompt-data` 中，路径为 `/app/data/inkprompt.db`
+> **注意**：
+> - `.sql` 格式：文本格式，可读，适合查看和编辑
+> - `.dump` 格式：二进制格式，压缩，恢复更快，推荐用于大数据库
 
-### 恢复数据库
+### 恢复 PostgreSQL 数据库
+
+#### 从 SQL 文件恢复
 
 ```bash
-# 停止服务
-docker-compose down
+# 停止后端服务（避免连接冲突）
+docker-compose stop backend
 
-# 恢复数据库文件到容器（需要先启动容器）
-docker-compose up -d backend
-docker cp backups/inkprompt_20231215_120000.db inkprompt-backend:/app/data/inkprompt.db
+# 恢复数据库
+docker exec -i inkprompt-postgres psql -U inkprompt -d inkprompt < backups/inkprompt_20231215_120000.sql
 
 # 重启所有服务
-docker-compose restart
+docker-compose up -d
+```
+
+#### 从 dump 文件恢复
+
+```bash
+# 停止后端服务
+docker-compose stop backend
+
+# 恢复数据库（需要先删除现有数据库）
+docker exec inkprompt-postgres dropdb -U inkprompt inkprompt
+docker exec inkprompt-postgres createdb -U inkprompt inkprompt
+docker exec -i inkprompt-postgres pg_restore -U inkprompt -d inkprompt < backups/inkprompt_20231215_120000.dump
+
+# 重启所有服务
+docker-compose up -d
 ```
 
 ### 自动备份脚本
@@ -343,13 +465,15 @@ docker-compose restart
 #!/bin/bash
 BACKUP_DIR="backups"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_FILE="$BACKUP_DIR/inkprompt_$TIMESTAMP.db"
+BACKUP_FILE="$BACKUP_DIR/inkprompt_$TIMESTAMP.dump"
 
 mkdir -p $BACKUP_DIR
-docker cp inkprompt-backend:/app/data/inkprompt.db $BACKUP_FILE
+
+# 备份 PostgreSQL 数据库（压缩格式）
+docker exec inkprompt-postgres pg_dump -U inkprompt -Fc inkprompt > $BACKUP_FILE
 
 # 保留最近 7 天的备份
-find $BACKUP_DIR -name "inkprompt_*.db" -mtime +7 -delete
+find $BACKUP_DIR -name "inkprompt_*.dump" -mtime +7 -delete
 
 echo "✅ Backup completed: $BACKUP_FILE"
 ```
@@ -358,6 +482,15 @@ echo "✅ Backup completed: $BACKUP_FILE"
 ```bash
 chmod +x scripts/backup.sh
 ./scripts/backup.sh
+```
+
+**设置定时备份（可选）**：
+```bash
+# 编辑 crontab
+crontab -e
+
+# 添加每天凌晨 2 点自动备份
+0 2 * * * /path/to/inkPrompt/scripts/backup.sh
 ```
 
 ## 生产部署建议

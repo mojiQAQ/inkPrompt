@@ -26,7 +26,7 @@
 
 ### 方式一：Docker 部署（推荐）
 
-使用 Docker 可以快速启动整个应用，无需手动配置环境。
+使用 Docker 可以快速启动整个应用，包含完整的数据库和应用环境，无需手动配置。
 
 #### 前置要求
 - Docker >= 20.10
@@ -43,13 +43,19 @@ cd inkPrompt
 cp .env.example backend/.env
 # 编辑 backend/.env 填写必要配置（Supabase、OpenRouter API Key）
 
-# 3. 启动所有服务
+# 3. 启动所有服务（PostgreSQL + 后端 + 前端）
 docker-compose up -d
 
 # 4. 访问应用
 # 前端: http://localhost:3000
 # API 文档: http://localhost:3000/api/docs
+# PostgreSQL: localhost:5432
 ```
+
+**包含的服务：**
+- ✅ PostgreSQL 15 数据库（数据持久化）
+- ✅ FastAPI 后端服务
+- ✅ React + Vite 前端（Nginx 提供服务）
 
 详细的 Docker 部署文档请参考：[Docker 部署指南](docs/DOCKER.md)
 

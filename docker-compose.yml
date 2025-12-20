@@ -1,6 +1,24 @@
 version: '3.8'
 
 services:
+  # PostgreSQL 数据库服务
+  postgres:
+    image: postgres:15-alpine
+    container_name: inkprompt-postgres
+    network_mode: host
+    environment:
+      POSTGRES_DB: inkprompt
+      POSTGRES_USER: inkprompt
+      POSTGRES_PASSWORD: inkprompt_password_change_in_production
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inkprompt"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   # 后端服务
   backend:
     build:
@@ -10,9 +28,9 @@ services:
     network_mode: host
     env_file:
       - ./backend/.env
-    volumes:
-      # 数据持久化 - 挂载整个数据目录而不是单个文件
-      - inkprompt-data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -35,4 +53,4 @@ services:
 
 # 数据卷
 volumes:
-  inkprompt-data:
+  postgres-data:
