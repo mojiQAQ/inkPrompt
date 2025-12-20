@@ -44,8 +44,15 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        # 从前端 .env 文件读取构建参数
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
     container_name: inkprompt-frontend
     network_mode: host
+    env_file:
+      - ./frontend/.env
     depends_on:
       backend:
         condition: service_healthy

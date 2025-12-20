@@ -25,6 +25,7 @@ build/
 *~
 
 # Environment
+# .env 通过 docker-compose build args 传递，不需要复制到镜像
 .env
 .env.local
 .env.*.local
