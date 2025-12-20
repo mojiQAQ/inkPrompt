@@ -13,8 +13,8 @@ RUN npm ci
 # 复制源代码
 COPY . .
 
-# 构建生产资源
-RUN npm run build
+# 构建生产资源（跳过类型检查以加快构建）
+RUN npm run build:docker
 
 # Stage 2: Production
 FROM nginx:alpine
