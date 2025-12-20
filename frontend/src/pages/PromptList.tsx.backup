@@ -1,0 +1,61 @@
+/**
+ * Prompt list page (placeholder for now)
+ */
+import { useAuth } from '@/hooks/useAuth'
+
+export function PromptList() {
+  const { user, signOut } = useAuth()
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-paper-white">
+      {/* Header */}
+      <header className="bg-white border-b border-ink-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-ink-900">Ink & Prompt</h1>
+            <div className="flex items-center gap-4">
+              <span className="text-ink-600">{user?.email}</span>
+              <button
+                onClick={handleLogout}
+                className="btn btn-secondary"
+              >
+                退出登录
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center py-16">
+          <h2 className="text-3xl font-bold text-ink-800 mb-4">
+            欢迎来到 Ink & Prompt
+          </h2>
+          <p className="text-ink-600 mb-8">
+            提示词管理功能正在开发中...
+          </p>
+          <div className="inline-block card">
+            <p className="text-ink-700">
+              ✅ 用户认证系统已完成
+              <br />
+              🚧 提示词管理功能开发中
+              <br />
+              🚧 标签系统开发中
+              <br />
+              🚧 Token 统计功能开发中
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}

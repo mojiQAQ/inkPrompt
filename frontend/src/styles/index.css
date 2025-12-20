@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-paper-white text-ink-800 font-sans;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-ink-700 text-white hover:bg-ink-800;
+  }
+
+  .btn-secondary {
+    @apply bg-ink-200 text-ink-800 hover:bg-ink-300;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-ink-200 p-6;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border border-ink-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-purple focus:border-transparent;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-system {
+    @apply bg-ink-700 text-white;
+  }
+
+  .badge-user {
+    @apply bg-gradient-to-r from-accent-purple to-accent-green text-white;
+  }
+}
+
+/* Page transition animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+.slide-down {
+  animation: slideDown 0.4s ease-out;
+}
+
+.card-transition {
+  transition: all 0.2s ease-in-out;
+}
+
+.card-transition:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
