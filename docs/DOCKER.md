@@ -108,9 +108,13 @@ docker-compose logs -f
 ### 数据库配置
 
 ```env
-# SQLite 数据库（开发和小规模部署）
-DATABASE_URL=sqlite:///./inkprompt.db
+# Docker 部署使用此路径（数据持久化到 Docker 卷）
+DATABASE_URL=sqlite:////app/data/inkprompt.db
+
+# 本地开发可使用：sqlite:///./inkprompt.db
 ```
+
+> **注意**：Docker 部署使用命名卷 `inkprompt-data` 来持久化数据库文件，路径为 `/app/data/inkprompt.db`（4 个斜杠表示绝对路径）。
 
 ### Supabase 认证配置
 
@@ -214,16 +218,22 @@ docker-compose exec frontend /bin/sh
 
 ### 1. 端口冲突
 
-**问题**：启动时提示端口 3000 已被占用
+**问题**：启动时提示端口 3000 或 8000 已被占用
 
 **解决方案**：
 ```bash
-# 方案 1: 停止占用端口的进程
-lsof -ti:3000 | xargs kill -9
+# 查看占用端口的进程
+lsof -ti:3000
+lsof -ti:8000
 
-# 方案 2: 修改 docker-compose.yml 中的端口映射
-# 将 "3000:80" 改为 "8080:80"
+# 停止占用端口的进程
+lsof -ti:3000 | xargs kill -9
+lsof -ti:8000 | xargs kill -9
 ```
+
+> **注意**：本项目使用 `host` 网络模式，容器直接使用主机的网络栈。前端监听 3000 端口，后端监听 8000 端口。如需修改端口，请编辑：
+> - 前端：`frontend/nginx.conf` 中的 `listen` 指令
+> - 后端：`backend/Dockerfile` 中的 `uvicorn` 启动命令
 
 ### 2. 数据库迁移失败
 
@@ -231,12 +241,14 @@ lsof -ti:3000 | xargs kill -9
 
 **解决方案**：
 ```bash
-# 删除旧的数据库文件
-rm backend/inkprompt.db
+# 停止服务并删除数据卷
+docker-compose down -v
 
-# 重启服务
-docker-compose restart backend
+# 重新启动服务（会创建新的数据库）
+docker-compose up -d
 ```
+
+> **警告**：使用 `-v` 参数会删除所有数据卷中的数据，请确保已备份重要数据。
 
 ### 3. 前端无法连接后端
 
@@ -250,9 +262,14 @@ docker-compose ps
 # 检查后端日志
 docker-compose logs backend
 
-# 验证网络连接
-docker-compose exec frontend ping backend
+# 验证后端健康检查端点
+curl http://localhost:8000/health
+
+# 验证前端代理到后端的连接
+curl http://localhost:3000/api/health
 ```
+
+> **注意**：使用 `host` 网络模式时，服务通过 `localhost` 相互通信，而不是通过容器名称。
 
 ### 4. 镜像构建缓慢
 
@@ -295,12 +312,14 @@ services:
 # 创建备份目录
 mkdir -p backups
 
-# 备份 SQLite 数据库
-cp backend/inkprompt.db backups/inkprompt_$(date +%Y%m%d_%H%M%S).db
+# 从 Docker 卷备份 SQLite 数据库
+docker cp inkprompt-backend:/app/data/inkprompt.db backups/inkprompt_$(date +%Y%m%d_%H%M%S).db
 
-# 或使用 docker cp
-docker cp inkprompt-backend:/app/inkprompt.db backups/inkprompt_$(date +%Y%m%d_%H%M%S).db
+# 验证备份文件
+ls -lh backups/
 ```
+
+> **注意**：数据库文件存储在 Docker 命名卷 `inkprompt-data` 中，路径为 `/app/data/inkprompt.db`
 
 ### 恢复数据库
 
@@ -308,11 +327,12 @@ docker cp inkprompt-backend:/app/inkprompt.db backups/inkprompt_$(date +%Y%m%d_%
 # 停止服务
 docker-compose down
 
-# 恢复数据库文件
-cp backups/inkprompt_20231215_120000.db backend/inkprompt.db
+# 恢复数据库文件到容器（需要先启动容器）
+docker-compose up -d backend
+docker cp backups/inkprompt_20231215_120000.db inkprompt-backend:/app/data/inkprompt.db
 
-# 重启服务
-docker-compose up -d
+# 重启所有服务
+docker-compose restart
 ```
 
 ### 自动备份脚本
@@ -326,12 +346,18 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_FILE="$BACKUP_DIR/inkprompt_$TIMESTAMP.db"
 
 mkdir -p $BACKUP_DIR
-docker cp inkprompt-backend:/app/inkprompt.db $BACKUP_FILE
+docker cp inkprompt-backend:/app/data/inkprompt.db $BACKUP_FILE
 
 # 保留最近 7 天的备份
 find $BACKUP_DIR -name "inkprompt_*.db" -mtime +7 -delete
 
 echo "✅ Backup completed: $BACKUP_FILE"
+```
+
+**使用方法**：
+```bash
+chmod +x scripts/backup.sh
+./scripts/backup.sh
 ```
 
 ## 生产部署建议
@@ -441,13 +467,21 @@ docker inspect inkprompt-backend | grep -A 10 Health
 ### 检查网络连接
 
 ```bash
-# 查看网络配置
-docker network ls
-docker network inspect inkprompt_inkprompt-network
+# 使用 host 网络模式时，服务通过 localhost 通信
+# 测试后端服务
+curl http://localhost:8000/health
 
-# 测试服务间连接
-docker-compose exec frontend curl http://backend:8000/health
+# 测试前端服务
+curl http://localhost:3000
+
+# 测试前端到后端的代理
+curl http://localhost:3000/api/health
+
+# 在容器内测试（如果需要）
+docker-compose exec backend curl http://localhost:8000/health
 ```
+
+> **注意**：本项目使用 `host` 网络模式，不创建独立的 Docker 网络。服务直接使用主机的网络栈进行通信。
 
 ### 查看资源使用
 

@@ -11,8 +11,8 @@ services:
     env_file:
       - ./backend/.env
     volumes:
-      # 数据库持久化
-      - ./backend/inkprompt.db:/app/inkprompt.db
+      # 数据持久化 - 挂载整个数据目录而不是单个文件
+      - inkprompt-data:/app/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
@@ -32,3 +32,7 @@ services:
       backend:
         condition: service_healthy
     restart: unless-stopped
+
+# 数据卷
+volumes:
+  inkprompt-data:
