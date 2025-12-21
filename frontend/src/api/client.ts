@@ -2,7 +2,8 @@
  * API client configuration
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+// 优先使用运行时环境变量（Docker），然后使用构建时环境变量（本地开发）
+const API_BASE_URL = (window as any)._env_?.VITE_API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 export class APIError extends Error {
   constructor(

@@ -70,18 +70,46 @@ cd inkPrompt
 
 ### 2. 配置环境变量
 
+Docker 部署需要配置以下环境变量文件：
+
+#### 2.1 配置前端环境变量
+
 ```bash
-# 复制环境变量模板到后端目录
+# 复制前端环境变量模板
+cp frontend/.env.example frontend/.env
+
+# 编辑前端环境变量
+nano frontend/.env  # 或使用其他编辑器
+```
+
+填写以下变量：
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+#### 2.2 配置后端环境变量
+
+```bash
+# 复制后端环境变量模板
 cp .env.example backend/.env
 
-# 编辑环境变量文件，填写必要的配置
+# 编辑后端环境变量
 nano backend/.env  # 或使用其他编辑器
 ```
 
 **必须配置的变量：**
-- `SUPABASE_URL` - Supabase 项目 URL
-- `SUPABASE_JWT_SECRET` - Supabase JWT 密钥
-- `OPENAI_API_KEY` - OpenRouter API 密钥
+- **frontend/.env**（前端构建时使用）:
+  - `VITE_SUPABASE_URL` - Supabase 项目 URL
+  - `VITE_SUPABASE_ANON_KEY` - Supabase Anon Key
+  - `VITE_API_BASE_URL` - 后端 API 地址（默认 http://localhost:8000）
+
+- **backend/.env**（后端运行时使用）:
+  - `SUPABASE_URL` - Supabase 项目 URL
+  - `SUPABASE_JWT_SECRET` - Supabase JWT Secret
+  - `OPENAI_API_KEY` - OpenRouter API 密钥
+  - `DATABASE_URL` - PostgreSQL 连接字符串（已预配置）
 
 ### 3. 启动服务
 

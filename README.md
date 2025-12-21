@@ -40,11 +40,16 @@ git clone <repository-url>
 cd inkPrompt
 
 # 2. 配置环境变量
+# 2.1 配置前端环境变量
+cp frontend/.env.example frontend/.env
+# 编辑 frontend/.env 填写 Supabase URL 和 Anon Key
+
+# 2.2 配置后端环境变量
 cp .env.example backend/.env
-# 编辑 backend/.env 填写必要配置（Supabase、OpenRouter API Key）
+# 编辑 backend/.env 填写 Supabase JWT Secret 和 OpenRouter API Key
 
 # 3. 启动所有服务（PostgreSQL + 后端 + 前端）
-docker-compose up -d
+docker-compose up --build -d
 
 # 4. 访问应用
 # 前端: http://localhost:3000
