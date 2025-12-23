@@ -87,8 +87,20 @@ def get_current_user(
             avatar_url=user_metadata.get("avatar_url"),
         )
         db.add(user)
-        db.commit()
-        db.refresh(user)
+
+        try:
+            db.commit()
+            db.refresh(user)
+        except Exception as e:
+            db.rollback()
+            # 如果是主键冲突（并发创建），重新查询用户
+            user = db.query(User).filter(User.id == user_id).first()
+            if user is None:
+                # 如果仍然找不到，说明是其他错误
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Failed to create user: {str(e)}"
+                )
     else:
         # Update last login time
         user.last_login_at = datetime.utcnow()
