@@ -240,7 +240,9 @@ inkPrompt/
 - [🔗 LangChain 集成指南](docs/LANGCHAIN_INTEGRATION.md) - AI 功能技术实现
 - [🐳 Docker 部署指南](docs/DOCKER.md) - Docker 容器化部署完整指南
 - [🚀 传统部署指南](docs/DEPLOYMENT.md) - 传统方式生产环境部署说明
-- [📋 实施总结](IMPLEMENTATION_SUMMARY.md) - Sprint 3-4 功能概览
+- [🧪 测试文档](docs/TESTING.md) - 项目级测试概览和运行指南
+- [📜 开发历史](docs/DEVELOPMENT_HISTORY.md) - Sprint 实施记录和开发时间线
+- [✅ 用户流程验证](docs/USER_FLOW_VERIFICATION.md) - 端到端验证检查清单
 
 ## 🎯 核心功能
 
