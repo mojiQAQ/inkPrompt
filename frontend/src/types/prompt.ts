@@ -15,6 +15,7 @@ export interface Prompt {
   name: string
   content: string
   token_count: number
+  is_favorited: boolean
   tags: Tag[]
   version_count: number
   created_at: string
@@ -60,4 +61,6 @@ export interface PromptFilters {
   tag_logic?: 'AND' | 'OR'
   sort_by?: 'updated_at' | 'created_at' | 'name' | 'token_count'
   sort_order?: 'asc' | 'desc'
+  folder_id?: string
+  favorites_only?: boolean
 }

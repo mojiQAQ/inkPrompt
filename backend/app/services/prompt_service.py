@@ -6,6 +6,7 @@ from sqlalchemy import or_, func
 
 from app.models.prompt import Prompt
 from app.models.prompt_version import PromptVersion
+from app.models.prompt_folder import prompt_folder_items
 from app.models.tag import Tag
 from app.schemas.prompt import PromptCreate, PromptUpdate
 from app.utils.token_counter import count_tokens
@@ -98,28 +99,29 @@ class PromptService:
         tag_names: Optional[List[str]] = None,
         tag_logic: str = "OR",
         sort_by: str = "updated_at",
-        sort_order: str = "desc"
+        sort_order: str = "desc",
+        folder_id: Optional[str] = None,
+        favorites_only: bool = False,
     ) -> Tuple[List[Prompt], int]:
         """
-        List prompts with pagination, search, and tag filtering.
-
-        Args:
-            db: Database session
-            user_id: User ID
-            page: Page number (1-indexed)
-            page_size: Items per page
-            search: Search query (searches in name and content)
-            tag_names: Filter by tag names
-            tag_logic: Tag filtering logic - "OR" (any tag) or "AND" (all tags)
-            sort_by: Sort field (updated_at/created_at/name/token_count)
-            sort_order: Sort direction (asc/desc)
-
-        Returns:
-            Tuple[List[Prompt], int]: (prompts, total_count)
+        List prompts with pagination, search, tag filtering, and folder filtering.
         """
         query = db.query(Prompt).filter(Prompt.user_id == user_id)
 
-        # Search filter (full-text search on name and content)
+        # Favorites filter
+        if favorites_only:
+            query = query.filter(Prompt.is_favorited == True)
+
+        # Folder filter (only for custom folders, not system ones)
+        if folder_id:
+            query = query.join(
+                prompt_folder_items,
+                Prompt.id == prompt_folder_items.c.prompt_id
+            ).filter(
+                prompt_folder_items.c.folder_id == folder_id
+            )
+
+        # Search filter
         if search:
             search_filter = or_(
                 Prompt.name.ilike(f"%{search}%"),
@@ -127,17 +129,15 @@ class PromptService:
             )
             query = query.filter(search_filter)
 
-        # Tag filter with AND/OR logic
+        # Tag filter
         if tag_names:
             if tag_logic == "AND":
-                # AND logic: prompt must have all specified tags
                 for tag_name in tag_names:
                     query = query.filter(Prompt.tags.any(Tag.name == tag_name))
             else:
-                # OR logic: prompt must have at least one of the specified tags
                 query = query.join(Prompt.tags).filter(Tag.name.in_(tag_names)).distinct()
 
-        # Get total count before pagination
+        # Get total count
         total = query.count()
 
         # Apply sorting

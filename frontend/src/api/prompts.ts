@@ -27,6 +27,8 @@ export async function fetchPrompts(
   if (filters.tag_logic) params.append('tag_logic', filters.tag_logic)
   if (filters.sort_by) params.append('sort_by', filters.sort_by)
   if (filters.sort_order) params.append('sort_order', filters.sort_order)
+  if (filters.folder_id) params.append('folder_id', filters.folder_id)
+  if (filters.favorites_only) params.append('favorites_only', 'true')
 
   const query = params.toString()
   const endpoint = `/api/prompts${query ? `?${query}` : ''}`

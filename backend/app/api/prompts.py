@@ -52,25 +52,13 @@ async def list_prompts(
     tag_logic: str = Query("OR", regex="^(AND|OR)$", description="标签筛选逻辑（AND/OR）"),
     sort_by: str = Query("updated_at", regex="^(updated_at|created_at|name|token_count)$", description="排序字段"),
     sort_order: str = Query("desc", regex="^(asc|desc)$", description="排序方向"),
+    folder_id: Optional[str] = Query(None, description="文件夹 ID 过滤"),
+    favorites_only: bool = Query(False, description="只显示收藏的提示词"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> PromptListResponse:
     """
     List prompts with pagination, search, and filtering.
-
-    Args:
-        page: Page number (1-indexed)
-        page_size: Items per page (1-100)
-        search: Search query (searches in name and content)
-        tags: Comma-separated tag names for filtering
-        tag_logic: Tag filtering logic (AND requires all tags, OR requires any tag)
-        sort_by: Sort field (updated_at/created_at/name/token_count)
-        sort_order: Sort direction (asc/desc)
-        current_user: Current authenticated user
-        db: Database session
-
-    Returns:
-        PromptListResponse: Paginated list of prompts
     """
     # Parse tags
     tag_names = [tag.strip() for tag in tags.split(",")] if tags else None
@@ -85,7 +73,9 @@ async def list_prompts(
         tag_names=tag_names,
         tag_logic=tag_logic,
         sort_by=sort_by,
-        sort_order=sort_order
+        sort_order=sort_order,
+        folder_id=folder_id,
+        favorites_only=favorites_only,
     )
 
     # Calculate total pages
@@ -190,6 +180,25 @@ async def delete_prompt(
     PromptService.delete_prompt(db, prompt)
 
 
+@router.put("/{prompt_id}/favorite")
+async def toggle_favorite(
+    prompt_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+) -> dict:
+    """
+    Toggle favorite status of a prompt.
+    """
+    from app.services.prompt_folder_service import PromptFolderService
+    result = PromptFolderService.toggle_favorite(db, prompt_id, current_user.id)
+    if result is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Prompt not found"
+        )
+    return {"is_favorited": result}
+
+
 @router.get("/{prompt_id}/versions", response_model=List[PromptVersionResponse])
 async def get_prompt_versions(
     prompt_id: str,
@@ -198,21 +207,9 @@ async def get_prompt_versions(
 ) -> List[PromptVersionResponse]:
     """
     Get all versions of a prompt.
-
-    Args:
-        prompt_id: Prompt ID
-        current_user: Current authenticated user
-        db: Database session
-
-    Returns:
-        List[PromptVersionResponse]: List of versions (newest first)
-
-    Raises:
-        HTTPException: 404 if prompt not found or doesn't belong to user
     """
     versions = PromptService.get_prompt_versions(db, prompt_id, current_user.id)
     if not versions:
-        # Check if prompt exists
         prompt = PromptService.get_prompt(db, prompt_id, current_user.id)
         if not prompt:
             raise HTTPException(
