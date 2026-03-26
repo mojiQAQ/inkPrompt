@@ -30,7 +30,7 @@ export function Navbar() {
               onClick={handleLogoClick}
               className="flex items-center gap-3 transition-opacity hover:opacity-80"
             >
-              <img src="/logo.png" alt="inkPrompt" className="h-9 w-9 rounded-2xl object-cover" />
+              <img src="/favicon.svg" alt="inkPrompt" className="h-9 w-9" />
               <h1 className="text-base font-semibold tracking-tight text-ink-900">Ink & Prompt</h1>
             </button>
           </div>
