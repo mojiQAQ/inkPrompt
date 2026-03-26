@@ -2,21 +2,7 @@
  * Version history API
  */
 import { apiRequest, getAuthHeaders } from './client'
-
-export interface PromptVersion {
-  id: string
-  prompt_id: string
-  version_number: number
-  content: string
-  token_count: number
-  change_note: string | null
-  created_at: string
-}
-
-export interface VersionListResponse {
-  versions: PromptVersion[]
-  total: number
-}
+import type { PromptVersion, VersionListResponse } from '@/types/prompt'
 
 /**
  * Get all versions of a prompt

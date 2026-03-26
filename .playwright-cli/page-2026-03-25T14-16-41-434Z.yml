@@ -1,0 +1,55 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - button "Ink & Prompt" [ref=e8] [cursor=pointer]:
+        - img [ref=e10]
+        - heading "Ink & Prompt" [level=1] [ref=e12]
+      - navigation [ref=e13]:
+        - button "我的提示词" [ref=e14] [cursor=pointer]
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - generic [ref=e18]: F
+          - generic [ref=e19]: fpccc007@gmail.com
+        - button "退出登录" [ref=e20] [cursor=pointer]
+  - main [ref=e21]:
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e27]: 编辑态
+          - generic [ref=e28]:
+            - textbox "提示词名称" [ref=e29]: 联调验证 Prompt 20260325-1
+            - generic [ref=e30]:
+              - generic [ref=e31]: 13 tokens
+              - generic [ref=e32]: ·
+              - generic [ref=e33]: 3 个版本
+              - generic [ref=e34]: ·
+              - generic [ref=e35]: 当前版本 v3
+              - generic [ref=e36]: ·
+              - generic [ref=e37]: 2026/03/25
+        - button "退出编辑" [ref=e39] [cursor=pointer]
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e43]:
+            - generic [ref=e44]: 提示词内容
+            - generic [ref=e45]: 支持自动保存
+          - textbox "输入提示词内容..." [ref=e46]: 你是一个真实联调验证助手。请用 3 条简短要点总结输入内容，并给出 1 条改进建议。输出请使用中文。
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]: 标签
+            - generic [ref=e50]: 编辑后自动保存
+          - generic [ref=e52]:
+            - textbox "输入标签并回车添加" [ref=e54]
+            - button "添加" [disabled] [ref=e55]
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - text: Version
+            - combobox [ref=e60]:
+              - option "v3 · 2026/03/25" [selected]
+              - option "v2 · 2026/03/25"
+              - option "v1 · 2026/03/25"
+          - button "历史版本" [ref=e61] [cursor=pointer]
+          - button "对比版本" [ref=e62] [cursor=pointer]
+          - button "AI 优化" [ref=e63] [cursor=pointer]
+          - button "模型测试" [ref=e64] [cursor=pointer]
+        - generic [ref=e65]: 修改内容后会自动保存，无需手动提交。

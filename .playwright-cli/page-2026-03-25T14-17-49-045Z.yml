@@ -1,0 +1,123 @@
+- generic [ref=e2]:
+  - status [ref=e133]: 测试完成
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e6]:
+        - button "Ink & Prompt" [ref=e8] [cursor=pointer]:
+          - img [ref=e10]
+          - heading "Ink & Prompt" [level=1] [ref=e12]
+        - navigation [ref=e13]:
+          - button "我的提示词" [ref=e14] [cursor=pointer]
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - generic [ref=e18]: F
+            - generic [ref=e19]: fpccc007@gmail.com
+          - button "退出登录" [ref=e20] [cursor=pointer]
+    - main [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - generic [ref=e25]:
+              - generic [ref=e27]: 编辑态
+              - generic [ref=e28]:
+                - textbox "提示词名称" [ref=e29]: 联调验证 Prompt 20260325-1
+                - generic [ref=e30]:
+                  - generic [ref=e31]: 13 tokens
+                  - generic [ref=e32]: ·
+                  - generic [ref=e33]: 3 个版本
+                  - generic [ref=e34]: ·
+                  - generic [ref=e35]: 当前版本 v3
+                  - generic [ref=e36]: ·
+                  - generic [ref=e37]: 2026/03/25
+            - button "退出编辑" [ref=e39] [cursor=pointer]
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]:
+                - generic [ref=e44]: 提示词内容
+                - generic [ref=e45]: 支持自动保存
+              - textbox "输入提示词内容..." [ref=e46]: 你是一个真实联调验证助手。请用 3 条简短要点总结输入内容，并给出 1 条改进建议。输出请使用中文。
+            - generic [ref=e47]:
+              - generic [ref=e48]:
+                - generic [ref=e49]: 标签
+                - generic [ref=e50]: 编辑后自动保存
+              - generic [ref=e52]:
+                - textbox "输入标签并回车添加" [ref=e54]
+                - button "添加" [disabled] [ref=e55]
+          - generic [ref=e57]:
+            - generic [ref=e58]:
+              - generic [ref=e59]:
+                - text: Version
+                - combobox [ref=e60]:
+                  - option "v3 · 2026/03/25" [selected]
+                  - option "v2 · 2026/03/25"
+                  - option "v1 · 2026/03/25"
+              - button "历史版本" [ref=e61] [cursor=pointer]
+              - button "对比版本" [ref=e62] [cursor=pointer]
+              - button "AI 优化" [ref=e63] [cursor=pointer]
+              - button "模型测试" [ref=e64] [cursor=pointer]
+            - generic [ref=e65]: 修改内容后会自动保存，无需手动提交。
+        - complementary [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68]:
+              - generic [ref=e69]:
+                - generic [ref=e70]: Test
+                - heading "多模型测试" [level=3] [ref=e71]
+                - paragraph [ref=e72]: 左侧提示词作为 system prompt，右侧查看并发输出。
+              - button [ref=e73] [cursor=pointer]:
+                - img [ref=e74]
+            - generic [ref=e76]:
+              - generic [ref=e77]:
+                - generic [ref=e78]:
+                  - generic [ref=e79]:
+                    - generic [ref=e80]: 当前提示词
+                    - paragraph [ref=e81]: 联调验证 Prompt 20260325-1
+                  - generic [ref=e82]: 1 个模型
+                - paragraph [ref=e85]: 优化后的提示词：作为一个真实联调验证专家，你需要从输入内容中总结出三个关键要点，并提出一项有效的改进建议。
+              - generic [ref=e86]:
+                - generic [ref=e87]:
+                  - generic [ref=e88]:
+                    - heading "模型列表" [level=3] [ref=e89]
+                    - paragraph [ref=e90]: 可同时选择多个模型，输出会分别保留在各自的卡片中。
+                  - generic [ref=e91]: 1 / 5
+                - button "当前配置模型 已选 https://openrouter.ai/api/v1 · openai/gpt-4 https://openrouter.ai/api/v1" [ref=e93] [cursor=pointer]:
+                  - generic [ref=e94]:
+                    - generic [ref=e95]:
+                      - generic [ref=e96]:
+                        - generic [ref=e97]: 当前配置模型
+                        - generic [ref=e98]: 已选
+                      - generic [ref=e99]: https://openrouter.ai/api/v1 · openai/gpt-4
+                    - img [ref=e101]
+                  - generic [ref=e103]: https://openrouter.ai/api/v1
+                - generic [ref=e104]:
+                  - paragraph [ref=e105]: 选择后会在同一测试会话中继续追加消息。
+                  - button "清空选择" [ref=e106] [cursor=pointer]
+              - generic [ref=e107]:
+                - generic [ref=e108]:
+                  - generic [ref=e109]:
+                    - heading "用户输入" [level=4] [ref=e110]
+                    - paragraph [ref=e111]: 输入后发送给所有已选模型，追加到同一会话。
+                  - button "清空" [ref=e112] [cursor=pointer]
+                - textbox "请输入本轮用户问题或补充说明..." [ref=e113]: 请直接给出三个要点和一条建议。
+                - generic [ref=e114]:
+                  - paragraph [ref=e115]: 继续对话时会在当前会话内追加新消息。
+                  - button "开始测试" [ref=e116] [cursor=pointer]
+              - article [ref=e118]:
+                - generic [ref=e120]:
+                  - generic [ref=e121]:
+                    - heading "当前配置模型" [level=4] [ref=e122]
+                    - generic [ref=e123]: 已完成
+                  - paragraph [ref=e134]: "会话 ID: e8989796-02e8-48dd-9518-4ce60a60508b"
+                - generic [ref=e124]:
+                  - generic [ref=e135]:
+                    - generic [ref=e136]:
+                      - generic [ref=e138]: system
+                      - paragraph [ref=e139]: 优化后的提示词：作为一个真实联调验证专家，你需要从输入内容中总结出三个关键要点，并提出一项有效的改进建议。
+                    - generic [ref=e140]:
+                      - generic [ref=e142]: user
+                      - paragraph [ref=e143]: 请直接给出三个要点和一条建议。
+                    - generic [ref=e144]:
+                      - generic [ref=e146]: assistant
+                      - paragraph [ref=e147]: 很抱歉，我需要更多的信息才能给出关键要点和建议。请提供关于真实联调验证的具体情况或问题。
+                  - generic [ref=e125]:
+                    - generic [ref=e126]: 输出
+                    - generic [ref=e127]: 很抱歉，我需要更多的信息才能给出关键要点和建议。请提供关于真实联调验证的具体情况或问题。

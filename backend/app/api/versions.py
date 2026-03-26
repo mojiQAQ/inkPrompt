@@ -4,9 +4,11 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.auth import get_current_user
-from app.models import User, Prompt, PromptVersion
+from app.models.prompt import Prompt
+from app.models.user import User
 from app.schemas.version import PromptVersionResponse, VersionListResponse
 from app.schemas.prompt import PromptResponse
+from app.services.prompt_service import PromptService
 
 router = APIRouter()
 
@@ -35,9 +37,7 @@ async def get_prompt_versions(
         )
 
     # Get all versions
-    versions = db.query(PromptVersion).filter(
-        PromptVersion.prompt_id == prompt_id
-    ).order_by(PromptVersion.version_number.desc()).all()
+    versions = PromptService.get_prompt_versions(db, prompt_id, current_user.id)
 
     return VersionListResponse(
         versions=versions,
@@ -68,10 +68,7 @@ async def get_version_detail(
         )
 
     # Get version
-    version = db.query(PromptVersion).filter(
-        PromptVersion.id == version_id,
-        PromptVersion.prompt_id == prompt_id
-    ).first()
+    version = PromptService.get_prompt_version(db, prompt_id, version_id, current_user.id)
 
     if not version:
         raise HTTPException(
@@ -107,10 +104,7 @@ async def restore_version(
         )
 
     # Get the version to restore
-    version_to_restore = db.query(PromptVersion).filter(
-        PromptVersion.id == version_id,
-        PromptVersion.prompt_id == prompt_id
-    ).first()
+    version_to_restore = PromptService.get_prompt_version(db, prompt_id, version_id, current_user.id)
 
     if not version_to_restore:
         raise HTTPException(
@@ -118,31 +112,13 @@ async def restore_version(
             detail="Version not found"
         )
 
-    # Update prompt with version content
-    prompt.content = version_to_restore.content
-    prompt.token_count = version_to_restore.token_count
-
-    # Create new version record
-    import uuid
-    from app.utils.token_counter import count_tokens
-
-    # Get next version number
-    latest_version = db.query(PromptVersion).filter(
-        PromptVersion.prompt_id == prompt_id
-    ).order_by(PromptVersion.version_number.desc()).first()
-
-    next_version_number = (latest_version.version_number + 1) if latest_version else 1
-
-    new_version = PromptVersion(
-        id=str(uuid.uuid4()),
-        prompt_id=prompt_id,
-        version_number=next_version_number,
+    PromptService.create_prompt_version(
+        db=db,
+        prompt=prompt,
         content=version_to_restore.content,
+        change_note=f"恢复到版本 {version_to_restore.version_number}",
         token_count=version_to_restore.token_count,
-        change_note=f"恢复到版本 {version_to_restore.version_number}"
     )
-
-    db.add(new_version)
     db.commit()
     db.refresh(prompt)
 

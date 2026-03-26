@@ -1,0 +1,38 @@
+[
+  {
+    "name": "{{DEFAULT_MODEL}}",
+    "base_url": "{{OPENAI_API_BASE}}",
+    "model": "{{DEFAULT_MODEL}}",
+    "api_key": "{{OPENAI_API_KEY}}"
+  },
+  {
+    "name": "claude-opus-4.6",
+    "base_url": "{{OPENAI_API_BASE}}",
+    "model": "anthropic/claude-opus-4-6",
+    "api_key": "{{OPENAI_API_KEY}}"
+  },
+  {
+    "name": "kimi-2.5",
+    "base_url": "{{OPENAI_API_BASE}}",
+    "model": "moonshotai/kimi-k2.5",
+    "api_key": "{{OPENAI_API_KEY}}"
+  },
+  {
+    "name": "MiniMax-M2.7",
+    "base_url": "{{OPENAI_API_BASE}}",
+    "model": "MiniMax-M2.7",
+    "api_key": "{{OPENAI_API_KEY}}"
+  },
+  {
+    "name": "GLM-4.7",
+    "base_url": "{{OPENAI_API_BASE}}",
+    "model": "zai-org/glm-4.7",
+    "api_key": "{{OPENAI_API_KEY}}"
+  },
+  {
+    "name": "gpt-5.4",
+    "base_url": "{{OPENAI_API_BASE}}",
+    "model": "gpt-5.4",
+    "api_key": "{{OPENAI_API_KEY}}"
+  }
+]

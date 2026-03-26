@@ -1,0 +1,114 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - status [ref=e8]: 优化完成，已生成新版本
+  - generic [ref=e9]:
+    - banner [ref=e10]:
+      - generic [ref=e12]:
+        - button "Ink & Prompt" [ref=e14] [cursor=pointer]:
+          - img [ref=e16]
+          - heading "Ink & Prompt" [level=1] [ref=e18]
+        - navigation [ref=e19]:
+          - button "我的提示词" [ref=e20] [cursor=pointer]
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - generic [ref=e24]: E
+            - generic [ref=e25]: e2e@example.com
+          - button "退出登录" [ref=e26] [cursor=pointer]
+    - main [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e30]:
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - heading "Prompt Detail Smoke" [level=1] [ref=e35]
+              - generic [ref=e36]:
+                - button "AI 优化" [ref=e37] [cursor=pointer]
+                - button "模型测试" [ref=e38] [cursor=pointer]
+                - button "进入编辑" [ref=e39] [cursor=pointer]:
+                  - img [ref=e40]
+            - generic [ref=e42]:
+              - generic [ref=e43]: 7 tokens
+              - generic [ref=e44]: v2
+              - generic [ref=e45]: 2026/01/02
+              - generic [ref=e46]: 测试
+              - button "添加标签" [ref=e47] [cursor=pointer]:
+                - img [ref=e48]
+          - generic [ref=e54]:
+            - heading "Prompt Detail v2" [level=1] [ref=e55]
+            - paragraph [ref=e56]: 当前主版本
+          - generic [ref=e58]:
+            - combobox [ref=e60]:
+              - option "v2 · 2026/01/02" [selected]
+              - option "v1 · 2026/01/01"
+            - button "展开历史版本" [ref=e62] [cursor=pointer]:
+              - text: 历史版本
+              - img [ref=e63]
+        - complementary [ref=e65]:
+          - generic [ref=e66]:
+            - generic [ref=e67]:
+              - heading "AI 优化" [level=3] [ref=e69]
+              - button [ref=e70] [cursor=pointer]:
+                - img [ref=e71]
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - generic [ref=e75]:
+                  - heading "优化想法" [level=4] [ref=e77]
+                  - button "重置" [ref=e78] [cursor=pointer]
+                - textbox "例如：加强角色定位，补充输出格式，并增加异常场景处理。" [ref=e79]
+              - generic [ref=e80]:
+                - generic [ref=e81]:
+                  - heading "可选建议" [level=4] [ref=e83]
+                  - generic [ref=e84]: "0"
+                - generic [ref=e85]:
+                  - generic [ref=e86]:
+                    - generic [ref=e87]:
+                      - generic [ref=e88]: 是否补充输出格式？
+                      - generic [ref=e89]: 0 项
+                    - generic [ref=e90]:
+                      - generic [ref=e91] [cursor=pointer]:
+                        - checkbox "Markdown" [ref=e92]
+                        - generic [ref=e93]: Markdown
+                      - generic [ref=e94] [cursor=pointer]:
+                        - checkbox "JSON" [ref=e95]
+                        - generic [ref=e96]: JSON
+                  - generic [ref=e97]:
+                    - generic [ref=e98]:
+                      - generic [ref=e99]: 是否增加约束？
+                      - generic [ref=e100]: 0 项
+                    - generic [ref=e101]:
+                      - generic [ref=e102] [cursor=pointer]:
+                        - checkbox "增加" [ref=e103]
+                        - generic [ref=e104]: 增加
+                      - generic [ref=e105] [cursor=pointer]:
+                        - checkbox "保持当前" [ref=e106]
+                        - generic [ref=e107]: 保持当前
+              - generic [ref=e108]:
+                - paragraph [ref=e109]: 0 项
+                - button "开始优化" [ref=e110] [cursor=pointer]
+              - generic [ref=e111]:
+                - generic [ref=e112]:
+                  - heading "优化历史" [level=4] [ref=e114]
+                  - generic [ref=e115]: 1 轮
+                - article [ref=e117]:
+                  - generic [ref=e118]:
+                    - generic [ref=e119]:
+                      - generic [ref=e120]:
+                        - generic [ref=e121]: 第 1 轮
+                        - generic [ref=e122]: 版本 version-2
+                      - paragraph [ref=e123]: 01/02 08:00
+                    - generic [ref=e124]: 2 条建议
+                  - generic [ref=e125]: 软件开发
+                  - heading "Seed" [level=1] [ref=e128]
+                  - generic [ref=e129]:
+                    - generic [ref=e130]:
+                      - text: 是否补充输出格式？
+                      - generic [ref=e131]:
+                        - generic [ref=e132]: Markdown
+                        - generic [ref=e133]: JSON
+                    - generic [ref=e134]:
+                      - text: 是否增加约束？
+                      - generic [ref=e135]:
+                        - generic [ref=e136]: 增加
+                        - generic [ref=e137]: 保持当前
+```

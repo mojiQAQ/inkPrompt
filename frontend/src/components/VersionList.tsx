@@ -2,8 +2,7 @@
  * Version list component showing all historical versions of a prompt
  */
 import { useState } from 'react'
-import { PromptVersion } from '@/api/versions'
-import toast from 'react-hot-toast'
+import type { PromptVersion } from '@/types/prompt'
 
 interface VersionListProps {
   versions: PromptVersion[]

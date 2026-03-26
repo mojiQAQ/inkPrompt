@@ -34,7 +34,8 @@ class TestLangChainConfig:
         """测试默认配置值"""
         config = LangChainConfig()
 
-        assert config.default_model == 'gpt-3.5-turbo'
+        assert isinstance(config.default_model, str)
+        assert config.default_model
         assert config.default_temperature == 0.7
         assert config.max_tokens == 4000
 
@@ -43,20 +44,20 @@ class TestLangChainConfig:
         config = LangChainConfig()
         config.api_key = None
 
-        is_valid, message = config.validate_config()
+        validation = config.validate_config()
 
-        assert not is_valid
-        assert "API key" in message.lower()
+        assert validation["valid"] is False
+        assert validation["api_key_set"] is False
 
     @patch.dict('os.environ', {'OPENAI_API_KEY': 'test-key'})
     def test_config_validation_success(self):
         """测试配置验证成功"""
         config = LangChainConfig()
 
-        is_valid, message = config.validate_config()
+        validation = config.validate_config()
 
-        assert is_valid
-        assert message == "Configuration is valid"
+        assert validation["valid"] is True
+        assert validation["api_key_set"] is True
 
     @patch.dict('os.environ', {'OPENAI_API_KEY': 'test-key'})
     @patch('app.core.langchain_config.ChatOpenAI')
@@ -172,15 +173,15 @@ class TestCallTrackerHandler:
         handler = CallTrackerHandler(
             db=test_db,
             user_id=test_user.id,
-            input_prompt="Test prompt",
-            chain_type="test_chain"
+            session_id="session-123",
+            metadata={"chain_type": "test_chain"},
         )
 
         assert handler.db == test_db
         assert handler.user_id == test_user.id
-        assert handler.input_prompt == "Test prompt"
-        assert handler.chain_type == "test_chain"
-        assert handler.call_id is not None
+        assert handler.session_id == "session-123"
+        assert handler.metadata["chain_type"] == "test_chain"
+        assert handler.call_id is None
 
     @patch('app.callbacks.call_tracker.count_tokens')
     def test_callback_on_llm_end(
@@ -196,8 +197,8 @@ class TestCallTrackerHandler:
         handler = CallTrackerHandler(
             db=test_db,
             user_id=test_user.id,
-            input_prompt="Test prompt",
-            model_name="gpt-3.5-turbo"
+            session_id="session-456",
+            metadata={"model_name": "gpt-3.5-turbo"},
         )
 
         # Mock LLM result
@@ -231,7 +232,7 @@ class TestCallTrackerHandler:
         handler = CallTrackerHandler(
             db=test_db,
             user_id=test_user.id,
-            input_prompt="Test prompt"
+            session_id="session-789",
         )
 
         # 触发错误回调

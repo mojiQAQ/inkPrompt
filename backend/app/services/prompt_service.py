@@ -16,6 +16,50 @@ class PromptService:
     """Service for prompt-related business logic."""
 
     @staticmethod
+    def create_prompt_version(
+        db: Session,
+        prompt: Prompt,
+        content: str,
+        change_note: Optional[str] = None,
+        token_count: Optional[int] = None,
+    ) -> PromptVersion:
+        """
+        Create a new version for a prompt and update the prompt content.
+
+        Args:
+            db: Database session
+            prompt: Prompt to version
+            content: Version content
+            change_note: Optional change note
+            token_count: Optional precomputed token count
+
+        Returns:
+            PromptVersion: Created version record
+        """
+        latest_version = db.query(func.max(PromptVersion.version_number)).filter(
+            PromptVersion.prompt_id == prompt.id
+        ).scalar() or 0
+
+        version_number = latest_version + 1
+        resolved_token_count = token_count if token_count is not None else count_tokens(content)
+
+        prompt.content = content
+        prompt.token_count = resolved_token_count
+
+        version = PromptVersion(
+            id=str(uuid.uuid4()),
+            prompt_id=prompt.id,
+            version_number=version_number,
+            content=content,
+            token_count=resolved_token_count,
+            change_note=change_note or f"版本 {version_number}",
+        )
+        db.add(version)
+        db.flush()
+
+        return version
+
+    @staticmethod
     def create_prompt(
         db: Session,
         user_id: str,
@@ -53,15 +97,13 @@ class PromptService:
         db.flush()
 
         # Create initial version
-        version = PromptVersion(
-            id=str(uuid.uuid4()),
-            prompt_id=prompt.id,
-            version_number=1,
+        PromptService.create_prompt_version(
+            db=db,
+            prompt=prompt,
             content=prompt.content,
-            token_count=token_count,
             change_note="初始版本",
+            token_count=token_count,
         )
-        db.add(version)
         db.commit()
         db.refresh(prompt)
 
@@ -191,20 +233,13 @@ class PromptService:
 
         # Create new version if content changed
         if content_changed:
-            # Get latest version number
-            latest_version = db.query(func.max(PromptVersion.version_number)).filter(
-                PromptVersion.prompt_id == prompt.id
-            ).scalar() or 0
-
-            version = PromptVersion(
-                id=str(uuid.uuid4()),
-                prompt_id=prompt.id,
-                version_number=latest_version + 1,
+            PromptService.create_prompt_version(
+                db=db,
+                prompt=prompt,
                 content=prompt.content,
+                change_note=prompt_data.change_note,
                 token_count=prompt.token_count,
-                change_note=prompt_data.change_note or f"版本 {latest_version + 1}",
             )
-            db.add(version)
 
         db.commit()
         db.refresh(prompt)
@@ -252,6 +287,22 @@ class PromptService:
         return db.query(PromptVersion).filter(
             PromptVersion.prompt_id == prompt_id
         ).order_by(PromptVersion.version_number.desc()).all()
+
+    @staticmethod
+    def get_prompt_version(
+        db: Session,
+        prompt_id: str,
+        version_id: str,
+        user_id: str,
+    ) -> Optional[PromptVersion]:
+        """
+        Get a specific prompt version owned by the user.
+        """
+        return db.query(PromptVersion).join(Prompt).filter(
+            PromptVersion.id == version_id,
+            PromptVersion.prompt_id == prompt_id,
+            Prompt.user_id == user_id,
+        ).first()
 
     @staticmethod
     def _get_or_create_tags(

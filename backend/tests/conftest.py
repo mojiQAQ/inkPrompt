@@ -1,31 +1,73 @@
 """
-Pytest configuration and shared fixtures for InkPrompt tests
+Pytest configuration and shared fixtures for InkPrompt tests.
 """
 import os
-import pytest
+import sys
+import types
 from typing import Generator
+
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-# Import app and database dependencies
+os.environ.setdefault("SUPABASE_URL", "http://test.local")
+os.environ.setdefault("SUPABASE_JWT_SECRET", "test-secret")
+os.environ.setdefault("OPENAI_API_KEY", "test-openai-key")
+
+if "langchain_openai" not in sys.modules:
+    stub_module = types.ModuleType("langchain_openai")
+
+    class ChatOpenAI:  # pragma: no cover - simple test stub
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            self.kwargs = kwargs
+
+        def invoke(self, *_args, **_kwargs):
+            return types.SimpleNamespace(content="")
+
+    stub_module.ChatOpenAI = ChatOpenAI
+    sys.modules["langchain_openai"] = stub_module
+
+if "langchain" not in sys.modules:
+    langchain_module = types.ModuleType("langchain")
+    callbacks_module = types.ModuleType("langchain.callbacks")
+    callbacks_base_module = types.ModuleType("langchain.callbacks.base")
+    schema_module = types.ModuleType("langchain.schema")
+
+    class BaseCallbackHandler:  # pragma: no cover - test stub
+        pass
+
+    class LLMResult:  # pragma: no cover - test stub
+        def __init__(self, generations=None):
+            self.generations = generations or []
+
+    callbacks_base_module.BaseCallbackHandler = BaseCallbackHandler
+    schema_module.LLMResult = LLMResult
+    callbacks_module.base = callbacks_base_module
+    langchain_module.callbacks = callbacks_module
+    langchain_module.schema = schema_module
+    sys.modules["langchain"] = langchain_module
+    sys.modules["langchain.callbacks"] = callbacks_module
+    sys.modules["langchain.callbacks.base"] = callbacks_base_module
+    sys.modules["langchain.schema"] = schema_module
+
 from app.main import app
+from app.core.auth import get_current_user
 from app.core.database import Base, get_db
-from app.models.user import User
-from app.models.prompt import Prompt
-from app.models.tag import Tag
-from app.models.prompt_version import PromptVersion
 from app.models.model_call import ModelCall
+from app.models.prompt import Prompt
+from app.models.prompt_version import PromptVersion
+from app.models.tag import Tag
+from app.models.user import User
 
 
-# Test database URL (in-memory SQLite)
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
 
 @pytest.fixture(scope="function")
 def test_engine():
-    """Create a test database engine"""
     engine = create_engine(
         TEST_DATABASE_URL,
         connect_args={"check_same_thread": False},
@@ -39,29 +81,44 @@ def test_engine():
 
 @pytest.fixture(scope="function")
 def test_db(test_engine) -> Generator[Session, None, None]:
-    """Create a test database session"""
-    TestingSessionLocal = sessionmaker(
+    testing_session_local = sessionmaker(
         autocommit=False,
         autoflush=False,
-        bind=test_engine
+        bind=test_engine,
     )
-    session = TestingSessionLocal()
+    session = testing_session_local()
     try:
         yield session
     finally:
         session.close()
 
 
+@pytest.fixture
+def test_user(test_db: Session) -> User:
+    user = User(
+        id="test-user-id-123",
+        email="test@example.com",
+        full_name="Test User",
+    )
+    test_db.add(user)
+    test_db.commit()
+    test_db.refresh(user)
+    return user
+
+
 @pytest.fixture(scope="function")
-def client(test_db: Session) -> Generator[TestClient, None, None]:
-    """Create a test client with test database"""
+def client(test_db: Session, test_user: User) -> Generator[TestClient, None, None]:
     def override_get_db():
         try:
             yield test_db
         finally:
             pass
 
+    def override_get_current_user():
+        return test_user
+
     app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[get_current_user] = override_get_current_user
 
     with TestClient(app) as test_client:
         yield test_client
@@ -70,28 +127,13 @@ def client(test_db: Session) -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture
-def test_user(test_db: Session) -> User:
-    """Create a test user"""
-    user = User(
-        id="test-user-id-123",
-        email="test@example.com",
-        supabase_user_id="supabase-test-id"
-    )
-    test_db.add(user)
-    test_db.commit()
-    test_db.refresh(user)
-    return user
-
-
-@pytest.fixture
 def test_prompt(test_db: Session, test_user: User) -> Prompt:
-    """Create a test prompt"""
     prompt = Prompt(
         id="test-prompt-id-123",
         name="Test Prompt",
         content="This is a test prompt for testing purposes.",
         user_id=test_user.id,
-        token_count=10
+        token_count=10,
     )
     test_db.add(prompt)
     test_db.commit()
@@ -101,10 +143,10 @@ def test_prompt(test_db: Session, test_user: User) -> Prompt:
 
 @pytest.fixture
 def test_tag(test_db: Session) -> Tag:
-    """Create a test tag"""
     tag = Tag(
+        id="test-tag-id-123",
         name="test-tag",
-        is_system=False
+        is_system=False,
     )
     test_db.add(tag)
     test_db.commit()
@@ -114,13 +156,13 @@ def test_tag(test_db: Session) -> Tag:
 
 @pytest.fixture
 def test_version(test_db: Session, test_prompt: Prompt) -> PromptVersion:
-    """Create a test prompt version"""
     version = PromptVersion(
+        id="test-version-id-123",
         prompt_id=test_prompt.id,
         version_number=1,
         content="Original content",
         token_count=10,
-        change_note="Initial version"
+        change_note="Initial version",
     )
     test_db.add(version)
     test_db.commit()
@@ -130,51 +172,45 @@ def test_version(test_db: Session, test_prompt: Prompt) -> PromptVersion:
 
 @pytest.fixture
 def auth_headers(test_user: User) -> dict:
-    """Create authentication headers for testing"""
-    # In a real test, you'd generate a valid JWT token
-    # For now, we'll use a mock token
     return {
-        "Authorization": "Bearer test-token-123"
+        "Authorization": "Bearer test-token-123",
     }
 
 
 @pytest.fixture
 def mock_openai_key(monkeypatch):
-    """Mock OpenAI API key for testing"""
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test-key-123")
     yield
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
 
 
-# Utility functions for tests
-
 def create_prompt_data(
     name: str = "Test Prompt",
     content: str = "Test content",
-    tag_names: list[str] = None
+    tag_names: list[str] | None = None,
 ) -> dict:
-    """Helper to create prompt data dict"""
+    """Helper to create prompt payloads."""
     return {
         "name": name,
         "content": content,
-        "tag_names": tag_names or []
+        "tag_names": tag_names or [],
     }
 
 
 def create_multiple_prompts(
     db: Session,
     user: User,
-    count: int = 3
+    count: int = 3,
 ) -> list[Prompt]:
-    """Helper to create multiple test prompts"""
+    """Helper to create multiple prompts for list/search tests."""
     prompts = []
-    for i in range(count):
+    for index in range(count):
         prompt = Prompt(
-            id=f"test-prompt-{i}",
-            name=f"Test Prompt {i}",
-            content=f"Test content {i}",
+            id=f"test-prompt-{index}",
+            name=f"Test Prompt {index}",
+            content=f"Test content {index}",
             user_id=user.id,
-            token_count=10 + i
+            token_count=10 + index,
         )
         db.add(prompt)
         prompts.append(prompt)

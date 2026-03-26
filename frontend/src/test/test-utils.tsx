@@ -4,6 +4,7 @@
 import { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
+import type { Prompt, PromptVersion, Tag } from '@/types/prompt'
 
 // Mock AuthProvider for testing
 const MockAuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -34,19 +35,21 @@ export const mockGetAccessToken = () => {
   return Promise.resolve('mock-token-123')
 }
 
-export const createMockPrompt = (overrides = {}) => ({
+export const createMockPrompt = (overrides: Partial<Prompt> = {}): Prompt => ({
   id: 'prompt-1',
   name: 'Test Prompt',
   content: 'Test content',
   user_id: 'user-1',
   token_count: 100,
+  is_favorited: false,
   tags: [],
+  version_count: 1,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   ...overrides,
 })
 
-export const createMockVersion = (overrides = {}) => ({
+export const createMockVersion = (overrides: Partial<PromptVersion> = {}): PromptVersion => ({
   id: 'version-1',
   prompt_id: 'prompt-1',
   version_number: 1,
@@ -57,10 +60,11 @@ export const createMockVersion = (overrides = {}) => ({
   ...overrides,
 })
 
-export const createMockTag = (overrides = {}) => ({
+export const createMockTag = (overrides: Partial<Tag> = {}): Tag => ({
   id: 'tag-1',
   name: 'test',
   is_system: false,
+  use_count: 0,
   ...overrides,
 })
 

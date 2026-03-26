@@ -21,6 +21,8 @@ class PromptVersion(Base):
 
     # Relationships
     prompt = relationship("Prompt", back_populates="versions")
+    test_sessions = relationship("TestSession", back_populates="prompt_version", cascade="all, delete-orphan")
+    optimization_rounds = relationship("OptimizationRound", back_populates="version")
 
     def __repr__(self) -> str:
         return f"<PromptVersion(id={self.id}, prompt_id={self.prompt_id}, version={self.version_number})>"

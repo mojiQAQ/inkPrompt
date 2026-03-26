@@ -23,6 +23,8 @@ class User(Base):
     prompts = relationship("Prompt", back_populates="user", cascade="all, delete-orphan")
     tags = relationship("Tag", back_populates="user", cascade="all, delete-orphan")
     folders = relationship("PromptFolder", back_populates="user", cascade="all, delete-orphan")
+    optimization_sessions = relationship("OptimizationSession", back_populates="user", cascade="all, delete-orphan")
+    test_sessions = relationship("TestSession", back_populates="user", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
         return f"<User(id={self.id}, email={self.email})>"

@@ -1,4 +1,6 @@
 """Tag model."""
+import uuid
+
 from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey, Table
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
@@ -21,7 +23,7 @@ class Tag(Base):
 
     __tablename__ = "tags"
 
-    id = Column(String(36), primary_key=True, index=True)
+    id = Column(String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)
     name = Column(String(50), nullable=False, index=True)
     is_system = Column(Boolean, default=False, nullable=False)

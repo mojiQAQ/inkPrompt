@@ -16,3 +16,20 @@ Use `@/openspec/AGENTS.md` to learn:
 Keep this managed block so 'openspec update' can refresh the instructions.
 
 <!-- OPENSPEC:END -->
+
+# Local Skills
+
+This repository should prefer user-installed local skills from `~/.codex/skills` when they match the task.
+
+## Preferred Skill Routing
+
+- Use `frontend-design` or `frontend-skill` for frontend visual redesign, layout refinement, interaction polish, or design-system work.
+- Use `gstack` when the task explicitly involves gstack-related workflow or tooling.
+- Use `powerpoint-automation` for PPT / deck generation or slide conversion tasks.
+- Use `document-illustrator` or `canvas-design` for illustration, visual asset, or static design tasks.
+- Use `find-skills` when a requested capability may exist as a skill but is not obviously available.
+
+## Local Skill Source
+
+- Primary user-local skills live under `~/.codex/skills`.
+- If a needed skill is present there, prefer reading that `SKILL.md` before falling back to generic implementation.

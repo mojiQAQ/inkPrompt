@@ -10,9 +10,15 @@ interface TagInputProps {
   value: string[]
   onChange: (tags: string[]) => void
   placeholder?: string
+  hideTags?: boolean
 }
 
-export function TagInput({ value, onChange, placeholder = '输入标签后按回车添加' }: TagInputProps) {
+export function TagInput({
+  value,
+  onChange,
+  placeholder = '输入标签后按回车添加',
+  hideTags = false,
+}: TagInputProps) {
   const { getAccessToken } = useAuth()
 
   const [inputValue, setInputValue] = useState('')
@@ -106,8 +112,7 @@ export function TagInput({ value, onChange, placeholder = '输入标签后按回
 
   return (
     <div className="relative">
-      {/* Input field */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="mb-3 flex items-center gap-2">
         <div className="relative flex-1">
           <input
             ref={inputRef}
@@ -124,16 +129,15 @@ export function TagInput({ value, onChange, placeholder = '输入标签后按回
             placeholder={placeholder}
           />
 
-          {/* Autocomplete suggestions */}
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-white border border-ink-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-10 mt-2 max-h-60 w-full overflow-y-auto rounded-[20px] border border-ink-200 bg-white/95 p-1 shadow-soft backdrop-blur">
               {suggestions.map((tag, index) => (
                 <button
                   key={tag.id}
                   type="button"
                   onClick={() => handleSuggestionClick(tag)}
-                  className={`w-full text-left px-4 py-2 hover:bg-ink-50 transition-colors flex items-center justify-between ${
-                    index === selectedIndex ? 'bg-ink-100' : ''
+                  className={`flex w-full items-center justify-between rounded-2xl px-4 py-2 text-left transition-colors ${
+                    index === selectedIndex ? 'bg-ink-100' : 'hover:bg-ink-50'
                   }`}
                 >
                   <span className="text-ink-700">{tag.name}</span>
@@ -149,26 +153,28 @@ export function TagInput({ value, onChange, placeholder = '输入标签后按回
         <button
           type="button"
           onClick={() => handleAdd(inputValue)}
-          className="btn btn-secondary"
+          className="icon-button h-11 w-11 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={!inputValue.trim()}
+          aria-label="添加标签"
         >
-          添加
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14m-7-7h14" />
+          </svg>
         </button>
       </div>
 
-      {/* Selected tags display */}
-      {value.length > 0 && (
+      {!hideTags && value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-accent-purple to-accent-green text-white rounded-full text-sm"
+              className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white px-3 py-1 text-sm text-ink-700 shadow-sm"
             >
               {tag}
               <button
                 type="button"
                 onClick={() => handleRemove(tag)}
-                className="hover:bg-white hover:bg-opacity-20 rounded-full p-0.5"
+                className="rounded-full p-0.5 text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700"
               >
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

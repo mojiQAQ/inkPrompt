@@ -140,7 +140,7 @@ export function OptimizeButton({ promptId, onOptimized }: OptimizeButtonProps) {
         onClick={handleButtonClick}
         disabled={isOptimizing}
         className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-accent-purple to-accent-purple/80 text-white rounded-lg hover:from-accent-purple/90 hover:to-accent-purple/70 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-        title="AI 优化提示词"
+        title="提示词优化"
         data-testid="optimize-button"
       >
         {isOptimizing ? (
@@ -155,7 +155,7 @@ export function OptimizeButton({ promptId, onOptimized }: OptimizeButtonProps) {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            AI 优化
+            提示词优化
           </>
         )}
       </button>

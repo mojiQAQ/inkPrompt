@@ -5,7 +5,7 @@ import { apiRequest, getAuthHeaders } from './client'
 import type {
   Prompt,
   PromptListResponse,
-  PromptVersion,
+  VersionListResponse,
   CreatePromptData,
   UpdatePromptData,
   PromptFilters,
@@ -98,8 +98,8 @@ export async function deletePrompt(
 export async function fetchPromptVersions(
   token: string,
   id: string
-): Promise<PromptVersion[]> {
-  return apiRequest<PromptVersion[]>(`/api/prompts/${id}/versions`, {
+): Promise<VersionListResponse> {
+  return apiRequest<VersionListResponse>(`/api/prompts/${id}/versions`, {
     headers: getAuthHeaders(token),
   })
 }

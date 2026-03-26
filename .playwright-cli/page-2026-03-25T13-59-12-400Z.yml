@@ -1,0 +1,56 @@
+- generic [ref=e302]:
+  - banner [ref=e303]:
+    - generic [ref=e305]:
+      - button "Ink & Prompt" [ref=e307] [cursor=pointer]:
+        - img [ref=e309]
+        - heading "Ink & Prompt" [level=1] [ref=e311]
+      - navigation [ref=e312]:
+        - button "我的提示词" [ref=e313] [cursor=pointer]
+      - generic [ref=e314]:
+        - generic [ref=e315]:
+          - generic [ref=e317]: F
+          - generic [ref=e318]: fpccc007@gmail.com
+        - button "退出登录" [ref=e319] [cursor=pointer]
+  - main [ref=e320]:
+    - generic [ref=e322]:
+      - generic [ref=e323]:
+        - generic [ref=e324]:
+          - generic [ref=e325]:
+            - generic [ref=e326]: 编辑态
+            - generic [ref=e374]: 已保存
+          - generic [ref=e327]:
+            - textbox "提示词名称" [ref=e365]: 联调验证 Prompt 20260325-1
+            - generic [ref=e329]:
+              - generic [ref=e330]: 13 tokens
+              - generic [ref=e331]: ·
+              - generic [ref=e332]: 2 个版本
+              - generic [ref=e333]: ·
+              - generic [ref=e334]: 当前版本 v1
+              - generic [ref=e335]: ·
+              - generic [ref=e336]: 2026/03/25
+        - button "退出编辑" [ref=e366] [cursor=pointer]
+      - generic [ref=e342]:
+        - generic [ref=e343]:
+          - generic [ref=e344]:
+            - generic [ref=e345]: 提示词内容
+            - generic [ref=e346]: 支持自动保存
+          - textbox "输入提示词内容..." [active] [ref=e367]: 你是一个真实联调验证助手。请用 3 条简短要点总结输入内容，并给出 1 条改进建议。输出请使用中文。
+        - generic [ref=e349]:
+          - generic [ref=e350]:
+            - generic [ref=e351]: 标签
+            - generic [ref=e352]: 编辑后自动保存
+          - generic [ref=e369]:
+            - textbox "输入标签并回车添加" [ref=e371]
+            - button "添加" [disabled] [ref=e372]
+      - generic [ref=e356]:
+        - generic [ref=e357]:
+          - generic [ref=e358]:
+            - text: Version
+            - combobox [ref=e359]:
+              - option "v2 · 2026/03/25"
+              - option "v1 · 2026/03/25" [selected]
+          - button "历史版本" [ref=e360] [cursor=pointer]
+          - button "对比版本" [ref=e361] [cursor=pointer]
+          - button "AI 优化" [ref=e362] [cursor=pointer]
+          - button "模型测试" [ref=e363] [cursor=pointer]
+        - generic [ref=e364]: 修改内容后会自动保存，无需手动提交。

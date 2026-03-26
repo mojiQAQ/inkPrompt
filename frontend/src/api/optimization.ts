@@ -1,7 +1,14 @@
 /**
  * Optimization API functions
  */
-import { apiRequest } from './client'
+import { apiRequest, getAuthHeaders } from './client'
+import type {
+  OptimizationSession,
+  OptimizationStreamRequest,
+  OptimizeSSEEvent,
+  OptimizeSSEEventHandler,
+} from '@/types/prompt'
+import { startOptimizeStream as startOptimizeSSE } from './optimization_sse'
 
 export type OptimizationScenario = 'general' | 'content_creation' | 'code_generation' | 'data_analysis' | 'conversation'
 
@@ -34,3 +41,25 @@ export async function optimizePrompt(
     body: JSON.stringify(request),
   })
 }
+
+export async function getOptimizationSession(
+  token: string,
+  promptId: string
+): Promise<OptimizationSession> {
+  return apiRequest<OptimizationSession>(`/api/prompts/${promptId}/optimize/session`, {
+    headers: getAuthHeaders(token),
+  })
+}
+
+export function startOptimizeStream(
+  token: string,
+  promptId: string,
+  versionId: string,
+  request: OptimizationStreamRequest,
+  onEvent: OptimizeSSEEventHandler,
+  controller?: AbortController
+) {
+  return startOptimizeSSE(token, promptId, versionId, request, onEvent, controller)
+}
+
+export type { OptimizationStreamRequest, OptimizeSSEEvent, OptimizeSSEEventHandler }

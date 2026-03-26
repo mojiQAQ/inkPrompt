@@ -32,6 +32,11 @@ export interface PromptVersion {
   created_at: string
 }
 
+export interface VersionListResponse {
+  versions: PromptVersion[]
+  total: number
+}
+
 export interface PromptListResponse {
   items: Prompt[]
   total: number
@@ -64,3 +69,95 @@ export interface PromptFilters {
   folder_id?: string
   favorites_only?: boolean
 }
+
+export interface OptimizeSuggestion {
+  question: string
+  options: string[]
+}
+
+export interface OptimizationSession {
+  id: string
+  prompt_id: string
+  user_id: string
+  created_at: string
+  updated_at: string
+  rounds: OptimizationRound[]
+}
+
+export interface OptimizationRound {
+  id: string
+  session_id: string
+  round_number: number
+  user_idea: string | null
+  selected_suggestions: Record<string, string[]> | null
+  optimized_content: string
+  suggestions: OptimizeSuggestion[]
+  domain_analysis: string
+  created_at: string
+  version_id?: string | null
+}
+
+export interface OptimizationSessionSummary {
+  session: OptimizationSession
+  latest_round: OptimizationRound | null
+}
+
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant'
+  content: string
+}
+
+export interface ModelConfig {
+  name: string
+  base_url: string
+  model: string
+  api_key?: string
+  [key: string]: unknown
+}
+
+export interface TestModelConversation {
+  id: string
+  test_session_id: string
+  model_name: string
+  model_config: ModelConfig
+  messages: ChatMessage[]
+  created_at: string
+  updated_at: string
+}
+
+export interface TestSession {
+  id: string
+  prompt_version_id: string
+  user_id: string
+  created_at: string
+  updated_at: string
+  conversations: TestModelConversation[]
+}
+
+export interface OptimizationStreamRequest {
+  user_idea?: string
+  selected_suggestions?: Record<string, string[]> | null
+}
+
+export interface TestStreamRequest {
+  model: ModelConfig
+  user_prompt: string
+  continue?: boolean
+}
+
+export type OptimizeSSEEvent =
+  | { type: 'round_start'; data: { round_number: number } }
+  | { type: 'content'; data: string }
+  | { type: 'suggestions'; data: { domain?: string; questions: OptimizeSuggestion[] } }
+  | { type: 'version_saved'; data: { version_id: string; version_number: number } }
+  | { type: 'complete'; data: Record<string, never> }
+  | { type: 'error'; data: { message: string } }
+
+export type TestSSEEvent =
+  | { type: 'conversation_id'; data: { conversation_id: string } }
+  | { type: 'content'; data: string }
+  | { type: 'complete'; data: Record<string, never> }
+  | { type: 'error'; data: { message: string } }
+
+export type OptimizeSSEEventHandler = (event: OptimizeSSEEvent) => void
+export type TestSSEEventHandler = (event: TestSSEEvent) => void

@@ -65,6 +65,7 @@ export function Login() {
       <div className="max-w-md w-full mx-4">
         {/* Logo and Title */}
         <div className="text-center mb-8">
+          <img src="/logo.png" alt="inkPrompt" className="h-24 w-24 mx-auto mb-4 rounded-2xl" />
           <h1 className="text-4xl font-bold text-ink-900 mb-2">
             Ink & Prompt
           </h1>

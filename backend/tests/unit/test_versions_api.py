@@ -28,6 +28,7 @@ class TestVersionListAPI:
         versions = []
         for i in range(3):
             version = PromptVersion(
+                id=f"version-{i + 1}",
                 prompt_id=test_prompt.id,
                 version_number=i + 1,
                 content=f"Content version {i + 1}",
@@ -48,16 +49,18 @@ class TestVersionListAPI:
         # 验证响应
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
-        assert len(data) == 3
+        assert "versions" in data
+        assert data["total"] == 3
+        assert isinstance(data["versions"], list)
+        assert len(data["versions"]) == 3
 
         # 验证版本按 version_number 倒序排列
-        assert data[0]["version_number"] == 3
-        assert data[1]["version_number"] == 2
-        assert data[2]["version_number"] == 1
+        assert data["versions"][0]["version_number"] == 3
+        assert data["versions"][1]["version_number"] == 2
+        assert data["versions"][2]["version_number"] == 1
 
         # 验证字段
-        for version_data in data:
+        for version_data in data["versions"]:
             assert "id" in version_data
             assert "version_number" in version_data
             assert "content" in version_data
@@ -79,8 +82,8 @@ class TestVersionListAPI:
 
         assert response.status_code == 200
         data = response.json()
-        assert isinstance(data, list)
-        assert len(data) == 0
+        assert data["total"] == 0
+        assert data["versions"] == []
 
     def test_get_versions_nonexistent_prompt(
         self,
@@ -153,6 +156,7 @@ class TestVersionRestoreAPI:
         """测试成功回滚版本"""
         # 创建旧版本
         old_version = PromptVersion(
+            id="old-version-1",
             prompt_id=test_prompt.id,
             version_number=1,
             content="Old content to restore",
@@ -176,10 +180,9 @@ class TestVersionRestoreAPI:
         assert response.status_code == 200
         data = response.json()
 
-        # 验证返回的新版本
+        # 验证返回的提示词已更新
         assert data["content"] == "Old content to restore"
-        assert data["version_number"] == 2
-        assert "Restored from version 1" in data["change_note"]
+        assert data["version_count"] == 2
 
         # 验证提示词内容已更新
         test_db.refresh(test_prompt)
@@ -209,12 +212,14 @@ class TestVersionRestoreAPI:
         """测试回滚会创建新版本而不是覆盖"""
         # 创建多个版本
         v1 = PromptVersion(
+            id="version-1",
             prompt_id=test_prompt.id,
             version_number=1,
             content="Version 1",
             token_count=10
         )
         v2 = PromptVersion(
+            id="version-2",
             prompt_id=test_prompt.id,
             version_number=2,
             content="Version 2",
@@ -232,8 +237,7 @@ class TestVersionRestoreAPI:
         assert response.status_code == 200
         data = response.json()
 
-        # 应该创建版本 3
-        assert data["version_number"] == 3
+        # 应该返回回滚后的提示词内容
         assert data["content"] == "Version 1"
 
         # 验证所有版本都还存在
@@ -241,6 +245,7 @@ class TestVersionRestoreAPI:
             PromptVersion.prompt_id == test_prompt.id
         ).all()
         assert len(all_versions) == 3
+        assert data["version_count"] == 3
 
 
 @pytest.mark.unit
@@ -260,6 +265,7 @@ class TestVersionTokenCount:
 
         # 创建版本
         version = PromptVersion(
+            id="token-version-1",
             prompt_id=test_prompt.id,
             version_number=1,
             content=original_content,
@@ -293,6 +299,7 @@ class TestVersionChangedNote:
         change_note = "Fixed typos and improved clarity"
 
         version = PromptVersion(
+            id="note-version-1",
             prompt_id=test_prompt.id,
             version_number=1,
             content="Updated content",
@@ -312,6 +319,7 @@ class TestVersionChangedNote:
     ):
         """测试版本可以没有变更说明"""
         version = PromptVersion(
+            id="note-version-2",
             prompt_id=test_prompt.id,
             version_number=1,
             content="Content without note",

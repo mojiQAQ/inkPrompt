@@ -1,0 +1,10 @@
+{
+  "name": "InkPrompt Prompt Detail Skeleton",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "main": "code.js",
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

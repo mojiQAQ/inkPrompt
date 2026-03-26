@@ -27,6 +27,7 @@ class Prompt(Base):
     versions = relationship("PromptVersion", back_populates="prompt", cascade="all, delete-orphan", order_by="PromptVersion.version_number")
     tags = relationship("Tag", secondary=prompt_tags, back_populates="prompts")
     folders = relationship("PromptFolder", secondary=prompt_folder_items, back_populates="prompts")
+    optimization_sessions = relationship("OptimizationSession", back_populates="prompt", cascade="all, delete-orphan")
 
     @property
     def version_count(self) -> int:

@@ -1,0 +1,38 @@
+- generic [ref=e113]:
+  - banner [ref=e114]:
+    - generic [ref=e116]:
+      - button "Ink & Prompt" [ref=e118] [cursor=pointer]:
+        - img [ref=e120]
+        - heading "Ink & Prompt" [level=1] [ref=e122]
+      - navigation [ref=e123]:
+        - button "我的提示词" [ref=e124] [cursor=pointer]
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - generic [ref=e128]: F
+          - generic [ref=e129]: fpccc007@gmail.com
+        - button "退出登录" [ref=e130] [cursor=pointer]
+  - main [ref=e131]:
+    - generic [ref=e132]:
+      - generic [ref=e133]:
+        - generic [ref=e134]:
+          - heading "新建提示词" [level=1] [ref=e135]
+          - paragraph [ref=e136]: 输入名称、内容和标签后创建新提示词。
+        - button [ref=e137] [cursor=pointer]:
+          - img [ref=e138]
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - generic [ref=e142]: 提示词名称
+          - textbox "例如：代码审查助手" [ref=e143]
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - generic [ref=e146]: 提示词内容
+            - generic [ref=e147]: 1 tokens
+          - textbox "输入提示词内容..." [ref=e148]
+        - generic [ref=e149]:
+          - generic [ref=e150]: 标签
+          - generic [ref=e152]:
+            - textbox "输入标签并回车添加" [ref=e154]
+            - button "添加" [disabled] [ref=e155]
+        - generic [ref=e156]:
+          - button "取消" [ref=e157] [cursor=pointer]
+          - button "创建提示词" [ref=e158] [cursor=pointer]

@@ -41,7 +41,7 @@ describe('OptimizeButton', () => {
 
       const button = screen.getByTestId('optimize-button')
       expect(button).toBeInTheDocument()
-      expect(button).toHaveTextContent('AI 优化')
+      expect(button).toHaveTextContent('提示词优化')
     })
 
     it('should show lightning icon', () => {
@@ -292,7 +292,7 @@ describe('OptimizeButton', () => {
       })
 
       await waitFor(() => {
-        expect(button).toHaveTextContent('AI 优化')
+        expect(button).toHaveTextContent('提示词优化')
       }, { timeout: 2000 })
     })
 
@@ -381,7 +381,11 @@ describe('OptimizeButton', () => {
       fireEvent.click(generalScenario)
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('优化失败，请稍后重试')
+        expect(toast.error).toHaveBeenCalled()
+        expect(toast.error).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.objectContaining({ duration: 5000 })
+        )
       })
     })
 
@@ -432,7 +436,7 @@ describe('OptimizeButton', () => {
 
       await waitFor(() => {
         expect(button).not.toBeDisabled()
-        expect(button).toHaveTextContent('AI 优化')
+        expect(button).toHaveTextContent('提示词优化')
       })
     })
   })

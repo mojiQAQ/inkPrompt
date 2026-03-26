@@ -1,0 +1,107 @@
+- generic [ref=e2]:
+  - status [ref=e164]: 提示词已创建
+  - generic [ref=e165]:
+    - banner [ref=e166]:
+      - generic [ref=e168]:
+        - button "Ink & Prompt" [ref=e170] [cursor=pointer]:
+          - img [ref=e172]
+          - heading "Ink & Prompt" [level=1] [ref=e174]
+        - navigation [ref=e175]:
+          - button "我的提示词" [ref=e176] [cursor=pointer]
+        - generic [ref=e177]:
+          - generic [ref=e178]:
+            - generic [ref=e180]: F
+            - generic [ref=e181]: fpccc007@gmail.com
+          - button "退出登录" [ref=e182] [cursor=pointer]
+    - main [ref=e183]:
+      - generic [ref=e184]:
+        - generic [ref=e186]:
+          - heading "文件夹" [level=3] [ref=e187]
+          - button "新建文件夹" [ref=e188] [cursor=pointer]:
+            - img [ref=e189]
+        - generic [ref=e191]:
+          - button "全部提示词 2" [ref=e192] [cursor=pointer]:
+            - img [ref=e193]
+            - generic [ref=e195]: 全部提示词
+            - generic [ref=e196]: "2"
+          - button "收藏提示词 1" [ref=e197] [cursor=pointer]:
+            - img [ref=e198]
+            - generic [ref=e200]: 收藏提示词
+            - generic [ref=e201]: "1"
+          - button "test 1" [ref=e204] [cursor=pointer]:
+            - img [ref=e205]
+            - generic [ref=e207]: test
+            - generic [ref=e208]: "1"
+            - img [ref=e210]
+      - generic [ref=e212]:
+        - generic [ref=e213]:
+          - generic [ref=e214]:
+            - heading "全部提示词" [level=2] [ref=e215]
+            - paragraph [ref=e216]: 共 2 个提示词
+          - button "新建提示词" [ref=e217] [cursor=pointer]:
+            - img [ref=e218]
+            - text: 新建提示词
+        - generic [ref=e220]:
+          - generic [ref=e221]:
+            - heading "搜索和排序" [level=3] [ref=e222]
+            - generic [ref=e223]:
+              - generic [ref=e224]:
+                - textbox "搜索提示词名称或内容..." [ref=e225]
+                - img [ref=e226]
+              - generic [ref=e229]:
+                - generic [ref=e230]: "排序:"
+                - combobox [ref=e231]:
+                  - option "更新时间" [selected]
+                  - option "创建时间"
+                  - option "名称"
+                  - option "Token 数"
+                - button "降序" [ref=e232] [cursor=pointer]:
+                  - img [ref=e233]
+          - generic [ref=e236]:
+            - heading "标签筛选" [level=3] [ref=e238]
+            - generic [ref=e239]:
+              - generic [ref=e241]:
+                - button "代码生成" [ref=e242] [cursor=pointer]
+                - button "代码审查" [ref=e243] [cursor=pointer]
+                - button "文案创作" [ref=e244] [cursor=pointer]
+                - button "翻译" [ref=e245] [cursor=pointer]
+              - button "+17" [ref=e246] [cursor=pointer]
+        - generic [ref=e247]:
+          - generic [ref=e248] [cursor=pointer]:
+            - generic [ref=e249]:
+              - heading "联调验证 Prompt 20260325-1" [level=3] [ref=e251]
+              - generic [ref=e252]:
+                - button "收藏" [ref=e253]:
+                  - img [ref=e254]
+                - generic [ref=e256]:
+                  - button "添加到文件夹" [ref=e257]:
+                    - img [ref=e258]
+                  - button "编辑" [ref=e260]:
+                    - img [ref=e261]
+                  - button "删除" [ref=e263]:
+                    - img [ref=e264]
+            - paragraph [ref=e267]: 你是一个真实联调验证助手。请用 3 条简短要点总结输入内容，并给出 1 条改进建议。
+            - generic [ref=e269]:
+              - img [ref=e270]
+              - generic [ref=e272]: "40"
+              - generic [ref=e273]: tokens
+            - generic [ref=e274]: 2026年3月25日
+          - generic [ref=e275] [cursor=pointer]:
+            - generic [ref=e276]:
+              - heading "Test Prompt 1" [level=3] [ref=e278]
+              - generic [ref=e279]:
+                - button "取消收藏" [ref=e280]:
+                  - img [ref=e281]
+                - generic [ref=e283]:
+                  - button "添加到文件夹" [ref=e284]:
+                    - img [ref=e285]
+                  - button "编辑" [ref=e287]:
+                    - img [ref=e288]
+                  - button "删除" [ref=e290]:
+                    - img [ref=e291]
+            - paragraph [ref=e294]: This is a test prompt for E2E testing.
+            - generic [ref=e296]:
+              - img [ref=e297]
+              - generic [ref=e299]: "11"
+              - generic [ref=e300]: tokens
+            - generic [ref=e301]: 2026年3月25日

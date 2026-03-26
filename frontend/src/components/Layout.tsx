@@ -10,9 +10,9 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-paper-white">
+    <div className="min-h-screen">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 page-transition">
+      <main className="mx-auto max-w-[1560px] px-4 py-4 sm:px-6 sm:py-5 lg:px-8 page-transition">
         {children}
       </main>
     </div>

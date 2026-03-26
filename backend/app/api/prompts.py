@@ -12,7 +12,6 @@ from app.schemas.prompt import (
     PromptUpdate,
     PromptResponse,
     PromptListResponse,
-    PromptVersionResponse,
 )
 from app.services.prompt_service import PromptService
 
@@ -198,23 +197,3 @@ async def toggle_favorite(
         )
     return {"is_favorited": result}
 
-
-@router.get("/{prompt_id}/versions", response_model=List[PromptVersionResponse])
-async def get_prompt_versions(
-    prompt_id: str,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-) -> List[PromptVersionResponse]:
-    """
-    Get all versions of a prompt.
-    """
-    versions = PromptService.get_prompt_versions(db, prompt_id, current_user.id)
-    if not versions:
-        prompt = PromptService.get_prompt(db, prompt_id, current_user.id)
-        if not prompt:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Prompt not found"
-            )
-
-    return [PromptVersionResponse.model_validate(v) for v in versions]

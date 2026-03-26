@@ -18,7 +18,7 @@ export function TagFilter({ selectedTags, onTagsChange, tagLogic, onLogicChange 
   const { getAccessToken } = useAuth()
   const [availableTags, setAvailableTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(false)
-  const [showAll, setShowAll] = useState(false)
+  const showAll = false
   const [showModal, setShowModal] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 

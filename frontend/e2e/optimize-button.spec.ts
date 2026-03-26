@@ -1,314 +1,434 @@
-/**
- * End-to-End Tests for OptimizeButton Component
- *
- * These tests verify the optimize button functionality in a real browser environment
- */
-import { test, expect } from '@playwright/test'
+import { expect, Page, test } from '@playwright/test'
 
-test.describe('OptimizeButton - Dropdown Menu', () => {
-  test.beforeEach(async ({ page }) => {
-    // Note: These tests assume user is logged in and on the prompt editor page
-    // You may need to add login steps or use fixtures for authentication
-    await page.goto('/prompts/test-prompt-id/edit')
-  })
+const testConversationsByVersion: Record<string, Array<{
+  id: string
+  test_session_id: string
+  model_name: string
+  model_config: {
+    name: string
+    base_url: string
+    model: string
+    params: Record<string, unknown>
+  }
+  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>
+  created_at: string
+  updated_at: string
+}>> = {
+  'version-1': [],
+  'version-2': [],
+  'version-3': [],
+}
 
-  test('should display the optimize button', async ({ page }) => {
-    const button = page.getByTestId('optimize-button')
-    await expect(button).toBeVisible()
-    await expect(button).toHaveText('AI 优化')
-  })
+const mockVersionsByPrompt: Record<string, Array<{
+  id: string
+  prompt_id: string
+  version_number: number
+  content: string
+  token_count: number
+  change_note: string | null
+  created_at: string
+}>> = {
+  '123': [],
+}
 
-  test('should show dropdown menu when clicked', async ({ page }) => {
-    const button = page.getByTestId('optimize-button')
+const mockOptimizationRoundsByPrompt: Record<string, Array<{
+  id: string
+  session_id: string
+  round_number: number
+  user_idea: string | null
+  selected_suggestions: Record<string, string[]> | null
+  optimized_content: string
+  suggestions: Array<{ question: string; options: string[] }>
+  domain_analysis: string
+  created_at: string
+  version_id: string | null
+}>> = {
+  '123': [],
+}
 
-    // Initially, dropdown should not be visible
-    await expect(page.getByTestId('optimize-dropdown-menu')).not.toBeVisible()
+function buildMockSession() {
+  const expiresAt = Math.floor(Date.now() / 1000) + 3600
 
-    // Click the button
-    await button.click()
+  return {
+    access_token: 'e2e-access-token',
+    refresh_token: 'e2e-refresh-token',
+    expires_in: 3600,
+    expires_at: expiresAt,
+    token_type: 'bearer',
+    user: {
+      id: 'e2e-user-id',
+      email: 'e2e@example.com',
+      role: 'authenticated',
+      aud: 'authenticated',
+      app_metadata: {
+        provider: 'email',
+        providers: ['email'],
+      },
+      user_metadata: {},
+    },
+  }
+}
 
-    // Dropdown should now be visible
-    await expect(page.getByTestId('optimize-dropdown-menu')).toBeVisible()
-  })
-
-  test('should display all 5 optimization scenarios', async ({ page }) => {
-    const button = page.getByTestId('optimize-button')
-    await button.click()
-
-    // Check all scenarios are present
-    await expect(page.getByTestId('optimize-scenario-general')).toBeVisible()
-    await expect(page.getByTestId('optimize-scenario-content_creation')).toBeVisible()
-    await expect(page.getByTestId('optimize-scenario-code_generation')).toBeVisible()
-    await expect(page.getByTestId('optimize-scenario-data_analysis')).toBeVisible()
-    await expect(page.getByTestId('optimize-scenario-conversation')).toBeVisible()
-  })
-
-  test('should show scenario labels and icons', async ({ page }) => {
-    const button = page.getByTestId('optimize-button')
-    await button.click()
-
-    await expect(page.getByText('通用优化')).toBeVisible()
-    await expect(page.getByText('内容创作')).toBeVisible()
-    await expect(page.getByText('代码生成')).toBeVisible()
-    await expect(page.getByText('数据分析')).toBeVisible()
-    await expect(page.getByText('对话交互')).toBeVisible()
-  })
-
-  test('should close dropdown when clicking outside', async ({ page }) => {
-    const button = page.getByTestId('optimize-button')
-    await button.click()
-
-    // Dropdown is visible
-    await expect(page.getByTestId('optimize-dropdown-menu')).toBeVisible()
-
-    // Click on the backdrop
-    await page.getByTestId('optimize-dropdown-backdrop').click()
-
-    // Dropdown should be hidden
-    await expect(page.getByTestId('optimize-dropdown-menu')).not.toBeVisible()
-  })
-
-  test('should toggle dropdown on multiple clicks', async ({ page }) => {
-    const button = page.getByTestId('optimize-button')
-
-    // First click - open
-    await button.click()
-    await expect(page.getByTestId('optimize-dropdown-menu')).toBeVisible()
-
-    // Second click - close
-    await button.click()
-    await expect(page.getByTestId('optimize-dropdown-menu')).not.toBeVisible()
-
-    // Third click - open again
-    await button.click()
-    await expect(page.getByTestId('optimize-dropdown-menu')).toBeVisible()
-  })
-
-  test('should close dropdown after selecting a scenario', async ({ page }) => {
-    // Mock the API response
-    await page.route('**/api/prompts/*/optimize', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          optimized_content: 'Optimized content from API',
-          suggestions: ['Suggestion 1'],
-          token_count: 150,
-          estimated_cost: 0.0012,
-        }),
-      })
-    })
-
-    const button = page.getByTestId('optimize-button')
-    await button.click()
-
-    // Select a scenario
-    await page.getByTestId('optimize-scenario-general').click()
-
-    // Dropdown should close
-    await expect(page.getByTestId('optimize-dropdown-menu')).not.toBeVisible()
-  })
-
-  test('should display loading state during optimization', async ({ page }) => {
-    // Mock a slow API response
-    await page.route('**/api/prompts/*/optimize', async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          optimized_content: 'Optimized',
-          suggestions: [],
-          token_count: 100,
-          estimated_cost: 0.001,
-        }),
-      })
-    })
-
-    const button = page.getByTestId('optimize-button')
-    await button.click()
-    await page.getByTestId('optimize-scenario-general').click()
-
-    // Should show loading state
-    await expect(button).toHaveText('优化中...')
-    await expect(button).toBeDisabled()
-
-    // Wait for optimization to complete
-    await expect(button).toHaveText('AI 优化', { timeout: 5000 })
-    await expect(button).toBeEnabled()
-  })
-
-  test('should display success toast after optimization', async ({ page }) => {
-    // Mock the API response
-    await page.route('**/api/prompts/*/optimize', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          optimized_content: 'Optimized content',
-          suggestions: [],
-          token_count: 180,
-          estimated_cost: 0.0013,
-        }),
-      })
-    })
-
-    const button = page.getByTestId('optimize-button')
-    await button.click()
-    await page.getByTestId('optimize-scenario-general').click()
-
-    // Wait for toast notification
-    await expect(page.getByText('优化完成！')).toBeVisible({ timeout: 5000 })
-    await expect(page.getByText(/Token: 180/)).toBeVisible()
-    await expect(page.getByText(/成本: \$0.0013/)).toBeVisible()
-  })
-
-  test('should update content after successful optimization', async ({ page }) => {
-    // Mock the API response
-    await page.route('**/api/prompts/*/optimize', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          optimized_content: 'This is the optimized content from the API',
-          suggestions: [],
-          token_count: 100,
-          estimated_cost: 0.001,
-        }),
-      })
-    })
-
-    // Get the textarea before optimization
-    const textarea = page.getByPlaceholder('输入你的提示词内容...')
-    const originalContent = await textarea.inputValue()
-
-    const button = page.getByTestId('optimize-button')
-    await button.click()
-    await page.getByTestId('optimize-scenario-general').click()
-
-    // Wait for optimization to complete
-    await expect(button).toBeEnabled({ timeout: 5000 })
-
-    // Content should be updated
-    const newContent = await textarea.inputValue()
-    expect(newContent).toBe('This is the optimized content from the API')
-    expect(newContent).not.toBe(originalContent)
-  })
-
-  test('should handle API errors gracefully', async ({ page }) => {
-    // Mock API error
-    await page.route('**/api/prompts/*/optimize', async (route) => {
-      await route.fulfill({
-        status: 500,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          detail: 'Internal Server Error',
-        }),
-      })
-    })
-
-    const button = page.getByTestId('optimize-button')
-    await button.click()
-    await page.getByTestId('optimize-scenario-general').click()
-
-    // Should show error toast
-    await expect(page.getByText('优化失败，请稍后重试')).toBeVisible({ timeout: 5000 })
-
-    // Button should return to normal state
-    await expect(button).toBeEnabled()
-    await expect(button).toHaveText('AI 优化')
-  })
-
-  test('should work with all scenario types', async ({ page }) => {
-    const scenarios = [
-      { testId: 'optimize-scenario-general', expectedScenario: 'general' },
-      { testId: 'optimize-scenario-content_creation', expectedScenario: 'content_creation' },
-      { testId: 'optimize-scenario-code_generation', expectedScenario: 'code_generation' },
-      { testId: 'optimize-scenario-data_analysis', expectedScenario: 'data_analysis' },
-      { testId: 'optimize-scenario-conversation', expectedScenario: 'conversation' },
+async function mockPromptDetailApis(page: Page) {
+  await page.addInitScript((session) => {
+    const storageKeys = [
+      'sb-test-auth-token',
+      'sb-test-auth-token-user',
+      'sb-uuvxozvzcqklxlcryjib-auth-token',
+      'sb-uuvxozvzcqklxlcryjib-auth-token-user',
     ]
 
-    for (const scenario of scenarios) {
-      // Track API calls
-      let apiCalled = false
-      let sentScenario = ''
+    localStorage.setItem(storageKeys[0], JSON.stringify(session))
+    localStorage.setItem(storageKeys[1], JSON.stringify({ user: session.user }))
+    localStorage.setItem(storageKeys[2], JSON.stringify(session))
+    localStorage.setItem(storageKeys[3], JSON.stringify({ user: session.user }))
+    localStorage.setItem('inkprompt_tour_completed', 'true')
+  }, buildMockSession())
 
-      await page.route('**/api/prompts/*/optimize', async (route, request) => {
-        apiCalled = true
-        const postData = request.postDataJSON()
-        sentScenario = postData.scenario
-
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            optimized_content: `Optimized for ${scenario.expectedScenario}`,
-            suggestions: [],
-            token_count: 100,
-            estimated_cost: 0.001,
-          }),
-        })
+  await page.route('**/api/prompts/123', async (route, request) => {
+    if (request.method() === 'PUT') {
+      const body = JSON.parse(request.postData() || '{}')
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: '123',
+          user_id: 'e2e-user-id',
+          name: body.name || 'Prompt Detail Smoke',
+          content: body.content || '# Prompt Detail\n\n- item 1\n- item 2',
+          token_count: 18,
+          is_favorited: false,
+          tags: (body.tag_names || []).map((name: string, index: number) => ({
+            id: `tag-${index}`,
+            name,
+            is_system: false,
+            use_count: 1,
+          })),
+          version_count: 2,
+          created_at: '2026-01-01T00:00:00.000Z',
+          updated_at: '2026-01-02T00:00:00.000Z',
+        }),
       })
-
-      const button = page.getByTestId('optimize-button')
-      await button.click()
-      await page.getByTestId(scenario.testId).click()
-
-      // Wait for API call
-      await page.waitForTimeout(500)
-
-      expect(apiCalled).toBe(true)
-      expect(sentScenario).toBe(scenario.expectedScenario)
-
-      // Remove the route for next iteration
-      await page.unroute('**/api/prompts/*/optimize')
+      return
     }
-  })
-})
 
-test.describe('OptimizeButton - Visual Regression', () => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: '123',
+        user_id: 'e2e-user-id',
+        name: 'Prompt Detail Smoke',
+        content: '# Prompt Detail\n\n- item 1\n- item 2',
+        token_count: 12,
+        is_favorited: false,
+        tags: [
+          { id: 'tag-1', name: '测试', is_system: false, use_count: 1 },
+        ],
+        version_count: 2,
+        created_at: '2026-01-01T00:00:00.000Z',
+        updated_at: '2026-01-02T00:00:00.000Z',
+      }),
+    })
+  })
+
+  await page.route('**/api/prompts/123/versions', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        versions: mockVersionsByPrompt['123'],
+        total: mockVersionsByPrompt['123'].length,
+      }),
+    })
+  })
+
+  await page.route('**/api/prompts/123/optimize/session', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: 'opt-session-1',
+        prompt_id: '123',
+        user_id: 'e2e-user-id',
+        created_at: '2026-01-01T00:00:00.000Z',
+        updated_at: '2026-01-02T00:00:00.000Z',
+        rounds: mockOptimizationRoundsByPrompt['123'],
+      }),
+    })
+  })
+
+  await page.route(/\/api\/prompts\/([^/]+)\/test\/session$/, async (route) => {
+    const match = route.request().url().match(/\/api\/prompts\/([^/]+)\/test\/session$/)
+    const versionId = match?.[1] ?? 'version-1'
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: `test-session-${versionId}`,
+        prompt_version_id: versionId,
+        user_id: 'e2e-user-id',
+        created_at: '2026-01-01T00:00:00.000Z',
+        updated_at: '2026-01-01T00:00:00.000Z',
+        conversations: testConversationsByVersion[versionId] ?? [],
+      }),
+    })
+  })
+
+  await page.route('**/api/models', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        items: [
+          {
+            name: 'GPT-4',
+            base_url: 'https://api.openai.com/v1',
+            model: 'gpt-4',
+            params: {},
+          },
+          {
+            name: 'Claude 3',
+            base_url: 'https://api.anthropic.com',
+            model: 'claude-3-opus',
+            params: {},
+          },
+        ],
+        max_concurrent_test_models: 3,
+      }),
+    })
+  })
+}
+
+test.describe('PromptDetail Panels', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/prompts/test-prompt-id/edit')
+    mockVersionsByPrompt['123'] = [
+      {
+        id: 'version-2',
+        prompt_id: '123',
+        version_number: 2,
+        content: '# Prompt Detail v2\n\n当前主版本',
+        token_count: 14,
+        change_note: '最新版本',
+        created_at: '2026-01-02T00:00:00.000Z',
+      },
+      {
+        id: 'version-1',
+        prompt_id: '123',
+        version_number: 1,
+        content: '# Prompt Detail v1\n\n历史版本',
+        token_count: 12,
+        change_note: '初始版本',
+        created_at: '2026-01-01T00:00:00.000Z',
+      },
+    ]
+    mockOptimizationRoundsByPrompt['123'] = []
+    testConversationsByVersion['version-1'] = []
+    testConversationsByVersion['version-2'] = []
+    testConversationsByVersion['version-3'] = []
+    await mockPromptDetailApis(page)
   })
 
-  test('should match screenshot of button', async ({ page }) => {
-    const button = page.getByTestId('optimize-button')
-    await expect(button).toHaveScreenshot('optimize-button.png')
+  test('should open optimize panel and render streamed result', async ({ page }) => {
+    await page.route('**/api/prompts/123/version-2/optimize/stream', async (route) => {
+      const optimizedContent = '# 优化后的提示词\n\n更清晰的结构'
+      mockVersionsByPrompt['123'] = [
+        {
+          id: 'version-3',
+          prompt_id: '123',
+          version_number: 3,
+          content: optimizedContent,
+          token_count: 16,
+          change_note: 'AI 优化生成',
+          created_at: '2026-01-03T00:00:00.000Z',
+        },
+        ...mockVersionsByPrompt['123'],
+      ]
+      mockOptimizationRoundsByPrompt['123'] = [
+        {
+          id: 'round-1',
+          session_id: 'opt-session-1',
+          round_number: 1,
+          user_idea: null,
+          selected_suggestions: null,
+          optimized_content: optimizedContent,
+          suggestions: [
+            {
+              question: '是否补充输出格式？',
+              options: ['Markdown', 'JSON'],
+            },
+          ],
+          domain_analysis: '软件开发',
+          created_at: '2026-01-03T00:00:00.000Z',
+          version_id: 'version-3',
+        },
+      ]
+
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/event-stream',
+        body: [
+          'event: round_start',
+          'data: {"round_number":1}',
+          '',
+          'event: content',
+          'data: # 优化后的提示词',
+          '',
+          'event: content',
+          'data: \\n\\n更清晰的结构',
+          '',
+          'event: suggestions',
+          'data: {"domain":"软件开发","questions":[{"question":"是否补充输出格式？","options":["Markdown","JSON"]}]}',
+          '',
+          'event: version_saved',
+          'data: {"version_id":"version-3","version_number":3}',
+          '',
+          'event: complete',
+          'data: {}',
+          '',
+        ].join('\n'),
+      })
+    })
+
+    await page.goto('/prompts/123')
+    await page.getByRole('button', { name: '提示词优化' }).click()
+    await expect(page.getByRole('heading', { name: '提示词优化' })).toBeVisible()
+
+    await page.getByRole('button', { name: '开始优化' }).click({ force: true })
+
+    await expect(page.getByText('优化完成，已生成新版本')).toBeVisible()
+    await expect(page.getByText('优化历史')).toBeVisible()
+    await expect(page.getByText('第 1 轮')).toBeVisible()
+    await expect(page.getByRole('article').getByText('是否补充输出格式？')).toBeVisible()
+    await expect(page.locator('select')).toHaveValue('version-3')
+    await expect(page.getByLabel('Markdown')).toBeVisible()
+    await expect(page.getByLabel('JSON')).toBeVisible()
   })
 
-  test('should match screenshot of dropdown menu', async ({ page }) => {
-    const button = page.getByTestId('optimize-button')
-    await button.click()
+  test('should submit selected suggestion options by question', async ({ page }) => {
+    let optimizeRequestBody: Record<string, unknown> | null = null
 
-    const dropdown = page.getByTestId('optimize-dropdown-menu')
-    await expect(dropdown).toHaveScreenshot('optimize-dropdown.png')
+    mockOptimizationRoundsByPrompt['123'] = [
+      {
+        id: 'round-seed',
+        session_id: 'opt-session-1',
+        round_number: 1,
+        user_idea: null,
+        selected_suggestions: {
+          '是否补充输出格式？': ['Markdown'],
+        },
+        optimized_content: '# Seed',
+        suggestions: [
+          {
+            question: '是否补充输出格式？',
+            options: ['Markdown', 'JSON'],
+          },
+          {
+            question: '是否增加约束？',
+            options: ['增加', '保持当前'],
+          },
+        ],
+        domain_analysis: '软件开发',
+        created_at: '2026-01-02T00:00:00.000Z',
+        version_id: 'version-2',
+      },
+    ]
+
+    await page.route('**/api/prompts/123/version-2/optimize/stream', async (route) => {
+      optimizeRequestBody = JSON.parse(route.request().postData() || '{}')
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/event-stream',
+        body: 'event: complete\ndata: {}\n\n',
+      })
+    })
+
+    await page.goto('/prompts/123')
+    await page.getByRole('button', { name: '提示词优化' }).click()
+    await expect(page.getByLabel('Markdown')).toBeVisible()
+
+    await page.getByLabel('JSON').check()
+    await page.getByLabel('增加').check()
+    await page.getByRole('button', { name: '开始优化' }).click({ force: true })
+
+    await expect.poll(() => optimizeRequestBody).not.toBeNull()
+    expect(optimizeRequestBody).toMatchObject({
+      selected_suggestions: {
+        '是否补充输出格式？': ['Markdown', 'JSON'],
+        '是否增加约束？': ['增加'],
+      },
+    })
   })
-})
 
-test.describe('OptimizeButton - Accessibility', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/prompts/test-prompt-id/edit')
+  test('should lock version switching while optimize request is pending', async ({ page }) => {
+    await page.route('**/api/prompts/123/version-2/optimize/stream', async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1200))
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/event-stream',
+        body: 'event: complete\ndata: {}\n\n',
+      })
+    })
+
+    await page.goto('/prompts/123')
+    await page.getByRole('button', { name: '提示词优化' }).click()
+    await page.getByRole('button', { name: '开始优化' }).click({ force: true })
+
+    await expect(page.getByText('处理中')).toBeVisible()
+    await expect(page.locator('select')).toBeDisabled()
   })
 
-  test('should be keyboard accessible', async ({ page }) => {
-    // Tab to the button
-    await page.keyboard.press('Tab')
-    // Note: You may need to tab multiple times depending on page structure
+  test('should open test panel and render model outputs', async ({ page }) => {
+    await page.route('**/api/prompts/version-2/test/stream', async (route) => {
+      const body = JSON.parse(route.request().postData() || '{}')
+      const modelName = body.model.name
+      const versionId = 'version-2'
+      const output = `${modelName} 输出内容`
 
-    const button = page.getByTestId('optimize-button')
-    await expect(button).toBeFocused()
+      testConversationsByVersion[versionId] = [
+        ...testConversationsByVersion[versionId].filter((item) => item.model_name !== modelName),
+        {
+          id: `conv-${modelName}`,
+          test_session_id: 'test-session-2',
+          model_name: modelName,
+          model_config: body.model,
+          messages: [
+            { role: 'system', content: '# Prompt Detail v2\n\n当前主版本' },
+            { role: 'user', content: body.user_prompt },
+            { role: 'assistant', content: output },
+          ],
+          created_at: '2026-01-02T00:00:00.000Z',
+          updated_at: '2026-01-02T00:00:00.000Z',
+        },
+      ]
 
-    // Press Enter to open dropdown
-    await page.keyboard.press('Enter')
-    await expect(page.getByTestId('optimize-dropdown-menu')).toBeVisible()
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/event-stream',
+        body: [
+          'event: conversation_id',
+          `data: {"conversation_id":"conv-${modelName}"}`,
+          '',
+          'event: content',
+          `data: ${output}`,
+          '',
+          'event: complete',
+          'data: {}',
+          '',
+        ].join('\n'),
+      })
+    })
 
-    // Press Escape to close
-    await page.keyboard.press('Escape')
-    await expect(page.getByTestId('optimize-dropdown-menu')).not.toBeVisible()
-  })
+    await page.goto('/prompts/123')
+    await page.getByRole('button', { name: '提示词测试' }).click()
+    await expect(page.getByText('提示词测试')).toBeVisible()
 
-  test('should have proper ARIA labels', async ({ page }) => {
-    const button = page.getByTestId('optimize-button')
-    await expect(button).toHaveAttribute('title', 'AI 优化提示词')
+    await page.getByPlaceholder('请输入本轮用户问题或补充说明...').fill('请帮我分析这个提示词')
+    await page.getByRole('button', { name: '开始测试' }).click({ force: true })
+
+    await expect(page.getByText('测试完成')).toBeVisible()
+    await expect(page.locator('pre', { hasText: 'GPT-4 输出内容' })).toBeVisible()
+    await expect(page.locator('pre', { hasText: 'Claude 3 输出内容' })).toBeVisible()
   })
 })

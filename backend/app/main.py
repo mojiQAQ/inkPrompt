@@ -69,6 +69,8 @@ from app.api import versions
 from app.api import optimization
 from app.api import model_calls
 from app.api import prompt_folders
+from app.api import prompt_detail
+from app.api import available_models
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(prompts.router, prefix="/api")
@@ -77,3 +79,5 @@ app.include_router(versions.router, prefix="/api")
 app.include_router(optimization.router, prefix="/api")
 app.include_router(model_calls.router, prefix="/api")
 app.include_router(prompt_folders.router, prefix="/api")
+app.include_router(prompt_detail.router, prefix="/api")
+app.include_router(available_models.router, prefix="/api")

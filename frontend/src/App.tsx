@@ -7,6 +7,9 @@ import { AuthCallback } from '@/pages/AuthCallback'
 import { PromptList } from '@/pages/PromptList'
 import { PromptEditor } from '@/pages/PromptEditor'
 
+// 路由层先完成 PromptDetail 入口收口，页面实现仍由 PromptEditor 承接。
+const PromptDetail = PromptEditor
+
 function App() {
   return (
     <BrowserRouter>
@@ -61,7 +64,7 @@ function App() {
             path="/prompts/:id"
             element={
               <ProtectedRoute>
-                <PromptEditor />
+                <PromptDetail />
               </ProtectedRoute>
             }
           />
@@ -69,7 +72,7 @@ function App() {
             path="/prompts/:id/edit"
             element={
               <ProtectedRoute>
-                <PromptEditor />
+                <PromptDetail />
               </ProtectedRoute>
             }
           />

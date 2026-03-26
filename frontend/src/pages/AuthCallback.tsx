@@ -9,22 +9,51 @@ export function AuthCallback() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Handle the OAuth callback
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('Auth callback error:', error)
-        navigate('/login', { state: { error: error.message } })
-        return
+    let cancelled = false
+
+    const searchParams = new URLSearchParams(window.location.search)
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''))
+    const authError = searchParams.get('error_description')
+      || searchParams.get('error')
+      || hashParams.get('error_description')
+      || hashParams.get('error')
+
+    if (authError) {
+      navigate('/login', { replace: true, state: { error: authError } })
+      return
+    }
+
+    const finishAuth = async () => {
+      for (let attempt = 0; attempt < 10; attempt += 1) {
+        const { data: { session }, error } = await supabase.auth.getSession()
+
+        if (cancelled) return
+
+        if (error) {
+          console.error('Auth callback error:', error)
+          navigate('/login', { replace: true, state: { error: error.message } })
+          return
+        }
+
+        if (session) {
+          navigate('/prompts', { replace: true })
+          return
+        }
+
+        await new Promise((resolve) => window.setTimeout(resolve, 250))
       }
 
-      if (session) {
-        // Successfully authenticated, redirect to prompts page
-        navigate('/prompts', { replace: true })
-      } else {
-        // No session, redirect to login
-        navigate('/login', { replace: true })
-      }
-    })
+      navigate('/login', {
+        replace: true,
+        state: { error: '登录回调未完成，请重试。' },
+      })
+    }
+
+    finishAuth()
+
+    return () => {
+      cancelled = true
+    }
   }, [navigate])
 
   return (

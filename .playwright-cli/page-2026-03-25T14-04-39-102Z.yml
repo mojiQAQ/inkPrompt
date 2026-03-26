@@ -1,0 +1,119 @@
+- generic [ref=e302]:
+  - banner [ref=e303]:
+    - generic [ref=e305]:
+      - button "Ink & Prompt" [ref=e307] [cursor=pointer]:
+        - img [ref=e309]
+        - heading "Ink & Prompt" [level=1] [ref=e311]
+      - navigation [ref=e312]:
+        - button "我的提示词" [ref=e313] [cursor=pointer]
+      - generic [ref=e314]:
+        - generic [ref=e315]:
+          - generic [ref=e317]: F
+          - generic [ref=e318]: fpccc007@gmail.com
+        - button "退出登录" [ref=e319] [cursor=pointer]
+  - main [ref=e320]:
+    - generic [ref=e321]:
+      - generic [ref=e423]:
+        - generic [ref=e424]:
+          - generic [ref=e425]:
+            - generic [ref=e427]: 编辑态
+            - generic [ref=e428]:
+              - textbox "提示词名称" [ref=e429]: 联调验证 Prompt 20260325-1
+              - generic [ref=e430]:
+                - generic [ref=e431]: 13 tokens
+                - generic [ref=e432]: ·
+                - generic [ref=e433]: 3 个版本
+                - generic [ref=e434]: ·
+                - generic [ref=e435]: 当前版本 v3
+                - generic [ref=e436]: ·
+                - generic [ref=e437]: 2026/03/25
+          - button "退出编辑" [ref=e439] [cursor=pointer]
+        - generic [ref=e441]:
+          - generic [ref=e442]:
+            - generic [ref=e443]:
+              - generic [ref=e444]: 提示词内容
+              - generic [ref=e445]: 支持自动保存
+            - textbox "输入提示词内容..." [ref=e446]: 你是一个真实联调验证助手。请用 3 条简短要点总结输入内容，并给出 1 条改进建议。输出请使用中文。
+          - generic [ref=e447]:
+            - generic [ref=e448]:
+              - generic [ref=e449]: 标签
+              - generic [ref=e450]: 编辑后自动保存
+            - generic [ref=e452]:
+              - textbox "输入标签并回车添加" [ref=e454]
+              - button "添加" [disabled] [ref=e455]
+        - generic [ref=e457]:
+          - generic [ref=e458]:
+            - generic [ref=e459]:
+              - text: Version
+              - combobox [ref=e460]:
+                - option "v3 · 2026/03/25" [selected]
+                - option "v2 · 2026/03/25"
+                - option "v1 · 2026/03/25"
+            - button "历史版本" [ref=e461] [cursor=pointer]
+            - button "对比版本" [ref=e462] [cursor=pointer]
+            - button "AI 优化" [ref=e463] [cursor=pointer]
+            - button "模型测试" [ref=e464] [cursor=pointer]
+          - generic [ref=e465]: 修改内容后会自动保存，无需手动提交。
+      - complementary [ref=e550]:
+        - generic [ref=e551]:
+          - generic [ref=e552]:
+            - generic [ref=e553]:
+              - generic [ref=e554]: Test
+              - heading "多模型测试" [level=3] [ref=e555]
+              - paragraph [ref=e556]: 左侧提示词作为 system prompt，右侧查看并发输出。
+            - button [ref=e557] [cursor=pointer]:
+              - img [ref=e558]
+          - generic [ref=e560]:
+            - generic [ref=e561]:
+              - generic [ref=e562]:
+                - generic [ref=e563]:
+                  - generic [ref=e564]: 当前提示词
+                  - paragraph [ref=e565]: 联调验证 Prompt 20260325-1
+                - generic [ref=e566]: 1 个模型
+              - paragraph [ref=e569]: 优化后的提示词：作为一个真实联调验证专家，你需要从输入内容中总结出三个关键要点，并提出一项有效的改进建议。
+            - generic [ref=e570]:
+              - generic [ref=e571]:
+                - generic [ref=e572]:
+                  - heading "模型列表" [level=3] [ref=e573]
+                  - paragraph [ref=e574]: 可同时选择多个模型，输出会分别保留在各自的卡片中。
+                - generic [ref=e575]: 1 / 5
+              - generic [ref=e576]:
+                - button "GPT-4 已选 https://api.openai.com/v1 · gpt-4 https://api.openai.com/v1" [ref=e577] [cursor=pointer]:
+                  - generic [ref=e578]:
+                    - generic [ref=e579]:
+                      - generic [ref=e580]:
+                        - generic [ref=e581]: GPT-4
+                        - generic [ref=e582]: 已选
+                      - generic [ref=e583]: https://api.openai.com/v1 · gpt-4
+                    - img [ref=e585]
+                  - generic [ref=e587]: https://api.openai.com/v1
+                - button "Claude 3 Opus https://api.anthropic.com · claude-3-opus-20240229 https://api.anthropic.com" [active] [ref=e641] [cursor=pointer]:
+                  - generic [ref=e590]:
+                    - generic [ref=e592]: Claude 3 Opus
+                    - generic [ref=e594]: https://api.anthropic.com · claude-3-opus-20240229
+                  - generic [ref=e598]: https://api.anthropic.com
+                - button "Gemini Pro https://generativelanguage.googleapis.com/v1beta · gemini-pro https://generativelanguage.googleapis.com/v1beta" [ref=e599] [cursor=pointer]:
+                  - generic [ref=e601]:
+                    - generic [ref=e603]: Gemini Pro
+                    - generic [ref=e604]: https://generativelanguage.googleapis.com/v1beta · gemini-pro
+                  - generic [ref=e606]: https://generativelanguage.googleapis.com/v1beta
+              - generic [ref=e607]:
+                - paragraph [ref=e608]: 选择后会在同一测试会话中继续追加消息。
+                - button "清空选择" [ref=e609] [cursor=pointer]
+            - generic [ref=e610]:
+              - generic [ref=e611]:
+                - generic [ref=e612]:
+                  - heading "用户输入" [level=4] [ref=e613]
+                  - paragraph [ref=e614]: 输入后发送给所有已选模型，追加到同一会话。
+                - button "清空" [ref=e615] [cursor=pointer]
+              - textbox "请输入本轮用户问题或补充说明..." [ref=e616]
+              - generic [ref=e617]:
+                - paragraph [ref=e618]: 继续对话时会在当前会话内追加新消息。
+                - button "开始测试" [disabled] [ref=e619]
+            - article [ref=e621]:
+              - generic [ref=e624]:
+                - heading "GPT-4" [level=4] [ref=e625]
+                - generic [ref=e626]: 待开始
+              - generic [ref=e628]:
+                - generic [ref=e629]: 输出
+                - generic [ref=e630]: 等待模型输出...

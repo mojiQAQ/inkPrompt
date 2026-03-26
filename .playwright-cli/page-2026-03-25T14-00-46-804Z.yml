@@ -1,0 +1,128 @@
+- generic [ref=e302]:
+  - banner [ref=e303]:
+    - generic [ref=e305]:
+      - button "Ink & Prompt" [ref=e307] [cursor=pointer]:
+        - img [ref=e309]
+        - heading "Ink & Prompt" [level=1] [ref=e311]
+      - navigation [ref=e312]:
+        - button "我的提示词" [ref=e313] [cursor=pointer]
+      - generic [ref=e314]:
+        - generic [ref=e315]:
+          - generic [ref=e317]: F
+          - generic [ref=e318]: fpccc007@gmail.com
+        - button "退出登录" [ref=e319] [cursor=pointer]
+  - main [ref=e320]:
+    - generic [ref=e321]:
+      - generic [ref=e423]:
+        - generic [ref=e424]:
+          - generic [ref=e425]:
+            - generic [ref=e427]: 编辑态
+            - generic [ref=e428]:
+              - textbox "提示词名称" [ref=e429]: 联调验证 Prompt 20260325-1
+              - generic [ref=e430]:
+                - generic [ref=e431]: 13 tokens
+                - generic [ref=e432]: ·
+                - generic [ref=e433]: 3 个版本
+                - generic [ref=e434]: ·
+                - generic [ref=e435]: 当前版本 v3
+                - generic [ref=e436]: ·
+                - generic [ref=e437]: 2026/03/25
+          - button "退出编辑" [ref=e439] [cursor=pointer]
+        - generic [ref=e441]:
+          - generic [ref=e442]:
+            - generic [ref=e443]:
+              - generic [ref=e444]: 提示词内容
+              - generic [ref=e445]: 支持自动保存
+            - textbox "输入提示词内容..." [ref=e446]: 你是一个真实联调验证助手。请用 3 条简短要点总结输入内容，并给出 1 条改进建议。输出请使用中文。
+          - generic [ref=e447]:
+            - generic [ref=e448]:
+              - generic [ref=e449]: 标签
+              - generic [ref=e450]: 编辑后自动保存
+            - generic [ref=e452]:
+              - textbox "输入标签并回车添加" [ref=e454]
+              - button "添加" [disabled] [ref=e455]
+        - generic [ref=e457]:
+          - generic [ref=e458]:
+            - generic [ref=e459]:
+              - text: Version
+              - combobox [ref=e460]:
+                - option "v3 · 2026/03/25" [selected]
+                - option "v2 · 2026/03/25"
+                - option "v1 · 2026/03/25"
+            - button "历史版本" [ref=e461] [cursor=pointer]
+            - button "对比版本" [ref=e462] [cursor=pointer]
+            - button "AI 优化" [ref=e463] [cursor=pointer]
+            - button "模型测试" [ref=e464] [cursor=pointer]
+          - generic [ref=e465]: 修改内容后会自动保存，无需手动提交。
+      - complementary [ref=e466]:
+        - generic [ref=e467]:
+          - generic [ref=e468]:
+            - generic [ref=e469]:
+              - generic [ref=e470]: Optimize
+              - heading "AI 优化" [level=3] [ref=e471]
+              - paragraph [ref=e472]: 围绕当前提示词生成新版本与优化建议。
+            - button [ref=e473] [cursor=pointer]:
+              - img [ref=e474]
+          - generic [ref=e476]:
+            - generic [ref=e477]:
+              - generic [ref=e478]:
+                - generic [ref=e479]:
+                  - generic [ref=e480]: 当前提示词
+                  - paragraph [ref=e481]: 联调验证 Prompt 20260325-1
+                - generic [ref=e482]: 会生成新版本
+              - paragraph [ref=e485]: 你是一个真实联调验证助手。请用 3 条简短要点总结输入内容，并给出 1 条改进建议。输出请使用中文。
+            - generic [ref=e486]:
+              - generic [ref=e487]:
+                - generic [ref=e488]:
+                  - heading "优化想法" [level=4] [ref=e489]
+                  - paragraph [ref=e490]: 可留空，系统会基于当前内容继续优化。
+                - button "重置" [ref=e491] [cursor=pointer]
+              - textbox "例如：加强角色定位，补充输出格式，并增加异常场景处理。" [ref=e492]
+            - generic [ref=e493]:
+              - generic [ref=e494]:
+                - generic [ref=e495]:
+                  - heading "可选建议" [level=4] [ref=e496]
+                  - paragraph [ref=e497]: 勾选后会影响本轮优化方向，不勾选也可以直接开始。
+                - generic [ref=e498]: 0 已选
+              - generic [ref=e499]:
+                - button "你的主要关注点是什么？ 选项 5 代码质量 / 系统性能 / 用户体验 / 安全性 / 功能完整性" [ref=e500] [cursor=pointer]:
+                  - generic [ref=e502]:
+                    - generic [ref=e503]:
+                      - generic [ref=e504]: 你的主要关注点是什么？
+                      - generic [ref=e505]: 选项 5
+                    - paragraph [ref=e506]: 代码质量 / 系统性能 / 用户体验 / 安全性 / 功能完整性
+                - button "你需要基于哪种验证方法提供帮助？ 选项 4 单元测试 / 集成测试 / 系统测试 / 验收测试" [ref=e508] [cursor=pointer]:
+                  - generic [ref=e510]:
+                    - generic [ref=e511]:
+                      - generic [ref=e512]: 你需要基于哪种验证方法提供帮助？
+                      - generic [ref=e513]: 选项 4
+                    - paragraph [ref=e514]: 单元测试 / 集成测试 / 系统测试 / 验收测试
+                - button "你希望改进建议的主要领域是什么？ 选项 5 测试策略 / 测试工具 / 测试流程 / 测试用例设计 / 测试团队协作" [ref=e516] [cursor=pointer]:
+                  - generic [ref=e518]:
+                    - generic [ref=e519]:
+                      - generic [ref=e520]: 你希望改进建议的主要领域是什么？
+                      - generic [ref=e521]: 选项 5
+                    - paragraph [ref=e522]: 测试策略 / 测试工具 / 测试流程 / 测试用例设计 / 测试团队协作
+            - generic [ref=e524]:
+              - paragraph [ref=e525]: 选择建议后点击开始优化，系统会生成新版本并写入历史。
+              - button "开始优化" [ref=e526] [cursor=pointer]
+            - generic [ref=e527]:
+              - generic [ref=e528]:
+                - generic [ref=e529]:
+                  - heading "优化历史" [level=4] [ref=e530]
+                  - paragraph [ref=e531]: 每轮结果都会保留在这里。
+                - generic [ref=e532]: 1 轮
+              - article [ref=e534]:
+                - generic [ref=e535]:
+                  - generic [ref=e536]:
+                    - generic [ref=e537]:
+                      - generic [ref=e538]: 第 1 轮
+                      - generic [ref=e539]: 版本 f4fecc8c-2804-4c7e-9cc8-93d639798667
+                    - paragraph [ref=e540]: 03/25 14:00
+                  - generic [ref=e541]: 3 条建议
+                - generic [ref=e542]: software testing
+                - paragraph [ref=e545]: 优化后的提示词：作为一个真实联调验证专家，你需要从输入内容中总结出三个关键要点，并提出一项有效的改进建议。
+                - generic [ref=e546]:
+                  - generic [ref=e547]: 你的主要关注点是什么？
+                  - generic [ref=e548]: 你需要基于哪种验证方法提供帮助？
+                  - generic [ref=e549]: 你希望改进建议的主要领域是什么？

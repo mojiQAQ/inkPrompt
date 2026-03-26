@@ -1,10 +1,16 @@
 /**
  * Unit tests for PromptCard component
  */
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@/test/test-utils'
 import { PromptCard } from '../PromptCard'
 import { createMockPrompt } from '@/test/test-utils'
+
+vi.mock('@/hooks/useAuth', () => ({
+  useAuth: () => ({
+    getAccessToken: vi.fn().mockResolvedValue('mock-token'),
+  }),
+}))
 
 describe('PromptCard', () => {
   const mockOnEdit = vi.fn()
@@ -100,9 +106,9 @@ describe('PromptCard', () => {
     it('should display up to 3 tags', () => {
       const prompt = createMockPrompt({
         tags: [
-          { id: '1', name: 'tag1', is_system: false },
-          { id: '2', name: 'tag2', is_system: false },
-          { id: '3', name: 'tag3', is_system: false },
+          { id: '1', name: 'tag1', is_system: false, use_count: 0 },
+          { id: '2', name: 'tag2', is_system: false, use_count: 0 },
+          { id: '3', name: 'tag3', is_system: false, use_count: 0 },
         ],
       })
 
@@ -123,11 +129,11 @@ describe('PromptCard', () => {
     it('should show "+N" indicator when more than 3 tags', () => {
       const prompt = createMockPrompt({
         tags: [
-          { id: '1', name: 'tag1', is_system: false },
-          { id: '2', name: 'tag2', is_system: false },
-          { id: '3', name: 'tag3', is_system: false },
-          { id: '4', name: 'tag4', is_system: false },
-          { id: '5', name: 'tag5', is_system: false },
+          { id: '1', name: 'tag1', is_system: false, use_count: 0 },
+          { id: '2', name: 'tag2', is_system: false, use_count: 0 },
+          { id: '3', name: 'tag3', is_system: false, use_count: 0 },
+          { id: '4', name: 'tag4', is_system: false, use_count: 0 },
+          { id: '5', name: 'tag5', is_system: false, use_count: 0 },
         ],
       })
 
@@ -149,7 +155,7 @@ describe('PromptCard', () => {
 
     it('should apply correct CSS class for system tags', () => {
       const prompt = createMockPrompt({
-        tags: [{ id: '1', name: 'system-tag', is_system: true }],
+        tags: [{ id: '1', name: 'system-tag', is_system: true, use_count: 0 }],
       })
 
       render(
@@ -167,7 +173,7 @@ describe('PromptCard', () => {
 
     it('should apply correct CSS class for user tags', () => {
       const prompt = createMockPrompt({
-        tags: [{ id: '1', name: 'user-tag', is_system: false }],
+        tags: [{ id: '1', name: 'user-tag', is_system: false, use_count: 0 }],
       })
 
       render(

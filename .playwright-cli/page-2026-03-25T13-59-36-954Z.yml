@@ -1,0 +1,98 @@
+- generic [ref=e302]:
+  - banner [ref=e303]:
+    - generic [ref=e305]:
+      - button "Ink & Prompt" [ref=e307] [cursor=pointer]:
+        - img [ref=e309]
+        - heading "Ink & Prompt" [level=1] [ref=e311]
+      - navigation [ref=e312]:
+        - button "我的提示词" [ref=e313] [cursor=pointer]
+      - generic [ref=e314]:
+        - generic [ref=e315]:
+          - generic [ref=e317]: F
+          - generic [ref=e318]: fpccc007@gmail.com
+        - button "退出登录" [ref=e319] [cursor=pointer]
+  - main [ref=e320]:
+    - generic [ref=e321]:
+      - generic [ref=e322]:
+        - generic [ref=e323]:
+          - generic [ref=e324]:
+            - generic [ref=e325]:
+              - generic [ref=e326]: 编辑态
+              - generic [ref=e374]: 已保存
+            - generic [ref=e327]:
+              - textbox "提示词名称" [ref=e365]: 联调验证 Prompt 20260325-1
+              - generic [ref=e329]:
+                - generic [ref=e330]: 13 tokens
+                - generic [ref=e331]: ·
+                - generic [ref=e332]: 2 个版本
+                - generic [ref=e333]: ·
+                - generic [ref=e334]: 当前版本 v1
+                - generic [ref=e335]: ·
+                - generic [ref=e336]: 2026/03/25
+          - button "退出编辑" [ref=e366] [cursor=pointer]
+        - generic [ref=e342]:
+          - generic [ref=e343]:
+            - generic [ref=e344]:
+              - generic [ref=e345]: 提示词内容
+              - generic [ref=e346]: 支持自动保存
+            - textbox "输入提示词内容..." [ref=e367]: 你是一个真实联调验证助手。请用 3 条简短要点总结输入内容，并给出 1 条改进建议。输出请使用中文。
+          - generic [ref=e349]:
+            - generic [ref=e350]:
+              - generic [ref=e351]: 标签
+              - generic [ref=e352]: 编辑后自动保存
+            - generic [ref=e369]:
+              - textbox "输入标签并回车添加" [ref=e371]
+              - button "添加" [disabled] [ref=e372]
+        - generic [ref=e356]:
+          - generic [ref=e357]:
+            - generic [ref=e358]:
+              - text: Version
+              - combobox [ref=e359]:
+                - option "v2 · 2026/03/25"
+                - option "v1 · 2026/03/25" [selected]
+            - button "历史版本" [ref=e360] [cursor=pointer]
+            - button "对比版本" [ref=e361] [cursor=pointer]
+            - button "AI 优化" [active] [ref=e362] [cursor=pointer]
+            - button "模型测试" [ref=e363] [cursor=pointer]
+          - generic [ref=e364]: 修改内容后会自动保存，无需手动提交。
+      - complementary [ref=e375]:
+        - generic [ref=e376]:
+          - generic [ref=e377]:
+            - generic [ref=e378]:
+              - generic [ref=e379]: Optimize
+              - heading "AI 优化" [level=3] [ref=e380]
+              - paragraph [ref=e381]: 围绕当前提示词生成新版本与优化建议。
+            - button [ref=e382] [cursor=pointer]:
+              - img [ref=e383]
+          - generic [ref=e385]:
+            - generic [ref=e386]:
+              - generic [ref=e387]:
+                - generic [ref=e388]:
+                  - generic [ref=e389]: 当前提示词
+                  - paragraph [ref=e390]: 联调验证 Prompt 20260325-1
+                - generic [ref=e391]: 会生成新版本
+              - paragraph [ref=e394]: 你是一个真实联调验证助手。请用 3 条简短要点总结输入内容，并给出 1 条改进建议。输出请使用中文。
+            - generic [ref=e395]:
+              - generic [ref=e396]:
+                - generic [ref=e397]:
+                  - heading "优化想法" [level=4] [ref=e398]
+                  - paragraph [ref=e399]: 可留空，系统会基于当前内容继续优化。
+                - button "重置" [ref=e400] [cursor=pointer]
+              - textbox "例如：加强角色定位，补充输出格式，并增加异常场景处理。" [ref=e401]
+            - generic [ref=e403]:
+              - generic [ref=e404]:
+                - heading "可选建议" [level=4] [ref=e405]
+                - paragraph [ref=e406]: 勾选后会影响本轮优化方向，不勾选也可以直接开始。
+              - generic [ref=e407]: 0 已选
+            - generic [ref=e408]:
+              - paragraph [ref=e409]: 选择建议后点击开始优化，系统会生成新版本并写入历史。
+              - button "开始优化" [ref=e410] [cursor=pointer]
+            - generic [ref=e411]:
+              - generic [ref=e412]:
+                - generic [ref=e413]:
+                  - heading "优化历史" [level=4] [ref=e414]
+                  - paragraph [ref=e415]: 每轮结果都会保留在这里。
+                - generic [ref=e416]: 0 轮
+              - generic [ref=e418]:
+                - paragraph [ref=e419]: 还没有优化记录
+                - paragraph [ref=e420]: 开始一次优化后会出现在这里。

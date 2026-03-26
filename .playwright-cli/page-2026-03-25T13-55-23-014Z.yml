@@ -1,0 +1,85 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - button "Ink & Prompt" [ref=e8] [cursor=pointer]:
+        - img [ref=e10]
+        - heading "Ink & Prompt" [level=1] [ref=e12]
+      - navigation [ref=e13]:
+        - button "我的提示词" [ref=e14] [cursor=pointer]
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - generic [ref=e18]: F
+          - generic [ref=e19]: fpccc007@gmail.com
+        - button "退出登录" [ref=e20] [cursor=pointer]
+  - main [ref=e21]:
+    - generic [ref=e22]:
+      - generic [ref=e24]:
+        - heading "文件夹" [level=3] [ref=e25]
+        - button "新建文件夹" [ref=e26] [cursor=pointer]:
+          - img [ref=e27]
+      - generic [ref=e29]:
+        - button "全部提示词 1" [ref=e30] [cursor=pointer]:
+          - img [ref=e31]
+          - generic [ref=e33]: 全部提示词
+          - generic [ref=e34]: "1"
+        - button "收藏提示词 1" [ref=e35] [cursor=pointer]:
+          - img [ref=e36]
+          - generic [ref=e38]: 收藏提示词
+          - generic [ref=e39]: "1"
+        - button "test 1" [ref=e42] [cursor=pointer]:
+          - img [ref=e43]
+          - generic [ref=e45]: test
+          - generic [ref=e46]: "1"
+          - img [ref=e48]
+    - generic [ref=e50]:
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - heading "全部提示词" [level=2] [ref=e53]
+          - paragraph [ref=e54]: 共 1 个提示词
+        - button "新建提示词" [ref=e55] [cursor=pointer]:
+          - img [ref=e56]
+          - text: 新建提示词
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - heading "搜索和排序" [level=3] [ref=e60]
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - textbox "搜索提示词名称或内容..." [ref=e63]
+              - img [ref=e64]
+            - generic [ref=e67]:
+              - generic [ref=e68]: "排序:"
+              - combobox [ref=e69]:
+                - option "更新时间" [selected]
+                - option "创建时间"
+                - option "名称"
+                - option "Token 数"
+              - button "降序" [ref=e70] [cursor=pointer]:
+                - img [ref=e71]
+        - generic [ref=e74]:
+          - heading "标签筛选" [level=3] [ref=e76]
+          - generic [ref=e77]:
+            - generic [ref=e79]:
+              - button "代码生成" [ref=e80] [cursor=pointer]
+              - button "代码审查" [ref=e81] [cursor=pointer]
+              - button "文案创作" [ref=e82] [cursor=pointer]
+              - button "翻译" [ref=e83] [cursor=pointer]
+            - button "+17" [ref=e84] [cursor=pointer]
+      - generic [ref=e86] [cursor=pointer]:
+        - generic [ref=e87]:
+          - heading "Test Prompt 1" [level=3] [ref=e89]
+          - generic [ref=e90]:
+            - button "取消收藏" [ref=e91]:
+              - img [ref=e92]
+            - generic [ref=e94]:
+              - button "添加到文件夹" [ref=e95]:
+                - img [ref=e96]
+              - button "编辑" [ref=e98]:
+                - img [ref=e99]
+              - button "删除" [ref=e101]:
+                - img [ref=e102]
+        - paragraph [ref=e105]: This is a test prompt for E2E testing.
+        - generic [ref=e107]:
+          - img [ref=e108]
+          - generic [ref=e110]: "11"
+          - generic [ref=e111]: tokens
+        - generic [ref=e112]: 2026年3月25日
