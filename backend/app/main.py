@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
 from app.core.database import init_db, get_db
-from app.utils.init_data import init_system_tags
+from app.utils.init_data import init_curated_square_entries, init_system_tags
 
 settings = get_settings()
 
@@ -39,6 +39,10 @@ async def startup_event():
         created_count = init_system_tags(db)
         if created_count > 0:
             print(f"✅ Initialized {created_count} system preset tags")
+
+        curated_count = init_curated_square_entries(db)
+        if curated_count > 0:
+            print(f"✅ Initialized {curated_count} curated square prompts")
     except Exception as e:
         print(f"⚠️ Failed to initialize system tags: {e}")
     finally:
@@ -71,6 +75,7 @@ from app.api import model_calls
 from app.api import prompt_folders
 from app.api import prompt_detail
 from app.api import available_models
+from app.api import prompt_square
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(prompts.router, prefix="/api")
@@ -81,3 +86,4 @@ app.include_router(model_calls.router, prefix="/api")
 app.include_router(prompt_folders.router, prefix="/api")
 app.include_router(prompt_detail.router, prefix="/api")
 app.include_router(available_models.router, prefix="/api")
+app.include_router(prompt_square.router, prefix="/api")

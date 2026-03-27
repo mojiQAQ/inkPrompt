@@ -7,6 +7,8 @@ import { AuthCallback } from '@/pages/AuthCallback'
 import { LandingPage } from '@/pages/LandingPage'
 import { PromptList } from '@/pages/PromptList'
 import { PromptEditor } from '@/pages/PromptEditor'
+import { PromptSquare } from '@/pages/PromptSquare'
+import { PromptSquareDetail } from '@/pages/PromptSquareDetail'
 
 // 路由层先完成 PromptDetail 入口收口，页面实现仍由 PromptEditor 承接。
 const PromptDetail = PromptEditor
@@ -44,6 +46,8 @@ function App() {
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/square" element={<PromptSquare />} />
+          <Route path="/square/:entryId" element={<PromptSquareDetail />} />
 
           {/* Protected routes */}
           <Route

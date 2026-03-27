@@ -60,6 +60,8 @@ class PromptResponse(BaseModel):
     content: str
     token_count: int
     is_favorited: bool = False
+    source_square_entry_id: Optional[str] = None
+    source_square_title: Optional[str] = None
     tags: List[TagInDB] = []
     version_count: int = Field(default=0, description="版本数量")
     created_at: datetime

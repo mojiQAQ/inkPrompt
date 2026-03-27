@@ -43,6 +43,7 @@
   "nav": {
     "logoTitle": "返回提示词列表",
     "myPrompts": "我的提示词",
+    "square": "广场",
     "logout": "退出登录",
     "avatarInitial": "{{email}} 的首字母"
   },
@@ -218,7 +219,37 @@
     "tagNamePlaceholder": "输入标签名",
     "copy": "复制完整提示词",
     "copied": "已复制完整提示词",
+    "squareSourceBadge": "广场来源",
+    "squareSourceDescription": "这是从广场条目“{{title}}”复制出的私有副本，你可以继续编辑、收藏和保存自己的版本。",
+    "squareSourceTesting": "你正在测试来自广场条目“{{title}}”的私有副本，测试结果只会影响你自己的库。",
+    "viewSquareSource": "查看广场原条目",
+    "publishToSquare": "发布到广场",
+    "publishingToSquare": "发布中...",
+    "publishedToSquare": "已发布到广场",
+    "publishFailed": "发布到广场失败",
     "copyFailed": "复制失败",
+    "publishDialog": {
+      "title": "确认发布到广场",
+      "description": "发布前再核对一次展示信息。标题、摘要、分类和难度会直接影响别人如何发现并理解这条提示词。",
+      "confirm": "确认发布",
+      "titleRequired": "请输入发布标题",
+      "summaryRequired": "请输入发布摘要",
+      "categoryRequired": "请选择发布分类",
+      "fields": {
+        "title": "展示标题",
+        "summary": "展示摘要",
+        "category": "广场分类",
+        "difficulty": "使用难度",
+        "recommendedModels": "推荐模型",
+        "allowFullPreview": "允许公开完整正文"
+      },
+      "placeholders": {
+        "title": "例如：品牌内容策略助手",
+        "summary": "一句话说明这条提示词适合解决什么问题、适合什么场景。",
+        "recommendedModels": "例如：gpt-5.4, claude-sonnet-4"
+      },
+      "allowFullPreviewHint": "关闭后，广场详情页只展示摘要和预览片段，不公开完整正文。"
+    },
     "emptyVersions": "暂无历史版本",
     "compare": "对比",
     "restore": "恢复",
@@ -322,6 +353,98 @@
         "title": "快捷键支持",
         "description": "使用 Ctrl+K（或 Cmd+K）快速聚焦到搜索框，提升操作效率。"
       }
+    }
+  },
+  "square": {
+    "kicker": "Prompt Square",
+    "title": "发现社区正在使用的优质提示词",
+    "subtitle": "从真实用例中找灵感，复制到你的工作区继续测试、优化和迭代。",
+    "searchPlaceholder": "搜索标题、摘要或提示词正文...",
+    "heroPanelTitle": "发现之后，立刻转为你的工作流",
+    "heroPanelBody": "这不是一个只供浏览的案例墙。你可以直接把公开提示词复制进自己的资料库，接着用现有的优化和测试能力继续打磨。",
+    "heroStats": {
+      "discover": "热门标签",
+      "convert": "当前结果"
+    },
+    "popularTags": "热门标签",
+    "popularTagsHint": "先从高频使用场景开始浏览，会更容易找到可直接复用的内容。",
+    "preview": "内容预览",
+    "author": "作者",
+    "recommendedModels": "推荐模型",
+    "howToUse": "如何使用这条提示词",
+    "howToUseBody": "先复制到你的个人工作区，再结合测试面板验证输入输出效果，最后按你的业务语境继续修改和保存版本。",
+    "detailNoteTitle": "当前展示说明",
+    "detailNoteBody": "部分作者不会公开完整正文，我们会优先展示摘要与片段预览，确保内容可发现，同时保留创作者对公开范围的控制。",
+    "publishedAt": "发布于 {{date}}",
+    "updatedAt": "更新于 {{date}}",
+    "actions": {
+      "search": "搜索",
+      "clearTag": "清除标签",
+      "resetFilters": "重置筛选",
+      "copy": "复制到我的库",
+      "quickCopy": "快速复制",
+      "testNow": "立即测试",
+      "like": "点赞",
+      "liked": "已点赞",
+      "favorite": "收藏",
+      "favorited": "已收藏",
+      "backToSquare": "返回广场"
+    },
+    "confirm": {
+      "copyTitle": "复制这条提示词到我的库？",
+      "copyMessage": "复制后会生成或复用你在个人库里的私有副本，后续编辑不会影响广场原条目。",
+      "testTitle": "复制后立即进入测试？",
+      "testMessage": "系统会先把这条广场提示词保存为你的私有副本，再直接打开测试面板。"
+    },
+    "filters": {
+      "allCategories": "全部分类",
+      "allDifficulty": "全部难度",
+      "summary": "当前分类：{{category}}"
+    },
+    "category": {
+      "general": "通用",
+      "writing": "写作",
+      "coding": "编程",
+      "analysis": "分析",
+      "marketing": "营销",
+      "education": "学习"
+    },
+    "sort": {
+      "hot": "最热",
+      "newest": "最新",
+      "copies": "最多复制"
+    },
+    "difficulty": {
+      "simple": "简单",
+      "medium": "中等",
+      "advanced": "进阶"
+    },
+    "stats": {
+      "views": "浏览",
+      "likes": "点赞",
+      "favorites": "收藏",
+      "copies": "复制"
+    },
+    "messages": {
+      "loadFailed": "加载广场失败",
+      "copied": "已复制到你的提示词库",
+      "alreadySaved": "这条提示词已经在你的库里，已直接打开现有副本",
+      "testReady": "已复制并打开测试工作流",
+      "testOpenedExisting": "已打开你库中现有的副本并进入测试",
+      "quickCopied": "已复制当前可见内容",
+      "quickCopyFailed": "复制当前内容失败",
+      "copyFailed": "复制到我的库失败",
+      "partialPreview": "作者未公开完整正文，当前展示的是可用于判断用途和结构的预览片段。",
+      "loginHint": "登录后即可点赞、收藏，并把这条提示词复制进你的个人工作区。"
+    },
+    "steps": {
+      "copy": "复制到你的个人提示词库",
+      "test": "在测试面板里跑实际输入",
+      "iterate": "根据结果继续优化并保存版本"
+    },
+    "empty": {
+      "title": "暂时还没有符合条件的公开提示词",
+      "description": "可以先清空筛选，或者从热门标签开始重新浏览。"
     }
   },
   "landing": {

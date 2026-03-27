@@ -37,6 +37,14 @@ vi.mock('@/pages/PromptEditor', () => ({
   PromptEditor: () => <div data-testid="prompt-editor-page">Prompt Editor</div>,
 }))
 
+vi.mock('@/pages/PromptSquare', () => ({
+  PromptSquare: () => <div data-testid="prompt-square-page">Prompt Square</div>,
+}))
+
+vi.mock('@/pages/PromptSquareDetail', () => ({
+  PromptSquareDetail: () => <div data-testid="prompt-square-detail-page">Prompt Square Detail</div>,
+}))
+
 describe('App routes', () => {
   afterEach(() => {
     cleanup()
@@ -65,6 +73,16 @@ describe('App routes', () => {
   it('should map /prompts/new to the prompt editor page', () => {
     renderAt('/prompts/new')
     expect(screen.getByTestId('prompt-editor-page')).toBeInTheDocument()
+  })
+
+  it('should map /square to the prompt square page', () => {
+    renderAt('/square')
+    expect(screen.getByTestId('prompt-square-page')).toBeInTheDocument()
+  })
+
+  it('should map /square/:entryId to the prompt square detail page', () => {
+    renderAt('/square/entry-123')
+    expect(screen.getByTestId('prompt-square-detail-page')).toBeInTheDocument()
   })
 
   it('should map /prompts/:id to the detail/editor entry', () => {

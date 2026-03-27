@@ -8,12 +8,14 @@ import toast from 'react-hot-toast'
 import { createPrompt, fetchPrompt, updatePrompt } from '@/api/prompts'
 import { getAvailableModels } from '@/api/models'
 import { getOptimizationSession, startOptimizeStream } from '@/api/optimization'
+import { fetchSquareCategories, publishPromptToSquare } from '@/api/square'
 import { getTestSession, startTestStream } from '@/api/test'
 import { getPromptVersions, restoreVersion } from '@/api/versions'
 import { ErrorMessage } from '@/components/ErrorMessage'
 import { Layout } from '@/components/Layout'
 import { Loading } from '@/components/Loading'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
+import { PublishToSquareDialog } from '@/components/PublishToSquareDialog'
 import type {
   CustomTestModelInput,
   TestModelOption,
@@ -38,12 +40,19 @@ import type {
   TestModelConversation,
   UpdatePromptData,
 } from '@/types/prompt'
+import type { PublishPromptPayload, SquareCategory } from '@/types/square'
 
 type PageMode = 'view' | 'edit'
 type RightPanel = 'optimize' | 'test' | null
 
 function estimateTokens(text: string) {
   return Math.max(1, Math.ceil(text.trim().length / 4))
+}
+
+function makeSummary(content: string) {
+  const normalized = content.replace(/\s+/g, ' ').trim()
+  if (normalized.length <= 140) return normalized
+  return `${normalized.slice(0, 140).trim()}...`
 }
 
 function makeSnapshot(name: string, content: string, tags: string[]) {
@@ -203,6 +212,9 @@ export function PromptDetail() {
   const [testUserInput, setTestUserInput] = useState('')
   const [testOutputs, setTestOutputs] = useState<TestModelOutput[]>([])
   const [isTesting, setIsTesting] = useState(false)
+  const [squareCategories, setSquareCategories] = useState<SquareCategory[]>([])
+  const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false)
+  const [isPublishingToSquare, setIsPublishingToSquare] = useState(false)
 
   const persistedSnapshotRef = useRef('')
   const editBaselineSnapshotRef = useRef('')
@@ -239,6 +251,14 @@ export function PromptDetail() {
   const isVersionSwitchBlocked = isOptimizing || activeTestCount > 0
   const displayedContent = optimizePreviewContent || (mode === 'edit' ? content : currentVersion?.content ?? content)
   const hasUnsavedChanges = mode === 'edit' && makeSnapshot(name, content, tags) !== editBaselineSnapshotRef.current
+  const publishInitialPayload = useMemo<PublishPromptPayload>(() => ({
+    title: name.trim() || prompt?.name || '',
+    summary: makeSummary(prompt?.content || content || ''),
+    category: squareCategories[0]?.key ?? 'general',
+    difficulty: 'simple',
+    recommended_models: [],
+    allow_full_preview: false,
+  }), [content, name, prompt, squareCategories])
 
   const syncPersistedEditorState = useCallback((nextName: string, nextContent: string, nextTags: string[]) => {
     const normalizedTags = normalizeTags(nextTags)
@@ -282,7 +302,7 @@ export function PromptDetail() {
       return sorted[0]?.id ?? null
     })
     return sorted
-  }, [getAccessToken])
+  }, [getAccessToken, t])
 
   const loadOptimizationRounds = useCallback(async (promptId: string) => {
     const token = await getAccessToken()
@@ -340,6 +360,12 @@ export function PromptDetail() {
         .map(mapOptionToTestPanelModel)
     })
   }, [getAccessToken, t])
+
+  const loadSquareCategories = useCallback(async () => {
+    const categories = await fetchSquareCategories()
+    setSquareCategories(categories)
+    return categories
+  }, [])
 
   const loadPrompt = useCallback(async (promptId: string, preferredVersionId?: string | null) => {
     setLoading(true)
@@ -420,6 +446,13 @@ export function PromptDetail() {
   useEffect(() => {
     setMode(isCreateMode || location.pathname.endsWith('/edit') ? 'edit' : 'view')
   }, [isCreateMode, location.pathname])
+
+  useEffect(() => {
+    const panel = new URLSearchParams(location.search).get('panel')
+    if (panel === 'test' || panel === 'optimize') {
+      setActivePanel(panel)
+    }
+  }, [location.search])
 
   useEffect(() => {
     return () => {
@@ -707,6 +740,39 @@ export function PromptDetail() {
     }
   }
 
+  const handleOpenPublishDialog = async () => {
+    if (isCreateMode || mode !== 'view' || !prompt || isPublishingToSquare) return
+
+    try {
+      if (squareCategories.length === 0) {
+        await loadSquareCategories()
+      }
+      setIsPublishDialogOpen(true)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t('promptEditor.publishFailed'))
+    }
+  }
+
+  const handlePublishToSquare = async (payload: PublishPromptPayload) => {
+    if (!id || !prompt || isPublishingToSquare) return
+
+    try {
+      const token = await getAccessToken()
+      if (!token) throw new Error(t('promptEditor.notLoggedIn'))
+
+      setIsPublishingToSquare(true)
+      const entry = await publishPromptToSquare(token, id, payload)
+
+      toast.success(t('promptEditor.publishedToSquare'))
+      setIsPublishDialogOpen(false)
+      navigate(`/square/${entry.id}`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t('promptEditor.publishFailed'))
+    } finally {
+      setIsPublishingToSquare(false)
+    }
+  }
+
   const handleAddPresetTestModel = (optionId: string) => {
     const option = availableModels.find((item) => item.id === optionId)
     if (!option) return
@@ -917,7 +983,7 @@ export function PromptDetail() {
     } finally {
       setIsTagSaving(false)
     }
-  }, [applyPromptToState, getAccessToken, id, isTagSaving, name, prompt])
+  }, [applyPromptToState, getAccessToken, id, isTagSaving, name, prompt, t])
 
   const handleToggleTagEditor = () => {
     setTagEditorOpen((previous) => !previous)
@@ -1150,6 +1216,34 @@ export function PromptDetail() {
                         ? formatFullDate(currentVersion.created_at, language)
                         : t('common.appFooterTagline')}
                     </p>
+                    {prompt?.source_square_entry_id ? (
+                      <div className="mt-3 rounded-[22px] border border-[rgba(79,70,229,0.14)] bg-[rgba(79,70,229,0.05)] px-4 py-3">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <div className="min-w-0">
+                            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#4f46e5]">
+                              {t('promptEditor.squareSourceBadge')}
+                            </div>
+                            <p className="mt-1 text-sm leading-6 text-ink-700">
+                              {t(
+                                activePanel === 'test'
+                                  ? 'promptEditor.squareSourceTesting'
+                                  : 'promptEditor.squareSourceDescription',
+                                {
+                                  title: prompt.source_square_title || prompt.name,
+                                },
+                              )}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/square/${prompt.source_square_entry_id}`)}
+                            className="btn btn-secondary btn-small"
+                          >
+                            {t('promptEditor.viewSquareSource')}
+                          </button>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="flex flex-wrap items-center justify-end gap-2">
@@ -1178,6 +1272,16 @@ export function PromptDetail() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-4 4H6a2 2 0 01-2-2V9a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2z" />
                       </svg>
                     </button>
+                    {!isCreateMode && mode === 'view' ? (
+                      <button
+                        type="button"
+                        onClick={() => void handleOpenPublishDialog()}
+                        className="btn btn-secondary"
+                        disabled={isPublishingToSquare}
+                      >
+                        {isPublishingToSquare ? t('promptEditor.publishingToSquare') : t('promptEditor.publishToSquare')}
+                      </button>
+                    ) : null}
                     {mode === 'edit' ? (
                       <>
                         <button type="button" onClick={handleExitEdit} className="btn btn-secondary">
@@ -1483,6 +1587,17 @@ export function PromptDetail() {
           </aside>
         )}
       </div>
+
+      <PublishToSquareDialog
+        isOpen={isPublishDialogOpen}
+        categories={squareCategories}
+        initialPayload={publishInitialPayload}
+        isSubmitting={isPublishingToSquare}
+        onClose={() => setIsPublishDialogOpen(false)}
+        onConfirm={(payload) => {
+          void handlePublishToSquare(payload)
+        }}
+      />
 
       <VersionDetailDialog
         version={selectedVersionDetail}

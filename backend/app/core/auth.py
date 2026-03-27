@@ -13,6 +13,7 @@ from app.core.database import get_db
 from app.models.user import User
 
 security = HTTPBearer()
+optional_security = HTTPBearer(auto_error=False)
 
 
 def verify_supabase_token(token: str) -> dict:
@@ -110,7 +111,7 @@ def get_current_user(
 
 
 def get_optional_current_user(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(optional_security),
     db: Session = Depends(get_db)
 ) -> Optional[User]:
     """

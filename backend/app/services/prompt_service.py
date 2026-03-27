@@ -63,7 +63,9 @@ class PromptService:
     def create_prompt(
         db: Session,
         user_id: str,
-        prompt_data: PromptCreate
+        prompt_data: PromptCreate,
+        source_square_entry_id: Optional[str] = None,
+        source_square_title: Optional[str] = None,
     ) -> Prompt:
         """
         Create a new prompt with tags and initial version.
@@ -86,6 +88,8 @@ class PromptService:
             name=prompt_data.name,
             content=prompt_data.content,
             token_count=token_count,
+            source_square_entry_id=source_square_entry_id,
+            source_square_title=source_square_title,
         )
 
         # Handle tags

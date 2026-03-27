@@ -16,6 +16,8 @@ export interface Prompt {
   content: string
   token_count: number
   is_favorited: boolean
+  source_square_entry_id?: string | null
+  source_square_title?: string | null
   tags: Tag[]
   version_count: number
   created_at: string

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
-import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { Navbar } from '@/components/Navbar'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/hooks/useI18n'
 import {
@@ -113,31 +113,21 @@ export function Login() {
   }
 
   return (
-    <div className="auth-page relative min-h-screen overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
+    <div className="auth-page relative min-h-screen overflow-hidden">
       <div className="app-page-grid pointer-events-none fixed inset-0 opacity-60" />
       <div className="app-page-orb app-page-orb-primary pointer-events-none fixed left-[-8rem] top-[2rem] h-[24rem] w-[24rem] rounded-full blur-3xl" />
       <div className="app-page-orb app-page-orb-secondary pointer-events-none fixed right-[-6rem] top-[14rem] h-[22rem] w-[22rem] rounded-full blur-3xl" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <div className="flex items-center justify-between gap-4">
-          <button
-            type="button"
-            onClick={() => navigate('/', { replace: true })}
-            className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/72 px-4 py-2 text-sm font-medium text-ink-700 shadow-[0_18px_34px_-28px_rgba(31,41,55,0.45)] backdrop-blur-xl transition-colors hover:text-ink-900"
-          >
-            <span>{t('login.backHome')}</span>
-            <ArrowRightIcon />
-          </button>
-          <LanguageSwitcher variant="landing" />
-        </div>
+      <Navbar brandHref="/" brandTitle={t('landing.nav.logoTitle')} showAuthAction={false} />
 
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 pb-6 pt-5 sm:px-6 lg:px-8">
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(430px,0.9fr)]">
           <section className="auth-showcase rounded-[36px] p-6 sm:p-8 lg:p-10">
             <div className="flex h-full flex-col justify-between gap-8">
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-3 rounded-full border border-white/65 bg-white/70 px-4 py-2 text-sm text-ink-700 shadow-[0_18px_40px_-30px_rgba(31,41,55,0.42)] backdrop-blur-xl">
-                  <img src="/logo.svg" alt="Ink & Prompt" className="h-5 w-5" />
-                  <span>{t('landing.hero.kicker')}</span>
+                  <img src="/favicon.svg" alt={t('common.appName')} className="h-5 w-5 rounded-xl bg-white/90 p-0.5" />
+                  <span>{t('common.appName')}</span>
                 </div>
 
                 <div>
@@ -186,7 +176,11 @@ export function Login() {
                   {t('common.appFooterTagline')}
                 </p>
               </div>
-              <img src="/favicon.svg" alt="inkPrompt" className="h-14 w-14 rounded-[20px] bg-white/88 p-2 shadow-sm" />
+              <img
+                src="/favicon.svg"
+                alt={t('common.appName')}
+                className="h-14 w-14 rounded-[20px] bg-white/88 p-2 shadow-sm"
+              />
             </div>
 
             {error ? (

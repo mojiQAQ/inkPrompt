@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { LanguageSwitcher } from '@/components/LanguageSwitcher'
+import { Navbar } from '@/components/Navbar'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/hooks/useI18n'
 import { persistPostAuthRedirect } from '@/utils/authRedirect'
@@ -94,22 +94,6 @@ function QuoteIcon() {
   )
 }
 
-function MenuIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M4 7h16M4 12h16M4 17h16" />
-    </svg>
-  )
-}
-
-function CloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="m6 6 12 12M18 6 6 18" />
-    </svg>
-  )
-}
-
 function ArrowRightIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
@@ -145,7 +129,6 @@ export function LandingPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { t, language } = useI18n()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const heroPills = t('landing.hero.pills', { returnObjects: true }) as string[]
   const heroStats = t('landing.hero.stats', { returnObjects: true }) as Array<{
@@ -222,114 +205,13 @@ export function LandingPage() {
     })
   }
 
-  const goToHome = () => {
-    setMobileMenuOpen(false)
-    navigate('/')
-  }
-
-  const goToPrompts = () => {
-    setMobileMenuOpen(false)
-    openAuthFlow('/prompts')
-  }
-
-  const goToLogin = () => {
-    setMobileMenuOpen(false)
-    openAuthFlow('/prompts')
-  }
-
   return (
     <div className="landing-page relative min-h-screen overflow-x-hidden text-ink-900">
       <div className="landing-grid pointer-events-none absolute inset-0 opacity-60" />
       <div className="landing-orb landing-orb-primary pointer-events-none absolute left-[-8rem] top-[-5rem] h-[26rem] w-[26rem] rounded-full blur-3xl" />
       <div className="landing-orb landing-orb-secondary pointer-events-none absolute right-[-6rem] top-[18rem] h-[24rem] w-[24rem] rounded-full blur-3xl" />
 
-      <header className="sticky top-0 z-50 border-b border-white/40 bg-[rgba(247,241,230,0.74)] backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <button
-            type="button"
-            onClick={goToHome}
-            className="flex items-center gap-3 text-left transition-opacity hover:opacity-80"
-            title={t('landing.nav.logoTitle')}
-          >
-            <img src="/logo.svg" alt="Ink & Prompt" className="h-9 w-9" />
-            <div>
-              <div className="text-sm font-semibold tracking-[0.26em] text-ink-500">
-                INK &amp; PROMPT
-              </div>
-              <div className="text-sm text-ink-700">{t('landing.nav.brandSubtitle')}</div>
-            </div>
-          </button>
-
-          <nav
-            aria-label={t('landing.nav.ariaLabel')}
-            className="hidden items-center gap-2 lg:flex"
-          >
-            {user ? (
-              <button
-                type="button"
-                onClick={goToPrompts}
-                className="rounded-full px-4 py-2 text-sm font-medium text-ink-700 transition-colors hover:text-ink-900"
-              >
-                {t('landing.nav.prompts')}
-              </button>
-            ) : null}
-            <a
-              href="/docs"
-              className="rounded-full px-4 py-2 text-sm font-medium text-ink-700 transition-colors hover:text-ink-900"
-            >
-              {t('landing.nav.docs')}
-            </a>
-            <LanguageSwitcher variant="landing" className="ml-2" />
-            <button
-              type="button"
-              onClick={goToLogin}
-              className="landing-nav-cta ml-2 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white"
-            >
-              {user ? t('landing.nav.workspace') : t('landing.nav.login')}
-            </button>
-          </nav>
-
-          <div className="flex items-center gap-3 lg:hidden">
-            <LanguageSwitcher variant="landing" className="hidden sm:flex" />
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen((value) => !value)}
-              className="icon-button h-11 w-11"
-              aria-expanded={mobileMenuOpen}
-              aria-label={mobileMenuOpen ? t('landing.nav.closeMenu') : t('landing.nav.openMenu')}
-            >
-              {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
-            </button>
-          </div>
-        </div>
-
-        {mobileMenuOpen ? (
-          <div className="border-t border-white/40 bg-[rgba(250,247,242,0.92)] px-4 py-4 backdrop-blur-xl lg:hidden">
-            <div className="mx-auto flex max-w-7xl flex-col gap-3">
-              <LanguageSwitcher variant="landing" className="sm:hidden" />
-              {user ? (
-                <button
-                  type="button"
-                  onClick={goToPrompts}
-                  className="landing-mobile-link"
-                >
-                  {t('landing.nav.prompts')}
-                </button>
-              ) : null}
-              <a href="/docs" className="landing-mobile-link">
-                {t('landing.nav.docs')}
-              </a>
-              <button
-                type="button"
-                onClick={goToLogin}
-                className="landing-nav-cta inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-white"
-              >
-                {user ? t('landing.nav.workspace') : t('landing.nav.login')}
-              </button>
-            </div>
-          </div>
-        ) : null}
-      </header>
+      <Navbar brandHref="/" brandTitle={t('landing.nav.logoTitle')} />
 
       <main>
         <section className="relative">

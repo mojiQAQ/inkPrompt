@@ -56,7 +56,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'VITE_SUPABASE_URL=http://127.0.0.1 VITE_SUPABASE_ANON_KEY=test-anon-key VITE_API_BASE_URL=http://127.0.0.1:8000 npm run dev -- --port 3000 --host 127.0.0.1',
+    command: 'VITE_SUPABASE_URL=http://127.0.0.1 VITE_SUPABASE_ANON_KEY=test-anon-key VITE_API_BASE_URL=http://127.0.0.1:8010 npm run dev -- --port 3000 --host 127.0.0.1',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
   },

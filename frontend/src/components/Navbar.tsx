@@ -1,14 +1,53 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { useAuth } from '@/hooks/useAuth'
 import { useI18n } from '@/hooks/useI18n'
+import { persistPostAuthRedirect } from '@/utils/authRedirect'
 
-export function Navbar() {
+interface NavbarProps {
+  brandHref?: string
+  brandTitle?: string
+  showAuthAction?: boolean
+}
+
+export function Navbar({
+  brandHref = '/prompts',
+  brandTitle,
+  showAuthAction = true,
+}: NavbarProps) {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, signOut } = useAuth()
   const { t } = useI18n()
   const avatarInitial = user?.email?.charAt(0).toUpperCase() || 'U'
+
+  const navItems = [
+    {
+      key: 'my-prompts',
+      label: t('nav.myPrompts'),
+      href: '/prompts',
+      active: location.pathname.startsWith('/prompts'),
+      requiresAuth: true,
+    },
+    {
+      key: 'square',
+      label: t('nav.square'),
+      href: '/square',
+      active: location.pathname.startsWith('/square'),
+      requiresAuth: false,
+    },
+  ]
+
+  const handleNavigate = (href: string, requiresAuth = false) => {
+    if (requiresAuth && !user) {
+      persistPostAuthRedirect(href)
+      navigate('/login')
+      return
+    }
+
+    navigate(href)
+  }
 
   const handleLogout = async () => {
     try {
@@ -19,14 +58,19 @@ export function Navbar() {
     }
   }
 
+  const handleLogin = () => {
+    persistPostAuthRedirect('/prompts')
+    navigate('/login')
+  }
+
   return (
     <header className="app-navbar sticky top-0 z-30">
       <div className="app-navbar-shell mx-auto flex h-[4.5rem] w-full max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <button
           type="button"
-          onClick={() => navigate('/prompts')}
+          onClick={() => navigate(brandHref)}
           className="flex min-w-0 items-center gap-3 text-left transition-opacity hover:opacity-85"
-          title={t('nav.logoTitle')}
+          title={brandTitle ?? t('nav.logoTitle')}
         >
           <img src="/favicon.svg" alt="Ink & Prompt" className="h-10 w-10 rounded-2xl bg-white/88 p-1.5 shadow-sm" />
           <div className="min-w-0">
@@ -37,13 +81,16 @@ export function Navbar() {
         </button>
 
         <nav className="hidden items-center gap-2 lg:flex">
-          <button
-            type="button"
-            onClick={() => navigate('/prompts')}
-            className="app-nav-link app-nav-link-active"
-          >
-            {t('nav.myPrompts')}
-          </button>
+          {navItems.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => handleNavigate(item.href, item.requiresAuth)}
+              className={`app-nav-link ${item.active ? 'app-nav-link-active' : ''}`}
+            >
+              {item.label}
+            </button>
+          ))}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -76,7 +123,7 @@ export function Navbar() {
                 <div className="border-t border-[rgba(122,102,82,0.1)] py-2">
                   <button
                     type="button"
-                    onClick={() => navigate('/prompts')}
+                    onClick={() => handleNavigate('/prompts', true)}
                     className="nav-dropdown-item"
                   >
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,6 +144,14 @@ export function Navbar() {
                 </div>
               </div>
             </div>
+          ) : showAuthAction ? (
+            <button
+              type="button"
+              onClick={handleLogin}
+              className="nav-primary-cta inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white"
+            >
+              {t('login.signIn')}
+            </button>
           ) : null}
         </div>
       </div>

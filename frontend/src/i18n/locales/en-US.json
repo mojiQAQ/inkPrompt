@@ -43,6 +43,7 @@
   "nav": {
     "logoTitle": "Back to prompt list",
     "myPrompts": "My prompts",
+    "square": "Square",
     "logout": "Log out",
     "avatarInitial": "First letter of {{email}}"
   },
@@ -218,7 +219,37 @@
     "tagNamePlaceholder": "Enter a tag name",
     "copy": "Copy full prompt",
     "copied": "Full prompt copied",
+    "squareSourceBadge": "Square source",
+    "squareSourceDescription": "This private prompt was copied from the square entry \"{{title}}\". You can keep editing, favorite it, and save your own versions here.",
+    "squareSourceTesting": "You are testing the private copy created from the square entry \"{{title}}\". Test results only affect your own library.",
+    "viewSquareSource": "View source entry",
+    "publishToSquare": "Publish to square",
+    "publishingToSquare": "Publishing...",
+    "publishedToSquare": "Published to square",
+    "publishFailed": "Failed to publish to square",
     "copyFailed": "Copy failed",
+    "publishDialog": {
+      "title": "Confirm square publish",
+      "description": "Review the public-facing metadata before publishing. The title, summary, category, and difficulty shape how others discover and understand this prompt.",
+      "confirm": "Publish now",
+      "titleRequired": "Please enter a publish title.",
+      "summaryRequired": "Please enter a publish summary.",
+      "categoryRequired": "Please choose a category.",
+      "fields": {
+        "title": "Display title",
+        "summary": "Display summary",
+        "category": "Square category",
+        "difficulty": "Difficulty",
+        "recommendedModels": "Recommended models",
+        "allowFullPreview": "Expose the full prompt body"
+      },
+      "placeholders": {
+        "title": "For example: Brand content strategy assistant",
+        "summary": "Explain what problem this prompt solves and when someone should use it.",
+        "recommendedModels": "For example: gpt-5.4, claude-sonnet-4"
+      },
+      "allowFullPreviewHint": "When disabled, the square detail page only shows a summary and preview snippet instead of the full prompt."
+    },
     "emptyVersions": "No version history yet",
     "compare": "Compare",
     "restore": "Restore",
@@ -322,6 +353,98 @@
         "title": "Keyboard shortcuts",
         "description": "Use Ctrl+K or Cmd+K to jump straight to the search box and move faster."
       }
+    }
+  },
+  "square": {
+    "kicker": "Prompt Square",
+    "title": "Discover prompts the community is actually using",
+    "subtitle": "Start from real examples, then copy them into your workspace to test, refine, and iterate.",
+    "searchPlaceholder": "Search titles, summaries, or prompt content...",
+    "heroPanelTitle": "Turn discovery into workflow instantly",
+    "heroPanelBody": "This is not just a gallery. You can copy any public prompt into your library and continue refining it with the optimization and testing tools you already use.",
+    "heroStats": {
+      "discover": "Popular tags",
+      "convert": "Current results"
+    },
+    "popularTags": "Popular tags",
+    "popularTagsHint": "Start with common use cases to find prompts you can reuse right away.",
+    "preview": "Preview",
+    "author": "Author",
+    "recommendedModels": "Recommended models",
+    "howToUse": "How to use this prompt",
+    "howToUseBody": "Copy it into your own workspace first, validate it with the testing panel, then adapt and version it for your real scenario.",
+    "detailNoteTitle": "About this view",
+    "detailNoteBody": "Some authors do not publish the full text. We prioritize summaries and partial previews so prompts remain discoverable while creators keep control over what is public.",
+    "publishedAt": "Published {{date}}",
+    "updatedAt": "Updated {{date}}",
+    "actions": {
+      "search": "Search",
+      "clearTag": "Clear tag",
+      "resetFilters": "Reset filters",
+      "copy": "Copy to my library",
+      "quickCopy": "Quick copy",
+      "testNow": "Test now",
+      "like": "Like",
+      "liked": "Liked",
+      "favorite": "Favorite",
+      "favorited": "Favorited",
+      "backToSquare": "Back to square"
+    },
+    "confirm": {
+      "copyTitle": "Copy this prompt into my library?",
+      "copyMessage": "This will create or reuse a private copy in your library. Any edits you make later will not affect the original square entry.",
+      "testTitle": "Copy this prompt and open testing?",
+      "testMessage": "We will first save this square prompt as your private copy, then jump straight into the testing panel."
+    },
+    "filters": {
+      "allCategories": "All categories",
+      "allDifficulty": "All difficulty levels",
+      "summary": "Current category: {{category}}"
+    },
+    "category": {
+      "general": "General",
+      "writing": "Writing",
+      "coding": "Coding",
+      "analysis": "Analysis",
+      "marketing": "Marketing",
+      "education": "Education"
+    },
+    "sort": {
+      "hot": "Hot",
+      "newest": "Newest",
+      "copies": "Most copied"
+    },
+    "difficulty": {
+      "simple": "Simple",
+      "medium": "Medium",
+      "advanced": "Advanced"
+    },
+    "stats": {
+      "views": "Views",
+      "likes": "Likes",
+      "favorites": "Favorites",
+      "copies": "Copies"
+    },
+    "messages": {
+      "loadFailed": "Failed to load the prompt square",
+      "copied": "Copied to your prompt library",
+      "alreadySaved": "This prompt is already in your library. Opened the existing copy instead.",
+      "testReady": "Copied and opened in the testing workflow",
+      "testOpenedExisting": "Opened the existing copy in your library and entered testing.",
+      "quickCopied": "Copied the visible content",
+      "quickCopyFailed": "Failed to copy the visible content",
+      "copyFailed": "Failed to copy into your library",
+      "partialPreview": "The author did not expose the full prompt. This preview is meant to help you judge the structure and use case.",
+      "loginHint": "Sign in to like, favorite, and copy this prompt into your personal workspace."
+    },
+    "steps": {
+      "copy": "Copy it into your personal prompt library",
+      "test": "Run a real input through the testing panel",
+      "iterate": "Refine the result and save new versions"
+    },
+    "empty": {
+      "title": "No public prompts match the current filters yet",
+      "description": "Try clearing filters, or start again from the popular tags."
     }
   },
   "landing": {

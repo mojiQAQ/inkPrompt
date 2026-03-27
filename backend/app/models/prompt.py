@@ -19,6 +19,8 @@ class Prompt(Base):
     content = Column(Text, nullable=False)
     token_count = Column(Integer, default=0, nullable=False)
     is_favorited = Column(Boolean, default=False, nullable=False)
+    source_square_entry_id = Column(String(36), nullable=True, index=True)
+    source_square_title = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
