@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useAuth } from '@/hooks/useAuth'
+import { useI18n } from '@/hooks/useI18n'
 import { Folder } from '@/types/folder'
 import { fetchFolders, addPromptToFolder } from '@/api/folders'
 
@@ -23,6 +24,7 @@ export function AddToFolderDialog({
   onAdded,
 }: AddToFolderDialogProps) {
   const { getAccessToken } = useAuth()
+  const { t } = useI18n()
   const [folders, setFolders] = useState<Folder[]>([])
   const [loading, setLoading] = useState(true)
   const [adding, setAdding] = useState(false)
@@ -56,11 +58,11 @@ export function AddToFolderDialog({
       if (!token) return
 
       await addPromptToFolder(token, folderId, promptId)
-      toast.success('已添加到文件夹')
+      toast.success(t('dialog.addToFolderAdded'))
       onAdded?.()
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : '添加失败')
+      toast.error(err instanceof Error ? err.message : t('dialog.addToFolderFailed'))
     } finally {
       setAdding(false)
     }
@@ -77,7 +79,7 @@ export function AddToFolderDialog({
       <div className="relative bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-ink-100">
-          <h3 className="text-base font-semibold text-ink-900">添加到文件夹</h3>
+          <h3 className="text-base font-semibold text-ink-900">{t('dialog.addToFolderTitle')}</h3>
           <button
             onClick={onClose}
             className="p-1 text-ink-400 hover:text-ink-600 rounded transition-colors"
@@ -91,14 +93,14 @@ export function AddToFolderDialog({
         {/* Content */}
         <div className="px-5 py-3">
           <p className="text-sm text-ink-500 mb-3">
-            将「{promptName}」添加到：
+            {t('dialog.addToFolderTarget', { name: promptName })}
           </p>
 
           {loading ? (
-            <div className="py-4 text-sm text-ink-400 text-center">加载中...</div>
+            <div className="py-4 text-sm text-ink-400 text-center">{t('common.action.loading')}</div>
           ) : folders.length === 0 ? (
             <div className="py-4 text-sm text-ink-400 text-center">
-              暂无自定义文件夹，请先创建文件夹
+              {t('dialog.addToFolderEmpty')}
             </div>
           ) : (
             <div className="space-y-1 max-h-60 overflow-y-auto">
@@ -128,7 +130,7 @@ export function AddToFolderDialog({
         {/* Footer */}
         <div className="px-5 py-3 border-t border-ink-100 flex justify-end">
           <button onClick={onClose} className="btn btn-secondary text-sm">
-            取消
+            {t('common.action.cancel')}
           </button>
         </div>
       </div>

@@ -4,6 +4,8 @@ from typing import Optional
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 
+from app.core.config import normalize_openai_base_url
+
 # Load environment variables
 load_dotenv()
 
@@ -14,7 +16,9 @@ class LangChainConfig:
     def __init__(self):
         """Initialize LangChain configuration."""
         self.api_key = os.getenv("OPENAI_API_KEY")
-        self.api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
+        self.api_base = normalize_openai_base_url(
+            os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
+        )
         self.default_model = os.getenv("DEFAULT_MODEL", "gpt-3.5-turbo")
         self.default_temperature = float(os.getenv("DEFAULT_TEMPERATURE", "0.7"))
         self.max_tokens = int(os.getenv("MAX_TOKENS_PER_REQUEST", "4000"))

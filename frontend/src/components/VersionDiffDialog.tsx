@@ -2,6 +2,7 @@
  * Side-by-side version diff dialog.
  */
 import { useEffect, useMemo } from 'react'
+import { useI18n } from '@/hooks/useI18n'
 import { PromptVersion } from '@/types/prompt'
 
 interface VersionDiffDialogProps {
@@ -74,6 +75,8 @@ export function VersionDiffDialog({
   compareVersion,
   onClose,
 }: VersionDiffDialogProps) {
+  const { t } = useI18n()
+
   useEffect(() => {
     if (!isOpen) return
 
@@ -102,7 +105,7 @@ export function VersionDiffDialog({
       <button
         type="button"
         className="absolute inset-0 bg-ink-900/55 backdrop-blur-[2px]"
-        aria-label="关闭版本对比"
+        aria-label={t('versionDiffDialog.close')}
         onClick={onClose}
       />
 
@@ -110,7 +113,7 @@ export function VersionDiffDialog({
         <div className="dialog-header">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-semibold text-ink-900">版本对比</h2>
+              <h2 className="text-2xl font-semibold text-ink-900">{t('versionDiffDialog.title')}</h2>
             </div>
 
             <button

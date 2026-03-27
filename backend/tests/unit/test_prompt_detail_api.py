@@ -82,6 +82,37 @@ class TestOptimizationSessionAPI:
         assert persisted_prompt is not None
         assert persisted_prompt.content == "优化后的提示词内容"
 
+    @patch("app.services.optimization_service.create_chat_model")
+    def test_optimize_stream_emits_error_event_when_model_call_fails(
+        self,
+        mock_create_model,
+        client,
+        test_prompt: Prompt,
+        test_version: PromptVersion,
+    ):
+        mock_llm = MagicMock()
+        mock_llm.stream.side_effect = Exception("404 page not found")
+        mock_llm.invoke.side_effect = Exception("404 page not found")
+        mock_create_model.return_value = mock_llm
+
+        response = client.post(
+            f"/api/prompts/{test_prompt.id}/{test_version.id}/optimize/stream",
+            json={
+                "user_idea": "让提示词更聚焦",
+                "selected_suggestions": {},
+            },
+        )
+
+        assert response.status_code == 200
+        body = response.text
+        assert "event: round_start" in body
+        assert "event: error" in body
+        assert "404 page not found" in body
+
+        session_response = client.get(f"/api/prompts/{test_prompt.id}/optimization/session")
+        session_data = session_response.json()
+        assert session_data["rounds"] == []
+
 
 @pytest.mark.unit
 class TestTestSessionAPI:

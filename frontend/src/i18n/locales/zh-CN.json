@@ -1,0 +1,587 @@
+{
+  "common": {
+    "appName": "Ink & Prompt",
+    "appTagline": "让提示词，更像写作",
+    "appFooterTagline": "让提示词写作，像水墨晕染般自然流畅",
+    "tokens": "tokens",
+    "untitledPrompt": "未命名提示词",
+    "language": {
+      "label": "语言",
+      "zh-CN": "简体中文",
+      "en-US": "English"
+    },
+    "label": {
+      "prompt": "提示词",
+      "library": "资料库",
+      "custom": "自定义",
+      "workflow": "工作流"
+    },
+    "action": {
+      "save": "保存",
+      "cancel": "取消",
+      "close": "关闭",
+      "create": "创建",
+      "delete": "删除",
+      "edit": "编辑",
+      "retry": "重试",
+      "clear": "清除",
+      "clearAll": "清除全部",
+      "confirm": "确认",
+      "finish": "完成",
+      "loading": "加载中..."
+    },
+    "status": {
+      "processing": "处理中",
+      "saving": "保存中",
+      "saved": "已保存",
+      "saveFailed": "保存失败",
+      "unsaved": "未保存",
+      "previewing": "预览中",
+      "tagSaving": "标签保存中"
+    }
+  },
+  "nav": {
+    "logoTitle": "返回提示词列表",
+    "myPrompts": "我的提示词",
+    "logout": "退出登录",
+    "avatarInitial": "{{email}} 的首字母"
+  },
+  "login": {
+    "welcome": "欢迎回来",
+    "createAccount": "创建账户",
+    "email": "邮箱",
+    "password": "密码",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "至少6个字符",
+    "processing": "处理中...",
+    "signIn": "登录",
+    "signUp": "注册",
+    "hasAccount": "已有账户？去登录",
+    "noAccount": "没有账户？去注册",
+    "divider": "或",
+    "google": "使用 Google 登录",
+    "backHome": "返回首页",
+    "terms": "登录即表示您同意我们的服务条款和隐私政策",
+    "error": {
+      "loginFailed": "登录失败，请重试",
+      "signupFailed": "注册失败，请重试",
+      "emailPasswordRequired": "请输入邮箱和密码",
+      "passwordMinLength": "密码至少需要6个字符"
+    },
+    "success": {
+      "signup": "注册成功！请检查邮箱以验证账户。"
+    }
+  },
+  "auth": {
+    "callbackLoading": "正在完成登录...",
+    "callbackIncomplete": "登录回调未完成，请重试。",
+    "loading": "加载中..."
+  },
+  "promptList": {
+    "allPrompts": "全部提示词",
+    "favoritePrompts": "收藏提示词",
+    "myPrompts": "我的提示词",
+    "count": "共 {{count}} 个提示词",
+    "newPrompt": "新建提示词",
+    "searchAndSort": "搜索和排序",
+    "filtering": "正在筛选",
+    "tagsCount": "· {{count}} 个标签",
+    "logicAnd": "（同时包含）",
+    "logicOr": "（包含任一）",
+    "clearFilters": "清除所有筛选",
+    "foundResults": "找到 {{count}} 个匹配的提示词",
+    "emptySearchTitle": "未找到匹配的提示词",
+    "emptySearchDescription": "尝试使用其他关键词搜索",
+    "emptyDefaultTitle": "还没有提示词",
+    "emptyDefaultDescription": "开始创建你的第一个提示词吧",
+    "createPrompt": "创建提示词",
+    "previousPage": "上一页",
+    "nextPage": "下一页",
+    "pageInfo": "第 {{page}} / {{totalPages}} 页",
+    "deleteTitle": "确认删除",
+    "deleteMessage": "确定要删除提示词“{{name}}”吗？此操作无法撤销。",
+    "deleted": "提示词已删除",
+    "loadFailed": "加载失败",
+    "deleteFailed": "删除失败",
+    "notLoggedIn": "未登录"
+  },
+  "folderSidebar": {
+    "title": "文件夹",
+    "newFolder": "新建文件夹",
+    "loading": "加载中...",
+    "placeholder": "文件夹名称",
+    "rename": "重命名",
+    "delete": "删除",
+    "created": "文件夹已创建",
+    "renamed": "文件夹已重命名",
+    "deleted": "文件夹已删除",
+    "createFailed": "创建失败",
+    "renameFailed": "重命名失败",
+    "deleteFailed": "删除失败"
+  },
+  "advancedSearch": {
+    "placeholder": "搜索提示词名称或内容...",
+    "history": "搜索历史",
+    "deleteHistory": "删除",
+    "sortLabel": "排序:",
+    "sortAsc": "升序",
+    "sortDesc": "降序",
+    "sortOptions": {
+      "updated_at": "更新时间",
+      "created_at": "创建时间",
+      "name": "名称",
+      "token_count": "Token 数"
+    }
+  },
+  "tagFilter": {
+    "loading": "加载标签...",
+    "title": "标签筛选",
+    "logicOr": "或",
+    "logicAnd": "且",
+    "clear": "清除",
+    "viewAll": "查看所有 {{count}} 个标签",
+    "selectTags": "选择标签",
+    "selectedCount": "已选择 {{count}} 个标签",
+    "complete": "完成",
+    "summaryAnd": "（同时包含）",
+    "summaryOr": "（包含任一）"
+  },
+  "promptCard": {
+    "historyCount": "{{count}} 个历史版本",
+    "favorite": "收藏",
+    "unfavorite": "取消收藏",
+    "addToFolder": "添加到文件夹",
+    "copy": "复制完整提示词",
+    "edit": "编辑",
+    "delete": "删除",
+    "favorited": "已收藏",
+    "unfavorited": "已取消收藏",
+    "copied": "已复制完整提示词",
+    "copyFailed": "复制失败",
+    "actionFailed": "操作失败",
+    "updatedAt": "更新于 {{date}}"
+  },
+  "dialog": {
+    "addToFolderTitle": "添加到文件夹",
+    "addToFolderTarget": "将“{{name}}”添加到：",
+    "addToFolderEmpty": "暂无自定义文件夹，请先创建文件夹",
+    "addToFolderAdded": "已添加到文件夹",
+    "addToFolderFailed": "添加失败"
+  },
+  "error": {
+    "retry": "重试"
+  },
+  "promptEditor": {
+    "notLoggedIn": "未登录",
+    "loadFailed": "加载失败",
+    "createFailed": "创建失败",
+    "saveFailed": "保存失败",
+    "restoreFailed": "恢复版本失败",
+    "optimizeFailed": "优化失败",
+    "testFailed": "测试失败",
+    "loadTestFailed": "加载测试数据失败",
+    "updateTagsFailed": "标签更新失败",
+    "nameRequired": "请输入提示词名称",
+    "contentRequired": "请输入提示词内容",
+    "created": "提示词已创建",
+    "saveWithVersion": "已保存，并生成最新版本",
+    "saved": "已保存",
+    "switchVersionBlocked": "流式处理中，暂时不能切换版本",
+    "restoreVersionBlocked": "流式处理中，暂时不能回滚版本",
+    "restoreVersionConfirm": "确定要恢复到版本 {{version}} 吗？这会创建一个新版本。",
+    "restored": "已恢复到版本 {{version}}",
+    "optimized": "优化完成，已生成新版本",
+    "maxModels": "最多只能添加 {{count}} 个模型",
+    "duplicateModel": "这个模型已经添加过了",
+    "removeModelBlocked": "测试进行中，暂时不能移除模型",
+    "testCompleted": "测试完成",
+    "loading": "加载中...",
+    "createTitle": "新建提示词",
+    "createDescription": "输入名称、内容和标签后创建新提示词。",
+    "nameLabel": "提示词名称",
+    "namePlaceholder": "例如：代码审查助手",
+    "contentLabel": "提示词内容",
+    "contentPlaceholder": "输入提示词内容...",
+    "tagsLabel": "标签",
+    "tagsPlaceholder": "输入标签并回车添加",
+    "creating": "创建中...",
+    "createButton": "创建提示词",
+    "optimize": "提示词优化",
+    "test": "提示词测试",
+    "saving": "保存中...",
+    "enterEdit": "进入编辑",
+    "removeTag": "删除标签 {{tag}}",
+    "expandTags": "展开剩余 {{count}} 个标签",
+    "collapseTags": "收起标签",
+    "collapse": "收起",
+    "addTag": "添加标签",
+    "tagNamePlaceholder": "输入标签名",
+    "copy": "复制完整提示词",
+    "copied": "已复制完整提示词",
+    "copyFailed": "复制失败",
+    "emptyVersions": "暂无历史版本",
+    "compare": "对比",
+    "restore": "恢复",
+    "versionButton": "版本",
+    "viewVersion": "v{{version}}",
+    "editSaveNote": "基于 v{{version}} 编辑保存",
+    "versionTokenCount": "{{count}} Tokens"
+  },
+  "tagInput": {
+    "defaultPlaceholder": "输入标签后按回车添加",
+    "usedCount": "{{count}} 次使用",
+    "addTag": "添加标签"
+  },
+  "optimizePanel": {
+    "title": "提示词优化",
+    "idea": "优化想法",
+    "reset": "重置",
+    "ideaPlaceholder": "例如：加强角色定位，补充输出格式，并增加异常场景处理。",
+    "suggestions": "可选建议",
+    "selectedItems": "{{count}} 项",
+    "start": "开始优化",
+    "running": "优化中...",
+    "history": "优化历史",
+    "roundCount": "{{count}} 轮",
+    "empty": "还没有优化记录",
+    "round": "第 {{count}} 轮",
+    "version": "版本 {{id}}",
+    "suggestionCount": "{{count}} 条建议"
+  },
+  "testPanel": {
+    "title": "提示词测试",
+    "userInput": "用户输入",
+    "clear": "清空",
+    "inputPlaceholder": "请输入这轮想测试的用户问题或补充说明...",
+    "custom": "自定义",
+    "collapseOutput": "收起输出",
+    "expandOutput": "展开输出",
+    "removeModel": "移除模型",
+    "modelOutput": "模型输出",
+    "presetModels": "配置模型",
+    "customModel": "自定义模型",
+    "noPresetModels": "当前没有可添加的系统预设模型了",
+    "addPresetModel": "添加预设模型",
+    "customNamePlaceholder": "展示名称，例如：我的 GPT-4.1",
+    "customModelPlaceholder": "模型 ID，例如：gpt-4.1",
+    "customBaseUrlPlaceholder": "Base URL，例如：https://api.openai.com/v1",
+    "customApiKeyPlaceholder": "API Key",
+    "customModelRequired": "请填写模型名称、Base URL 和 API Key",
+    "addCustomModel": "添加自定义模型",
+    "addModel": "添加一个模型",
+    "maxModelsReached": "已达到模型数量上限",
+    "selectedModels": "已添加 {{count}} 个模型",
+    "selectedModelsWithLimit": "已添加 {{count}} 个模型 / {{max}}",
+    "start": "开始测试",
+    "running": "测试中...",
+    "status": {
+      "idle": "待测试",
+      "streaming": "测试中",
+      "done": "已完成",
+      "error": "失败"
+    },
+    "placeholder": {
+      "idle": "等待开始测试...",
+      "streaming": "正在生成输出...",
+      "error": "测试失败，请稍后重试。",
+      "done": "等待模型输出..."
+    }
+  },
+  "versionDetailDialog": {
+    "title": "版本 {{version}}",
+    "changeNote": "变更说明:",
+    "restore": "恢复此版本"
+  },
+  "versionDiffDialog": {
+    "close": "关闭版本对比",
+    "title": "版本对比"
+  },
+  "featureTour": {
+    "title": "欢迎使用 InkPrompt",
+    "subtitle": "让我们快速了解主要功能",
+    "skip": "跳过引导",
+    "previous": "上一步",
+    "next": "下一步",
+    "start": "开始使用",
+    "jumpToStep": "跳转到步骤 {{step}}",
+    "footer": "提示：你可以随时在设置中重新查看此引导",
+    "steps": {
+      "create": {
+        "title": "创建和管理提示词",
+        "description": "点击“新建提示词”按钮创建你的第一个提示词模板，支持添加标签进行分类管理。"
+      },
+      "history": {
+        "title": "版本历史追踪",
+        "description": "每次修改提示词都会自动创建新版本，支持查看历史记录和回滚到任意版本。"
+      },
+      "search": {
+        "title": "高级搜索和筛选",
+        "description": "使用关键词搜索提示词内容，通过标签筛选，支持多种排序方式。搜索历史会自动保存。"
+      },
+      "shortcuts": {
+        "title": "快捷键支持",
+        "description": "使用 Ctrl+K（或 Cmd+K）快速聚焦到搜索框，提升操作效率。"
+      }
+    }
+  },
+  "landing": {
+    "meta": {
+      "title": "Ink & Prompt - 让提示词管理、优化与测试像写作一样顺手",
+      "description": "Ink & Prompt 为提示词创作者提供管理、版本控制、智能优化与多模型测试的一体化工作台。"
+    },
+    "nav": {
+      "ariaLabel": "落地页主导航",
+      "logoTitle": "返回落地页首页",
+      "brandSubtitle": "提示词创作工作台",
+      "prompts": "提示词管理",
+      "docs": "文档",
+      "login": "登录 / 注册",
+      "workspace": "进入工作台",
+      "openMenu": "打开导航菜单",
+      "closeMenu": "关闭导航菜单"
+    },
+    "hero": {
+      "kicker": "为 AI 提示词创作者打造的全流程工作台",
+      "title": "让提示词管理、优化与测试，像写作一样顺手。",
+      "subtitle": "从灵感记录、版本演进到多模型验证，Ink & Prompt 用一套连贯的工作流，把零散的提示词实验整理成真正可复用的资产。",
+      "primary": "立即免费开始",
+      "primaryLoggedIn": "进入提示词工作台",
+      "secondary": "查看功能演示",
+      "pills": [
+        "强大的提示词管理",
+        "灵活的版本回滚",
+        "智能优化建议",
+        "多模型实时对比"
+      ],
+      "stats": [
+        {
+          "value": "60 秒",
+          "label": "完成首次上手"
+        },
+        {
+          "value": "4 个核心流程",
+          "label": "覆盖创作到验证全链路"
+        },
+        {
+          "value": "持续沉淀",
+          "label": "把零散实验变成资产"
+        }
+      ],
+      "preview": {
+        "label": "Live Workspace",
+        "title": "一块像编辑台一样顺手的提示词工作区",
+        "badge": "Preview",
+        "promptTitle": "品牌内容策略助手",
+        "promptMeta": "最近更新于今天 · 已连接版本历史",
+        "version": "v12",
+        "promptBody": "你是一名资深内容策略顾问，请结合品牌调性、渠道差异与用户意图，输出一份可直接执行的内容框架，并补充每一段的语气建议。",
+        "tags": [
+          "内容策略",
+          "品牌语气",
+          "小红书",
+          "长文输出"
+        ],
+        "optimizeTitle": "优化建议",
+        "optimizeItems": [
+          "补充输出格式，减少返工",
+          "强化目标受众与渠道限制",
+          "自动将优化结果保存为新版本"
+        ],
+        "testTitle": "模型对比",
+        "models": [
+          {
+            "name": "GPT-4.1",
+            "score": "92%"
+          },
+          {
+            "name": "Claude 3.7",
+            "score": "86%"
+          },
+          {
+            "name": "Gemini 2.0",
+            "score": "78%"
+          }
+        ]
+      }
+    },
+    "features": {
+      "kicker": "核心功能",
+      "title": "让灵感不再散落在聊天窗口里",
+      "subtitle": "从保存、回溯到优化与验证，每一步都围绕“把提示词变成可持续迭代的作品”来设计。",
+      "explore": "打开功能",
+      "items": [
+        {
+          "id": "management",
+          "title": "文件管理",
+          "description": "像整理文稿一样整理提示词，按文件夹、标签与搜索历史快速归档和复用。",
+          "badge": "Manage",
+          "target": "/prompts",
+          "items": [
+            "标签分类与文件夹整理",
+            "全文检索与筛选排序",
+            "常用提示词快速回到手边"
+          ]
+        },
+        {
+          "id": "versioning",
+          "title": "版本控制",
+          "description": "每一次微调都被记录下来，支持查看差异、备注变化，并安全回滚到任意版本。",
+          "badge": "Version",
+          "target": "/prompts",
+          "items": [
+            "自动生成历史版本",
+            "版本差异对比更直观",
+            "回滚恢复不怕试错"
+          ]
+        },
+        {
+          "id": "optimization",
+          "title": "智能优化",
+          "description": "围绕结构、风格、清晰度和边界条件给出 AI 建议，帮助你更快逼近理想提示词。",
+          "badge": "Optimize",
+          "target": "/prompts/new",
+          "items": [
+            "多维度优化建议",
+            "支持输入你的优化目标",
+            "优化结果直接沉淀成新版本"
+          ]
+        },
+        {
+          "id": "testing",
+          "title": "多模型测试",
+          "description": "同一条提示词，一次并发跑多个模型，实时对比输出质量、风格与成本表现。",
+          "badge": "Test",
+          "target": "/prompts/new",
+          "items": [
+            "多模型并发流式输出",
+            "快速比较不同模型差异",
+            "测试记录自动保存可回溯"
+          ]
+        }
+      ]
+    },
+    "steps": {
+      "kicker": "使用流程",
+      "title": "三步把提示词从灵感做成工作流",
+      "subtitle": "不需要先学一套复杂系统，先写、再改、再比对，流程足够自然，结果也足够专业。",
+      "items": [
+        {
+          "step": "1",
+          "title": "注册并创建第一个提示词",
+          "description": "登录后立即进入工作台，把你常用的提示词先保存下来，后续所有优化和测试都围绕它展开。",
+          "items": [
+            "支持 Google 账号快速登录",
+            "创建后即可加入标签与文件夹",
+            "适合从零开始搭建个人 Prompt 库"
+          ]
+        },
+        {
+          "step": "2",
+          "title": "用优化助手提升提示词质量",
+          "description": "给出你的目标或痛点，系统会从结构、语气、输出约束等角度帮你提出可执行修改建议。",
+          "items": [
+            "快速发现提示词中的模糊区",
+            "保留原稿的同时生成新版本",
+            "适合内容、产品与开发类场景"
+          ]
+        },
+        {
+          "step": "3",
+          "title": "并行测试多个模型并做选择",
+          "description": "让不同模型同时输出结果，观察表现、语感与稳定性，再决定最终要交付哪一版。",
+          "items": [
+            "并发输出更节省试验时间",
+            "同屏查看差异与优先级",
+            "把测试过程沉淀为可复盘记录"
+          ]
+        }
+      ]
+    },
+    "testimonials": {
+      "kicker": "真实反馈",
+      "title": "被创作者、产品经理和开发者拿来当日常工作台",
+      "subtitle": "我们把提示词从“聊完就散”的临时产物，变成“能迭代、能复盘、能协作”的长期资产。",
+      "cardLabel": "用户反馈",
+      "items": [
+        {
+          "quote": "以前我的提示词分散在文档、聊天记录和便签里，现在终于能统一整理、对比和回滚了。",
+          "name": "林栖",
+          "role": "AI 内容设计师"
+        },
+        {
+          "quote": "多模型测试特别实用，同一个任务一次跑完，马上就知道哪个模型更适合当前场景。",
+          "name": "周泊",
+          "role": "独立开发者"
+        },
+        {
+          "quote": "优化助手不像只会改措辞，它会提醒我补目标、补格式、补边界条件，效率高很多。",
+          "name": "Yvonne",
+          "role": "产品策略顾问"
+        },
+        {
+          "quote": "最喜欢版本控制，终于能大胆实验，不用担心把原来那版写废。",
+          "name": "陈屿",
+          "role": "全栈工程师"
+        }
+      ]
+    },
+    "footer": {
+      "brandKicker": "让提示词写作，像水墨晕染般自然流畅",
+      "description": "Ink & Prompt 让提示词创作从零散试验变成可持续迭代的工作流，适合创作者、开发者和所有认真打磨 AI 输出的人。",
+      "groups": [
+        {
+          "title": "产品",
+          "links": [
+            {
+              "label": "功能介绍",
+              "href": "#features"
+            },
+            {
+              "label": "使用流程",
+              "href": "#workflow"
+            },
+            {
+              "label": "提示词管理",
+              "href": "/prompts"
+            }
+          ]
+        },
+        {
+          "title": "资源",
+          "links": [
+            {
+              "label": "文档",
+              "href": "/docs"
+            },
+            {
+              "label": "登录 / 注册",
+              "href": "/login"
+            },
+            {
+              "label": "查看产品",
+              "href": "/"
+            }
+          ]
+        },
+        {
+          "title": "更多",
+          "links": [
+            {
+              "label": "版本测试能力",
+              "href": "#features"
+            },
+            {
+              "label": "使用反馈",
+              "href": "#workflow"
+            },
+            {
+              "label": "打开文档",
+              "href": "/docs"
+            }
+          ]
+        }
+      ],
+      "copyright": "© 2026 Ink & Prompt. All rights reserved."
+    }
+  }
+}

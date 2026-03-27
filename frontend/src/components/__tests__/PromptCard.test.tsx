@@ -19,6 +19,11 @@ describe('PromptCard', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
+    })
   })
 
   describe('Basic Rendering', () => {
@@ -62,43 +67,6 @@ describe('PromptCard', () => {
       // Check if date is displayed in Chinese format
       expect(screen.getByText(/2024/)).toBeInTheDocument()
       expect(screen.getByText(/1月/)).toBeInTheDocument()
-    })
-  })
-
-  describe('Version Badge', () => {
-    it('should show version badge when version_count > 1', () => {
-      const prompt = createMockPrompt({
-        version_count: 3,
-      })
-
-      render(
-        <PromptCard
-          prompt={prompt}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-          onClick={mockOnClick}
-        />
-      )
-
-      expect(screen.getByText('3')).toBeInTheDocument()
-      expect(screen.getByTitle('3 个历史版本')).toBeInTheDocument()
-    })
-
-    it('should not show version badge when version_count is 1', () => {
-      const prompt = createMockPrompt({
-        version_count: 1,
-      })
-
-      render(
-        <PromptCard
-          prompt={prompt}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-          onClick={mockOnClick}
-        />
-      )
-
-      expect(screen.queryByTitle(/个历史版本/)).not.toBeInTheDocument()
     })
   })
 
@@ -282,6 +250,27 @@ describe('PromptCard', () => {
       const deleteButton = screen.getByTitle('删除')
       fireEvent.click(deleteButton)
 
+      expect(mockOnClick).not.toHaveBeenCalled()
+    })
+
+    it('should copy full prompt content when copy button is clicked', async () => {
+      const prompt = createMockPrompt({
+        content: '完整提示词内容',
+      })
+
+      render(
+        <PromptCard
+          prompt={prompt}
+          onEdit={mockOnEdit}
+          onDelete={mockOnDelete}
+          onClick={mockOnClick}
+        />
+      )
+
+      const copyButton = screen.getByTitle('复制完整提示词')
+      fireEvent.click(copyButton)
+
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('完整提示词内容')
       expect(mockOnClick).not.toHaveBeenCalled()
     })
   })

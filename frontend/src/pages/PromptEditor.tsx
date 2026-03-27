@@ -27,6 +27,7 @@ import { OptimizePanel } from '@/components/OptimizePanel'
 import { VersionDetailDialog } from '@/components/VersionDetailDialog'
 import { VersionDiffDialog } from '@/components/VersionDiffDialog'
 import { useAuth } from '@/hooks/useAuth'
+import { useI18n } from '@/hooks/useI18n'
 import type {
   ChatMessage,
   CreatePromptData,
@@ -57,16 +58,8 @@ function normalizeTags(tags: string[]) {
   return tags.map((tag) => tag.trim()).filter(Boolean)
 }
 
-function formatShortDate(value: string) {
-  return new Date(value).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
-}
-
-function formatFullDate(value: string) {
-  return new Date(value).toLocaleString('zh-CN', {
+function formatFullDate(value: string, locale: string) {
+  return new Date(value).toLocaleString(locale, {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -170,6 +163,7 @@ export function PromptDetail() {
   const location = useLocation()
   const navigate = useNavigate()
   const { getAccessToken } = useAuth()
+  const { t, language } = useI18n()
 
   const isCreateMode = !id
   const initialMode: PageMode = isCreateMode || location.pathname.endsWith('/edit') ? 'edit' : 'view'
@@ -272,7 +266,7 @@ export function PromptDetail() {
 
   const loadVersions = useCallback(async (promptId: string, preferredVersionId?: string | null) => {
     const token = await getAccessToken()
-    if (!token) throw new Error('未登录')
+    if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
     const response = await getPromptVersions(token, promptId)
     const list = response.versions
@@ -292,7 +286,7 @@ export function PromptDetail() {
 
   const loadOptimizationRounds = useCallback(async (promptId: string) => {
     const token = await getAccessToken()
-    if (!token) throw new Error('未登录')
+    if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
     const session = await getOptimizationSession(token, promptId)
     const rounds = [...session.rounds]
@@ -302,20 +296,20 @@ export function PromptDetail() {
     setOptimizeSuggestions(rounds[0]?.suggestions ?? [])
     setSelectedOptimizeSuggestions(rounds[0]?.selectedSuggestions ?? {})
     return rounds
-  }, [getAccessToken])
+  }, [getAccessToken, t])
 
   const loadTestConversation = useCallback(async (versionId: string) => {
     const token = await getAccessToken()
-    if (!token) throw new Error('未登录')
+    if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
     const session = await getTestSession(token, versionId)
     setTestOutputs(session.conversations.map(mapConversationToOutput))
     return session.conversations
-  }, [getAccessToken])
+  }, [getAccessToken, t])
 
   const loadAvailableModelOptions = useCallback(async () => {
     const token = await getAccessToken()
-    if (!token) throw new Error('未登录')
+    if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
     const response = await getAvailableModels(token)
     const options: TestModelOption[] = response.items.map((item) => ({
@@ -345,7 +339,7 @@ export function PromptDetail() {
         .slice(0, Math.min(1, response.max_concurrent_test_models))
         .map(mapOptionToTestPanelModel)
     })
-  }, [getAccessToken])
+  }, [getAccessToken, t])
 
   const loadPrompt = useCallback(async (promptId: string, preferredVersionId?: string | null) => {
     setLoading(true)
@@ -353,7 +347,7 @@ export function PromptDetail() {
 
     try {
       const token = await getAccessToken()
-      if (!token) throw new Error('未登录')
+      if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
       const value = await fetchPrompt(token, promptId)
       applyPromptToState(value)
@@ -367,11 +361,11 @@ export function PromptDetail() {
         await loadTestConversation(versionId)
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '加载失败')
+      setError(err instanceof Error ? err.message : t('promptEditor.loadFailed'))
     } finally {
       setLoading(false)
     }
-  }, [applyPromptToState, getAccessToken, loadOptimizationRounds, loadTestConversation, loadVersions])
+  }, [applyPromptToState, getAccessToken, loadOptimizationRounds, loadTestConversation, loadVersions, t])
 
   useEffect(() => {
     if (isCreateMode) {
@@ -448,12 +442,12 @@ export function PromptDetail() {
     event.preventDefault()
 
     if (!name.trim()) {
-      setError('请输入提示词名称')
+      setError(t('promptEditor.nameRequired'))
       return
     }
 
     if (!content.trim()) {
-      setError('请输入提示词内容')
+      setError(t('promptEditor.contentRequired'))
       return
     }
 
@@ -462,7 +456,7 @@ export function PromptDetail() {
 
     try {
       const token = await getAccessToken()
-      if (!token) throw new Error('未登录')
+      if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
       const payload: CreatePromptData = {
         name: name.trim(),
@@ -471,10 +465,10 @@ export function PromptDetail() {
       }
 
       await createPrompt(token, payload)
-      toast.success('提示词已创建')
+      toast.success(t('promptEditor.created'))
       navigate('/prompts')
     } catch (err) {
-      const message = err instanceof Error ? err.message : '创建失败'
+      const message = err instanceof Error ? err.message : t('promptEditor.createFailed')
       setError(message)
       toast.error(message)
     } finally {
@@ -524,13 +518,13 @@ export function PromptDetail() {
 
     if (!name.trim()) {
       setSavingState('error')
-      setSavingError('请输入提示词名称')
+      setSavingError(t('promptEditor.nameRequired'))
       return
     }
 
     if (!content.trim()) {
       setSavingState('error')
-      setSavingError('请输入提示词内容')
+      setSavingError(t('promptEditor.contentRequired'))
       return
     }
 
@@ -544,7 +538,7 @@ export function PromptDetail() {
 
     try {
       const token = await getAccessToken()
-      if (!token) throw new Error('未登录')
+      if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
       setSavingState('saving')
       setSavingError(null)
@@ -558,7 +552,9 @@ export function PromptDetail() {
         name: normalizedName,
         content: normalizedContent,
         tag_names: normalizedTags,
-        change_note: contentChanged && currentVersion ? `基于 v${currentVersion.version_number} 编辑保存` : undefined,
+        change_note: contentChanged && currentVersion
+          ? t('promptEditor.editSaveNote', { version: currentVersion.version_number })
+          : undefined,
       }
 
       await updatePrompt(token, id, updateData)
@@ -568,9 +564,9 @@ export function PromptDetail() {
       setSavingState('saved')
       setSavingError(null)
       navigate(`/prompts/${id}`, { replace: true })
-      toast.success(contentChanged ? '已保存，并生成最新版本' : '已保存')
+      toast.success(contentChanged ? t('promptEditor.saveWithVersion') : t('promptEditor.saved'))
     } catch (err) {
-      const message = err instanceof Error ? err.message : '保存失败'
+      const message = err instanceof Error ? err.message : t('promptEditor.saveFailed')
       setSavingState('error')
       setSavingError(message)
       toast.error(message)
@@ -579,7 +575,7 @@ export function PromptDetail() {
 
   const handleSetActiveVersion = (versionId: string) => {
     if (isVersionSwitchBlocked) {
-      toast.error('流式处理中，暂时不能切换版本')
+      toast.error(t('promptEditor.switchVersionBlocked'))
       return
     }
     setActiveVersionId(versionId)
@@ -587,22 +583,24 @@ export function PromptDetail() {
 
   const handleRestoreVersion = async (version: PromptVersion) => {
     if (!id || isVersionSwitchBlocked) {
-      toast.error('流式处理中，暂时不能回滚版本')
+      toast.error(t('promptEditor.restoreVersionBlocked'))
       return
     }
 
-    const shouldRestore = window.confirm(`确定要恢复到版本 ${version.version_number} 吗？这会创建一个新版本。`)
+    const shouldRestore = window.confirm(
+      t('promptEditor.restoreVersionConfirm', { version: version.version_number }),
+    )
     if (!shouldRestore) return
 
     try {
       const token = await getAccessToken()
-      if (!token) throw new Error('未登录')
+      if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
       await restoreVersion(token, id, version.id)
-      toast.success(`已恢复到版本 ${version.version_number}`)
+      toast.success(t('promptEditor.restored', { version: version.version_number }))
       await loadPrompt(id)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : '恢复版本失败')
+      toast.error(err instanceof Error ? err.message : t('promptEditor.restoreFailed'))
     }
   }
 
@@ -611,7 +609,7 @@ export function PromptDetail() {
 
     try {
       const token = await getAccessToken()
-      if (!token) throw new Error('未登录')
+      if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
       setIsOptimizing(true)
       setOptimizePreviewContent('')
@@ -670,9 +668,9 @@ export function PromptDetail() {
       setOptimizeIdea('')
       setSelectedOptimizeSuggestions({})
       setOptimizePreviewContent('')
-      toast.success('优化完成，已生成新版本')
+      toast.success(t('promptEditor.optimized'))
     } catch (err) {
-      const message = err instanceof Error ? err.message : '优化失败'
+      const message = err instanceof Error ? err.message : t('promptEditor.optimizeFailed')
       toast.error(message)
     } finally {
       setIsOptimizing(false)
@@ -692,7 +690,20 @@ export function PromptDetail() {
       await loadAvailableModelOptions()
       await loadTestConversation(currentVersion.id)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : '加载测试数据失败')
+      toast.error(err instanceof Error ? err.message : t('promptEditor.loadTestFailed'))
+    }
+  }
+
+  const handleCopyPromptContent = async () => {
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error('Clipboard API unavailable')
+      }
+
+      await navigator.clipboard.writeText(mode === 'edit' ? content : displayedContent)
+      toast.success(t('promptEditor.copied'))
+    } catch {
+      toast.error(t('promptEditor.copyFailed'))
     }
   }
 
@@ -706,7 +717,7 @@ export function PromptDetail() {
       }
 
       if (maxSelectedModels && previous.length >= maxSelectedModels) {
-        toast.error(`最多只能添加 ${maxSelectedModels} 个模型`)
+        toast.error(t('promptEditor.maxModels', { count: maxSelectedModels }))
         return previous
       }
 
@@ -719,12 +730,12 @@ export function PromptDetail() {
 
     setTestModels((previous) => {
       if (previous.some((item) => item.id === nextModel.id)) {
-        toast.error('这个模型已经添加过了')
+        toast.error(t('promptEditor.duplicateModel'))
         return previous
       }
 
       if (maxSelectedModels && previous.length >= maxSelectedModels) {
-        toast.error(`最多只能添加 ${maxSelectedModels} 个模型`)
+        toast.error(t('promptEditor.maxModels', { count: maxSelectedModels }))
         return previous
       }
 
@@ -734,7 +745,7 @@ export function PromptDetail() {
 
   const handleRemoveTestModel = (modelId: string) => {
     if (isTesting) {
-      toast.error('测试进行中，暂时不能移除模型')
+      toast.error(t('promptEditor.removeModelBlocked'))
       return
     }
 
@@ -747,7 +758,7 @@ export function PromptDetail() {
 
     try {
       const token = await getAccessToken()
-      if (!token) throw new Error('未登录')
+      if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
       setIsTesting(true)
       const conversationMap = new Map<string, TestModelOutput>()
@@ -840,7 +851,7 @@ export function PromptDetail() {
         try {
           await connection.done
         } catch (err) {
-          const message = err instanceof Error ? err.message : '测试失败'
+          const message = err instanceof Error ? err.message : t('promptEditor.testFailed')
           hasStreamError = true
           if (!firstErrorMessage) {
             firstErrorMessage = message
@@ -861,12 +872,12 @@ export function PromptDetail() {
 
       if (!hasStreamError) {
         await loadTestConversation(currentVersion.id)
-        toast.success('测试完成')
+        toast.success(t('promptEditor.testCompleted'))
       } else {
-        toast.error(firstErrorMessage || '提示词测试失败')
+        toast.error(firstErrorMessage || t('promptEditor.testFailed'))
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : '测试失败')
+      toast.error(err instanceof Error ? err.message : t('promptEditor.testFailed'))
     } finally {
       Object.values(testControllersRef.current).forEach((controller) => controller.abort())
       testControllersRef.current = {}
@@ -885,7 +896,7 @@ export function PromptDetail() {
 
     try {
       const token = await getAccessToken()
-      if (!token) throw new Error('未登录')
+      if (!token) throw new Error(t('promptEditor.notLoggedIn'))
 
       setIsTagSaving(true)
       setSavingError(null)
@@ -900,7 +911,7 @@ export function PromptDetail() {
       applyPromptToState(updatedPrompt)
       return true
     } catch (err) {
-      const message = err instanceof Error ? err.message : '标签更新失败'
+      const message = err instanceof Error ? err.message : t('promptEditor.updateTagsFailed')
       toast.error(message)
       return false
     } finally {
@@ -983,7 +994,7 @@ export function PromptDetail() {
     return (
       <Layout>
         <div className="flex items-center justify-center py-16">
-          <Loading text="加载中..." />
+          <Loading text={t('promptEditor.loading')} />
         </div>
       </Layout>
     )
@@ -992,59 +1003,111 @@ export function PromptDetail() {
   if (isCreateMode) {
     return (
       <Layout>
-        <div className="mx-auto max-w-3xl">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-ink-900">新建提示词</h1>
-              <p className="mt-1 text-sm text-ink-500">输入名称、内容和标签后创建新提示词。</p>
-            </div>
-            <button onClick={handleCancelCreate} className="icon-button" type="button">
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          <form onSubmit={handleCreateSubmit} className="space-y-6 rounded-3xl border border-ink-200 bg-white p-6 shadow-soft">
-            {error && <ErrorMessage message={error} />}
-
-            <div>
-              <label className="mb-2 block text-sm font-medium text-ink-700">提示词名称</label>
-              <input
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                className="input"
-                placeholder="例如：代码审查助手"
-              />
-            </div>
-
-            <div>
-              <div className="mb-2 flex items-center justify-between">
-                <label className="block text-sm font-medium text-ink-700">提示词内容</label>
-                <span className="text-xs text-ink-400">{tokenCount} tokens</span>
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,0.92fr)_minmax(540px,1.08fr)]">
+          <section className="create-showcase rounded-[34px] p-6 sm:p-8">
+            <div className="flex h-full flex-col justify-between gap-8">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/74 px-4 py-2 text-sm text-ink-700 shadow-[0_18px_36px_-28px_rgba(31,41,55,0.45)] backdrop-blur-xl">
+                  <img src="/logo.svg" alt="Ink & Prompt" className="h-5 w-5" />
+                  <span>{t('landing.steps.title')}</span>
+                </div>
+                <div>
+                  <p className="landing-section-kicker">{t('promptEditor.createTitle')}</p>
+                  <h1 className="landing-display-title mt-4 text-4xl font-semibold leading-[1.06] text-ink-900 sm:text-5xl">
+                    {t('promptEditor.createTitle')}
+                  </h1>
+                  <p className="mt-4 max-w-xl text-sm leading-7 text-ink-600 sm:text-base">
+                    {t('promptEditor.createDescription')}
+                  </p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {(
+                    t('landing.hero.pills', { returnObjects: true }) as string[]
+                  ).map((pill) => (
+                    <div
+                      key={pill}
+                      className="landing-pill inline-flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium text-ink-700"
+                    >
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#ece7ff] text-[#4f46e5]">
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m5 13 4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>{pill}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <textarea
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
-                className="input min-h-[320px] font-mono text-sm"
-                placeholder="输入提示词内容..."
-              />
+
+              <div className="create-showcase-note rounded-[28px] p-5">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-ink-400">
+                  {t('common.label.workflow')}
+                </div>
+                <div className="mt-3 space-y-3 text-sm leading-7 text-ink-700">
+                  <div>{t('promptEditor.createButton')}</div>
+                  <div>{t('promptEditor.optimize')}</div>
+                  <div>{t('promptEditor.test')}</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="create-form-shell rounded-[34px] p-6 sm:p-8">
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <p className="landing-section-kicker">{t('common.appName')}</p>
+                <h2 className="mt-3 text-3xl font-semibold text-ink-900">{t('promptEditor.createTitle')}</h2>
+              </div>
+              <button onClick={handleCancelCreate} className="icon-button" type="button">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-ink-700">标签</label>
-              <TagInput value={tags} onChange={setTags} placeholder="输入标签并回车添加" />
-            </div>
+            <form onSubmit={handleCreateSubmit} className="space-y-6">
+              {error && <ErrorMessage message={error} />}
 
-            <div className="flex items-center justify-between pt-2">
-              <button type="button" onClick={handleCancelCreate} className="btn btn-secondary">
-                取消
-              </button>
-              <button type="submit" className="btn btn-primary" disabled={savingState === 'saving'}>
-                {savingState === 'saving' ? '创建中...' : '创建提示词'}
-              </button>
-            </div>
-          </form>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-ink-700">{t('promptEditor.nameLabel')}</label>
+                <input
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  className="input h-12"
+                  placeholder={t('promptEditor.namePlaceholder')}
+                />
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="block text-sm font-medium text-ink-700">{t('promptEditor.contentLabel')}</label>
+                  <span className="rounded-full border border-[rgba(122,102,82,0.12)] bg-white/78 px-3 py-1 text-xs text-ink-500">
+                    {tokenCount} {t('common.tokens')}
+                  </span>
+                </div>
+                <textarea
+                  value={content}
+                  onChange={(event) => setContent(event.target.value)}
+                  className="input min-h-[360px] font-mono text-sm"
+                  placeholder={t('promptEditor.contentPlaceholder')}
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-ink-700">{t('promptEditor.tagsLabel')}</label>
+                <TagInput value={tags} onChange={setTags} placeholder={t('promptEditor.tagsPlaceholder')} />
+              </div>
+
+              <div className="flex flex-col gap-3 border-t border-[rgba(122,102,82,0.12)] pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <button type="button" onClick={handleCancelCreate} className="btn btn-secondary">
+                  {t('common.action.cancel')}
+                </button>
+                <button type="submit" className="landing-hero-primary inline-flex items-center justify-center rounded-full px-7 py-3.5 text-sm font-semibold text-white" disabled={savingState === 'saving'}>
+                  {savingState === 'saving' ? t('promptEditor.creating') : t('promptEditor.createButton')}
+                </button>
+              </div>
+            </form>
+          </section>
         </div>
       </Layout>
     )
@@ -1075,13 +1138,18 @@ export function PromptDetail() {
                         value={name}
                         onChange={(event) => setName(event.target.value)}
                         className="input h-11 text-base font-semibold tracking-tight text-ink-900"
-                        placeholder="提示词名称"
+                        placeholder={t('promptEditor.nameLabel')}
                       />
                     ) : (
                       <h1 className="flex h-11 items-center text-base font-semibold tracking-tight text-ink-900">
-                        {name || '未命名提示词'}
+                        {name || t('common.untitledPrompt')}
                       </h1>
                     )}
+                    <p className="workbench-subtitle">
+                      {currentVersion
+                        ? formatFullDate(currentVersion.created_at, language)
+                        : t('common.appFooterTagline')}
+                    </p>
                   </div>
 
                   <div className="flex flex-wrap items-center justify-end gap-2">
@@ -1090,19 +1158,30 @@ export function PromptDetail() {
                       onClick={handleOpenOptimize}
                       className={`btn ${activePanel === 'optimize' ? 'btn-primary' : 'btn-secondary'}`}
                     >
-                      提示词优化
+                      {t('promptEditor.optimize')}
                     </button>
                     <button
                       type="button"
                       onClick={handleOpenTest}
                       className={`btn ${activePanel === 'test' ? 'btn-primary' : 'btn-secondary'}`}
                     >
-                      提示词测试
+                      {t('promptEditor.test')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleCopyPromptContent}
+                      className="icon-button"
+                      title={t('promptEditor.copy')}
+                      aria-label={t('promptEditor.copy')}
+                    >
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V5a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-4 4H6a2 2 0 01-2-2V9a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2z" />
+                      </svg>
                     </button>
                     {mode === 'edit' ? (
                       <>
                         <button type="button" onClick={handleExitEdit} className="btn btn-secondary">
-                          取消
+                          {t('common.action.cancel')}
                         </button>
                         <button
                           type="button"
@@ -1110,23 +1189,20 @@ export function PromptDetail() {
                           className="btn btn-primary"
                           disabled={savingState === 'saving' || !hasUnsavedChanges}
                         >
-                          {savingState === 'saving' ? '保存中...' : '保存'}
+                          {savingState === 'saving' ? t('promptEditor.saving') : t('common.action.save')}
                         </button>
                       </>
                     ) : (
-                      <button type="button" onClick={handleEnterEdit} className="icon-button" title="进入编辑">
+                      <button type="button" onClick={handleEnterEdit} className="icon-button" title={t('promptEditor.enterEdit')}>
                         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
                       </button>
                     )}
-                  </div>
                 </div>
+              </div>
 
                 <div className="workbench-metrics">
-                  <span className="metric-chip">{estimateTokens(displayedContent)} tokens</span>
-                  {currentVersion && <span className="metric-chip">v{currentVersion.version_number}</span>}
-                  {currentVersion && <span className="metric-chip">{formatShortDate(currentVersion.created_at)}</span>}
                   {displayedTags.map((tag) => (
                     <span key={tag} className="badge badge-user group relative pr-7">
                       {tag}
@@ -1134,8 +1210,8 @@ export function PromptDetail() {
                         type="button"
                         onClick={() => void handleRemoveTag(tag)}
                         className="absolute right-1.5 top-1/2 inline-flex h-4 w-4 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white/90 opacity-0 transition-all duration-150 hover:bg-white/30 hover:text-white focus-visible:opacity-100 group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-0"
-                        title={`删除标签 ${tag}`}
-                        aria-label={`删除标签 ${tag}`}
+                        title={t('promptEditor.removeTag', { tag })}
+                        aria-label={t('promptEditor.removeTag', { tag })}
                         disabled={isTagSaving}
                       >
                         <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1149,8 +1225,8 @@ export function PromptDetail() {
                       type="button"
                       onClick={handleToggleTagsExpanded}
                       className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-ink-200/80 bg-white/55 px-3 py-1 text-[11px] font-semibold text-ink-600 shadow-sm backdrop-blur-sm transition-all hover:border-ink-300 hover:bg-white/75 hover:text-ink-800"
-                      title={`展开剩余 ${hiddenTags.length} 个标签`}
-                      aria-label={`展开剩余 ${hiddenTags.length} 个标签`}
+                      title={t('promptEditor.expandTags', { count: hiddenTags.length })}
+                      aria-label={t('promptEditor.expandTags', { count: hiddenTags.length })}
                     >
                       <span className="max-w-[7rem] truncate opacity-70 blur-[0.2px]">
                         {collapsedTagPreview}
@@ -1168,10 +1244,10 @@ export function PromptDetail() {
                       type="button"
                       onClick={handleToggleTagsExpanded}
                       className="inline-flex items-center gap-1 rounded-full border border-ink-200 bg-white/70 px-3 py-1 text-[11px] font-semibold text-ink-600 transition-all hover:border-ink-300 hover:bg-white hover:text-ink-900"
-                      title="收起标签"
-                      aria-label="收起标签"
+                      title={t('promptEditor.collapseTags')}
+                      aria-label={t('promptEditor.collapseTags')}
                     >
-                      收起
+                      {t('promptEditor.collapse')}
                       <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
@@ -1194,7 +1270,7 @@ export function PromptDetail() {
                           }
                         }}
                         className="tag-inline-input"
-                        placeholder="输入标签名"
+                        placeholder={t('promptEditor.tagNamePlaceholder')}
                       />
                     </div>
                   ) : (
@@ -1202,7 +1278,7 @@ export function PromptDetail() {
                       type="button"
                       onClick={handleToggleTagEditor}
                       className="tag-add-button"
-                      title="添加标签"
+                      title={t('promptEditor.addTag')}
                       disabled={isTagSaving}
                     >
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1210,14 +1286,14 @@ export function PromptDetail() {
                       </svg>
                     </button>
                   )}
-                  {isTagSaving && <span className="status-pill bg-amber-100 text-amber-800">标签保存中</span>}
-                  {isVersionSwitchBlocked && <span className="status-pill bg-amber-100 text-amber-800">处理中</span>}
+                  {isTagSaving && <span className="status-pill bg-amber-100 text-amber-800">{t('common.status.tagSaving')}</span>}
+                  {isVersionSwitchBlocked && <span className="status-pill bg-amber-100 text-amber-800">{t('common.status.processing')}</span>}
                   {mode === 'edit' && hasUnsavedChanges && savingState !== 'saving' && (
-                    <span className="status-pill bg-slate-100 text-slate-700">未保存</span>
+                    <span className="status-pill bg-slate-100 text-slate-700">{t('common.status.unsaved')}</span>
                   )}
-                  {savingState === 'saving' && <span className="status-pill bg-amber-100 text-amber-800">保存中</span>}
-                  {savingState === 'saved' && <span className="status-pill bg-emerald-100 text-emerald-800">已保存</span>}
-                  {savingState === 'error' && <span className="status-pill bg-rose-100 text-rose-800">保存失败</span>}
+                  {savingState === 'saving' && <span className="status-pill bg-amber-100 text-amber-800">{t('common.status.saving')}</span>}
+                  {savingState === 'saved' && <span className="status-pill bg-emerald-100 text-emerald-800">{t('common.status.saved')}</span>}
+                  {savingState === 'error' && <span className="status-pill bg-rose-100 text-rose-800">{t('common.status.saveFailed')}</span>}
                 </div>
               </div>
             </div>
@@ -1235,7 +1311,7 @@ export function PromptDetail() {
                     value={content}
                     onChange={(event) => setContent(event.target.value)}
                     className="input editor-frame h-full flex-1 font-mono text-sm"
-                    placeholder="输入提示词内容..."
+                    placeholder={t('promptEditor.contentPlaceholder')}
                   />
                 </div>
               ) : (
@@ -1253,7 +1329,7 @@ export function PromptDetail() {
                 <div className="version-dock-history px-4 py-4">
                   {sortedVersions.length === 0 ? (
                     <div className="panel-empty">
-                      <p className="text-sm font-medium text-ink-700">暂无历史版本</p>
+                      <p className="text-sm font-medium text-ink-700">{t('promptEditor.emptyVersions')}</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -1275,13 +1351,13 @@ export function PromptDetail() {
                                 v{version.version_number}
                               </span>
                               <span className="text-xs text-ink-500">
-                                {formatFullDate(version.created_at)}
+                                {formatFullDate(version.created_at, language)}
                               </span>
                             </div>
 
                             <div className="flex items-center gap-3 flex-shrink-0">
                               <span className="text-xs font-medium text-ink-500">
-                                {version.token_count} Tokens
+                                {t('promptEditor.versionTokenCount', { count: version.token_count })}
                               </span>
                               <button
                                 type="button"
@@ -1291,7 +1367,7 @@ export function PromptDetail() {
                                 }}
                                 className="btn btn-ghost btn-small"
                               >
-                                对比
+                                {t('promptEditor.compare')}
                               </button>
                               {!isCurrent && (
                                 <button
@@ -1303,7 +1379,7 @@ export function PromptDetail() {
                                   className="btn btn-secondary btn-small"
                                   disabled={isVersionSwitchBlocked}
                                 >
-                                  恢复
+                                  {t('promptEditor.restore')}
                                 </button>
                               )}
                             </div>
@@ -1317,7 +1393,10 @@ export function PromptDetail() {
 
               <div className="workspace-toolbar version-dock-toolbar border-t-0">
                 <div className="toolbar-cluster">
-                  {isOptimizing && optimizePreviewContent ? <span className="status-pill status-pill-active">预览中</span> : null}
+                  <span className="metric-chip">{estimateTokens(displayedContent)} {t('common.tokens')}</span>
+                  {isOptimizing && optimizePreviewContent ? <span className="status-pill status-pill-active">{t('common.status.previewing')}</span> : null}
+                </div>
+                <div className="toolbar-cluster">
                   <button
                     type="button"
                     onClick={() => setVersionHistoryExpanded((previous) => !previous)}
@@ -1326,9 +1405,11 @@ export function PromptDetail() {
                         ? 'border border-indigo-300 bg-indigo-50/85 text-indigo-700 shadow-soft hover:bg-indigo-100'
                         : 'btn-secondary'
                     }`}
-                    aria-label={versionHistoryExpanded ? '收起历史版本' : '展开历史版本'}
+                    aria-label={versionHistoryExpanded ? t('promptEditor.collapseTags') : t('promptEditor.versionButton')}
                   >
-                    {currentVersion ? `v${currentVersion.version_number}` : '版本'}
+                    {currentVersion
+                      ? t('promptEditor.viewVersion', { version: currentVersion.version_number })
+                      : t('promptEditor.versionButton')}
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -1344,7 +1425,7 @@ export function PromptDetail() {
         {activePanel === 'optimize' && (
           <aside className="self-start xl:sticky xl:top-24 xl:h-[calc(100dvh-7rem)]">
             <OptimizePanel
-              promptName={name || '未命名提示词'}
+              promptName={name || t('common.untitledPrompt')}
               currentContent={displayedContent}
               rounds={optimizeRounds}
               suggestions={optimizeSuggestions}

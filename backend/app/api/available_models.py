@@ -4,7 +4,7 @@ import re
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from app.core.config import get_settings
+from app.core.config import get_settings, normalize_openai_base_url
 
 router = APIRouter(prefix="/models", tags=["models"])
 
@@ -56,6 +56,7 @@ async def list_available_models() -> AvailableModelsResponse:
         if not resolved_item.get("api_key"):
             continue
 
+        resolved_item["base_url"] = normalize_openai_base_url(resolved_item.get("base_url"))
         items.append(AvailableModelItem.model_validate({
             key: value for key, value in resolved_item.items() if key != "api_key"
         }))
@@ -64,7 +65,7 @@ async def list_available_models() -> AvailableModelsResponse:
         items.append(
             AvailableModelItem(
                 name="当前配置模型",
-                base_url=settings.openai_api_base,
+                base_url=normalize_openai_base_url(settings.openai_api_base) or settings.openai_api_base,
                 model=settings.default_model,
             )
         )

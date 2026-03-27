@@ -49,7 +49,10 @@ async def optimize_prompt(
         )
         return OptimizationResponse(**result)
     except Exception as e:
+        status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        if getattr(e, "status_code", None) is not None:
+            status_code = status.HTTP_502_BAD_GATEWAY
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status_code,
             detail=f"Optimization failed: {str(e)}"
         )

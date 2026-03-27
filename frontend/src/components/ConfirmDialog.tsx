@@ -3,6 +3,8 @@
  */
 import { useEffect } from 'react'
 
+import { useI18n } from '@/hooks/useI18n'
+
 interface ConfirmDialogProps {
   isOpen: boolean
   title: string
@@ -18,12 +20,16 @@ export function ConfirmDialog({
   isOpen,
   title,
   message,
-  confirmLabel = '确认',
-  cancelLabel = '取消',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
   danger = false,
 }: ConfirmDialogProps) {
+  const { t } = useI18n()
+  const resolvedConfirmLabel = confirmLabel ?? t('common.action.confirm')
+  const resolvedCancelLabel = cancelLabel ?? t('common.action.cancel')
+
   // Handle ESC key to close dialog
   useEffect(() => {
     if (!isOpen) return
@@ -63,14 +69,14 @@ export function ConfirmDialog({
             onClick={onCancel}
             className="btn btn-secondary"
           >
-            {cancelLabel}
+            {resolvedCancelLabel}
           </button>
 
           <button
             onClick={onConfirm}
             className={`btn ${danger ? 'bg-red-600 text-white hover:bg-red-700' : 'btn-primary'}`}
           >
-            {confirmLabel}
+            {resolvedConfirmLabel}
           </button>
         </div>
       </div>

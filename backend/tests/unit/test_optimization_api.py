@@ -234,6 +234,32 @@ class TestOptimizationErrorHandling:
         # 应该返回 500 错误
         assert response.status_code == 500
 
+    def test_optimize_upstream_model_error_returns_bad_gateway(
+        self,
+        mock_create_model,
+        client: TestClient,
+        test_prompt: Prompt,
+        auth_headers: dict
+    ):
+        """测试上游模型错误不会再被包装成 500"""
+
+        class UpstreamError(Exception):
+            status_code = 401
+
+        mock_llm = MagicMock()
+        mock_llm.invoke.side_effect = UpstreamError("auth_error")
+        mock_create_model.return_value = mock_llm
+
+        request_data = {"scenario": "general"}
+        response = client.post(
+            f"/api/prompts/{test_prompt.id}/optimize",
+            json=request_data,
+            headers=auth_headers
+        )
+
+        assert response.status_code == 502
+        assert "auth_error" in response.json()["detail"]
+
     def test_optimize_empty_response(
         self,
         mock_create_model,

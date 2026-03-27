@@ -3,10 +3,14 @@
  */
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+import { useI18n } from '@/hooks/useI18n'
 import { supabase } from '@/lib/supabase'
+import { consumePostAuthRedirect } from '@/utils/authRedirect'
 
 export function AuthCallback() {
   const navigate = useNavigate()
+  const { t } = useI18n()
 
   useEffect(() => {
     let cancelled = false
@@ -36,7 +40,7 @@ export function AuthCallback() {
         }
 
         if (session) {
-          navigate('/prompts', { replace: true })
+          navigate(consumePostAuthRedirect('/prompts'), { replace: true })
           return
         }
 
@@ -45,7 +49,7 @@ export function AuthCallback() {
 
       navigate('/login', {
         replace: true,
-        state: { error: '登录回调未完成，请重试。' },
+        state: { error: t('auth.callbackIncomplete') },
       })
     }
 
@@ -54,13 +58,13 @@ export function AuthCallback() {
     return () => {
       cancelled = true
     }
-  }, [navigate])
+  }, [navigate, t])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-paper-white">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ink-700 mx-auto"></div>
-        <p className="mt-4 text-ink-600">正在完成登录...</p>
+        <p className="mt-4 text-ink-600">{t('auth.callbackLoading')}</p>
       </div>
     </div>
   )

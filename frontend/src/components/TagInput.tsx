@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { fetchTags } from '@/api/tags'
+import { useI18n } from '@/hooks/useI18n'
 import type { Tag } from '@/types/tag'
 
 interface TagInputProps {
@@ -16,10 +17,11 @@ interface TagInputProps {
 export function TagInput({
   value,
   onChange,
-  placeholder = '输入标签后按回车添加',
+  placeholder,
   hideTags = false,
 }: TagInputProps) {
   const { getAccessToken } = useAuth()
+  const { t } = useI18n()
 
   const [inputValue, setInputValue] = useState('')
   const [suggestions, setSuggestions] = useState<Tag[]>([])
@@ -126,7 +128,7 @@ export function TagInput({
               setTimeout(() => setShowSuggestions(false), 200)
             }}
             className="input"
-            placeholder={placeholder}
+            placeholder={placeholder ?? t('tagInput.defaultPlaceholder')}
           />
 
           {showSuggestions && suggestions.length > 0 && (
@@ -142,7 +144,7 @@ export function TagInput({
                 >
                   <span className="text-ink-700">{tag.name}</span>
                   <span className="text-xs text-ink-400">
-                    {tag.use_count} 次使用
+                    {t('tagInput.usedCount', { count: tag.use_count })}
                   </span>
                 </button>
               ))}
@@ -155,7 +157,7 @@ export function TagInput({
           onClick={() => handleAdd(inputValue)}
           className="icon-button h-11 w-11 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={!inputValue.trim()}
-          aria-label="添加标签"
+          aria-label={t('tagInput.addTag')}
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v14m-7-7h14" />

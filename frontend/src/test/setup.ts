@@ -16,6 +16,26 @@ vi.stubEnv('VITE_SUPABASE_URL', 'https://test.supabase.co')
 vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'test-anon-key')
 vi.stubEnv('VITE_API_BASE_URL', 'http://localhost:8000')
 
+const storage = new Map<string, string>()
+
+Object.defineProperty(window, 'localStorage', {
+  configurable: true,
+  value: {
+    getItem: vi.fn((key: string) => storage.get(key) ?? null),
+    setItem: vi.fn((key: string, value: string) => {
+      storage.set(key, value)
+    }),
+    removeItem: vi.fn((key: string) => {
+      storage.delete(key)
+    }),
+    clear: vi.fn(() => {
+      storage.clear()
+    }),
+  },
+})
+
+window.localStorage.setItem('userLanguage', 'zh-CN')
+
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -30,3 +50,5 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 })
+
+await import('@/i18n')

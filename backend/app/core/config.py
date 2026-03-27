@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 from typing import Any, Dict, List
+from urllib.parse import urlparse, urlunparse
 
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings
@@ -35,6 +36,26 @@ def load_available_models_config(config_path: str | Path) -> List[Dict[str, Any]
         normalized_items.append(dict(item))
 
     return normalized_items
+
+
+def normalize_openai_base_url(value: str | None) -> str | None:
+    """Normalize OpenAI-compatible base URLs to the versioned API root."""
+    if value is None:
+        return None
+
+    normalized = value.strip()
+    if not normalized:
+        return normalized
+
+    parsed = urlparse(normalized)
+    path = parsed.path.rstrip("/")
+
+    if not path:
+        path = "/v1"
+    elif path == "/api":
+        path = "/api/v1"
+
+    return urlunparse(parsed._replace(path=path))
 
 
 class Settings(BaseSettings):
@@ -78,6 +99,9 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def load_available_models(self) -> "Settings":
         """Populate model list from config file unless explicitly overridden."""
+        normalized_base_url = normalize_openai_base_url(self.openai_api_base) or self.openai_api_base
+        object.__setattr__(self, "openai_api_base", normalized_base_url)
+
         if self.AVAILABLE_MODELS:
             return self
 

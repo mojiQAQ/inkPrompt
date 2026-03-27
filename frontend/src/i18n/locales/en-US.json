@@ -1,0 +1,587 @@
+{
+  "common": {
+    "appName": "Ink & Prompt",
+    "appTagline": "Make prompts feel more like writing",
+    "appFooterTagline": "Let prompt writing feel as natural as flowing ink.",
+    "tokens": "tokens",
+    "untitledPrompt": "Untitled prompt",
+    "language": {
+      "label": "Language",
+      "zh-CN": "Simplified Chinese",
+      "en-US": "English"
+    },
+    "label": {
+      "prompt": "Prompt",
+      "library": "Library",
+      "custom": "Custom",
+      "workflow": "Workflow"
+    },
+    "action": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "create": "Create",
+      "delete": "Delete",
+      "edit": "Edit",
+      "retry": "Retry",
+      "clear": "Clear",
+      "clearAll": "Clear all",
+      "confirm": "Confirm",
+      "finish": "Done",
+      "loading": "Loading..."
+    },
+    "status": {
+      "processing": "Processing",
+      "saving": "Saving",
+      "saved": "Saved",
+      "saveFailed": "Save failed",
+      "unsaved": "Unsaved",
+      "previewing": "Previewing",
+      "tagSaving": "Saving tags"
+    }
+  },
+  "nav": {
+    "logoTitle": "Back to prompt list",
+    "myPrompts": "My prompts",
+    "logout": "Log out",
+    "avatarInitial": "First letter of {{email}}"
+  },
+  "login": {
+    "welcome": "Welcome back",
+    "createAccount": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "At least 6 characters",
+    "processing": "Processing...",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "hasAccount": "Already have an account? Sign in",
+    "noAccount": "No account yet? Sign up",
+    "divider": "or",
+    "google": "Continue with Google",
+    "backHome": "Back to home",
+    "terms": "By signing in, you agree to our Terms of Service and Privacy Policy.",
+    "error": {
+      "loginFailed": "Sign-in failed. Please try again.",
+      "signupFailed": "Sign-up failed. Please try again.",
+      "emailPasswordRequired": "Please enter your email and password.",
+      "passwordMinLength": "Password must be at least 6 characters."
+    },
+    "success": {
+      "signup": "Sign-up successful. Please check your inbox to verify your account."
+    }
+  },
+  "auth": {
+    "callbackLoading": "Finishing sign-in...",
+    "callbackIncomplete": "The login callback did not finish. Please try again.",
+    "loading": "Loading..."
+  },
+  "promptList": {
+    "allPrompts": "All prompts",
+    "favoritePrompts": "Favorite prompts",
+    "myPrompts": "My prompts",
+    "count": "{{count}} prompts",
+    "newPrompt": "New prompt",
+    "searchAndSort": "Search and sort",
+    "filtering": "Filtering",
+    "tagsCount": "· {{count}} tags",
+    "logicAnd": "(match all)",
+    "logicOr": "(match any)",
+    "clearFilters": "Clear all filters",
+    "foundResults": "{{count}} matching prompts found",
+    "emptySearchTitle": "No matching prompts found",
+    "emptySearchDescription": "Try a different keyword",
+    "emptyDefaultTitle": "No prompts yet",
+    "emptyDefaultDescription": "Create your first prompt to get started",
+    "createPrompt": "Create prompt",
+    "previousPage": "Previous",
+    "nextPage": "Next",
+    "pageInfo": "Page {{page}} / {{totalPages}}",
+    "deleteTitle": "Confirm delete",
+    "deleteMessage": "Delete prompt \"{{name}}\"? This action cannot be undone.",
+    "deleted": "Prompt deleted",
+    "loadFailed": "Failed to load prompts",
+    "deleteFailed": "Failed to delete prompt",
+    "notLoggedIn": "Not signed in"
+  },
+  "folderSidebar": {
+    "title": "Folders",
+    "newFolder": "New folder",
+    "loading": "Loading...",
+    "placeholder": "Folder name",
+    "rename": "Rename",
+    "delete": "Delete",
+    "created": "Folder created",
+    "renamed": "Folder renamed",
+    "deleted": "Folder deleted",
+    "createFailed": "Failed to create folder",
+    "renameFailed": "Failed to rename folder",
+    "deleteFailed": "Failed to delete folder"
+  },
+  "advancedSearch": {
+    "placeholder": "Search prompt names or content...",
+    "history": "Search history",
+    "deleteHistory": "Delete",
+    "sortLabel": "Sort:",
+    "sortAsc": "Ascending",
+    "sortDesc": "Descending",
+    "sortOptions": {
+      "updated_at": "Updated",
+      "created_at": "Created",
+      "name": "Name",
+      "token_count": "Token count"
+    }
+  },
+  "tagFilter": {
+    "loading": "Loading tags...",
+    "title": "Tag filter",
+    "logicOr": "OR",
+    "logicAnd": "AND",
+    "clear": "Clear",
+    "viewAll": "View all {{count}} tags",
+    "selectTags": "Choose tags",
+    "selectedCount": "{{count}} tags selected",
+    "complete": "Done",
+    "summaryAnd": "(match all)",
+    "summaryOr": "(match any)"
+  },
+  "promptCard": {
+    "historyCount": "{{count}} historical versions",
+    "favorite": "Favorite",
+    "unfavorite": "Unfavorite",
+    "addToFolder": "Add to folder",
+    "copy": "Copy full prompt",
+    "edit": "Edit",
+    "delete": "Delete",
+    "favorited": "Added to favorites",
+    "unfavorited": "Removed from favorites",
+    "copied": "Full prompt copied",
+    "copyFailed": "Copy failed",
+    "actionFailed": "Action failed",
+    "updatedAt": "Updated {{date}}"
+  },
+  "dialog": {
+    "addToFolderTitle": "Add to folder",
+    "addToFolderTarget": "Add \"{{name}}\" to:",
+    "addToFolderEmpty": "No custom folders yet. Create one first.",
+    "addToFolderAdded": "Added to folder",
+    "addToFolderFailed": "Failed to add to folder"
+  },
+  "error": {
+    "retry": "Retry"
+  },
+  "promptEditor": {
+    "notLoggedIn": "Not signed in",
+    "loadFailed": "Failed to load prompt",
+    "createFailed": "Failed to create prompt",
+    "saveFailed": "Failed to save prompt",
+    "restoreFailed": "Failed to restore version",
+    "optimizeFailed": "Optimization failed",
+    "testFailed": "Test failed",
+    "loadTestFailed": "Failed to load test data",
+    "updateTagsFailed": "Failed to update tags",
+    "nameRequired": "Please enter a prompt name.",
+    "contentRequired": "Please enter prompt content.",
+    "created": "Prompt created",
+    "saveWithVersion": "Saved and created a new version",
+    "saved": "Saved",
+    "switchVersionBlocked": "You cannot switch versions while streaming is in progress.",
+    "restoreVersionBlocked": "You cannot restore a version while streaming is in progress.",
+    "restoreVersionConfirm": "Restore version {{version}}? This will create a new version.",
+    "restored": "Restored to version {{version}}",
+    "optimized": "Optimization complete. A new version was created.",
+    "maxModels": "You can add up to {{count}} models.",
+    "duplicateModel": "This model has already been added.",
+    "removeModelBlocked": "You cannot remove a model while a test is running.",
+    "testCompleted": "Test completed",
+    "loading": "Loading...",
+    "createTitle": "Create prompt",
+    "createDescription": "Enter a name, content, and tags to create a new prompt.",
+    "nameLabel": "Prompt name",
+    "namePlaceholder": "For example: Code review assistant",
+    "contentLabel": "Prompt content",
+    "contentPlaceholder": "Enter your prompt content...",
+    "tagsLabel": "Tags",
+    "tagsPlaceholder": "Type a tag and press Enter",
+    "creating": "Creating...",
+    "createButton": "Create prompt",
+    "optimize": "Optimize prompt",
+    "test": "Test prompt",
+    "saving": "Saving...",
+    "enterEdit": "Enter edit mode",
+    "removeTag": "Remove tag {{tag}}",
+    "expandTags": "Show {{count}} more tags",
+    "collapseTags": "Collapse tags",
+    "collapse": "Collapse",
+    "addTag": "Add tag",
+    "tagNamePlaceholder": "Enter a tag name",
+    "copy": "Copy full prompt",
+    "copied": "Full prompt copied",
+    "copyFailed": "Copy failed",
+    "emptyVersions": "No version history yet",
+    "compare": "Compare",
+    "restore": "Restore",
+    "versionButton": "Version",
+    "viewVersion": "v{{version}}",
+    "editSaveNote": "Saved from editing based on v{{version}}",
+    "versionTokenCount": "{{count}} tokens"
+  },
+  "tagInput": {
+    "defaultPlaceholder": "Type a tag and press Enter",
+    "usedCount": "Used {{count}} times",
+    "addTag": "Add tag"
+  },
+  "optimizePanel": {
+    "title": "Optimize prompt",
+    "idea": "Optimization goal",
+    "reset": "Reset",
+    "ideaPlaceholder": "For example: strengthen the role framing, add output format guidance, and cover edge cases.",
+    "suggestions": "Suggested options",
+    "selectedItems": "{{count}} selected",
+    "start": "Start optimization",
+    "running": "Optimizing...",
+    "history": "Optimization history",
+    "roundCount": "{{count}} rounds",
+    "empty": "No optimization history yet",
+    "round": "Round {{count}}",
+    "version": "Version {{id}}",
+    "suggestionCount": "{{count}} suggestions"
+  },
+  "testPanel": {
+    "title": "Test prompt",
+    "userInput": "User input",
+    "clear": "Clear",
+    "inputPlaceholder": "Enter the user message or extra context you want to test in this round...",
+    "custom": "Custom",
+    "collapseOutput": "Collapse output",
+    "expandOutput": "Expand output",
+    "removeModel": "Remove model",
+    "modelOutput": "Model output",
+    "presetModels": "Preset models",
+    "customModel": "Custom model",
+    "noPresetModels": "There are no more preset models available to add.",
+    "addPresetModel": "Add preset model",
+    "customNamePlaceholder": "Display name, for example: My GPT-4.1",
+    "customModelPlaceholder": "Model ID, for example: gpt-4.1",
+    "customBaseUrlPlaceholder": "Base URL, for example: https://api.openai.com/v1",
+    "customApiKeyPlaceholder": "API key",
+    "customModelRequired": "Please provide the model name, Base URL, and API key.",
+    "addCustomModel": "Add custom model",
+    "addModel": "Add a model",
+    "maxModelsReached": "Model limit reached",
+    "selectedModels": "{{count}} models added",
+    "selectedModelsWithLimit": "{{count}} models added / {{max}}",
+    "start": "Start test",
+    "running": "Testing...",
+    "status": {
+      "idle": "Ready",
+      "streaming": "Running",
+      "done": "Done",
+      "error": "Failed"
+    },
+    "placeholder": {
+      "idle": "Waiting to start...",
+      "streaming": "Generating output...",
+      "error": "The test failed. Please try again later.",
+      "done": "Waiting for model output..."
+    }
+  },
+  "versionDetailDialog": {
+    "title": "Version {{version}}",
+    "changeNote": "Change note:",
+    "restore": "Restore this version"
+  },
+  "versionDiffDialog": {
+    "close": "Close version diff",
+    "title": "Version diff"
+  },
+  "featureTour": {
+    "title": "Welcome to InkPrompt",
+    "subtitle": "Here is a quick tour of the main features",
+    "skip": "Skip tour",
+    "previous": "Previous",
+    "next": "Next",
+    "start": "Start using",
+    "jumpToStep": "Jump to step {{step}}",
+    "footer": "Tip: you can reopen this tour later from settings.",
+    "steps": {
+      "create": {
+        "title": "Create and manage prompts",
+        "description": "Use the “New prompt” button to create your first prompt template, then organize it with tags."
+      },
+      "history": {
+        "title": "Track version history",
+        "description": "Each prompt edit automatically creates a new version, so you can review history or roll back anytime."
+      },
+      "search": {
+        "title": "Search and filter faster",
+        "description": "Search prompt content with keywords, filter by tags, and sort results in multiple ways. Search history is saved automatically."
+      },
+      "shortcuts": {
+        "title": "Keyboard shortcuts",
+        "description": "Use Ctrl+K or Cmd+K to jump straight to the search box and move faster."
+      }
+    }
+  },
+  "landing": {
+    "meta": {
+      "title": "Ink & Prompt - Manage, refine, and test prompts like a real writing workflow",
+      "description": "Ink & Prompt gives prompt creators one workspace for organization, versioning, optimization, and multi-model testing."
+    },
+    "nav": {
+      "ariaLabel": "Landing page main navigation",
+      "logoTitle": "Back to the landing page",
+      "brandSubtitle": "Prompt creation workspace",
+      "prompts": "Prompt workspace",
+      "docs": "Docs",
+      "login": "Sign in / Sign up",
+      "workspace": "Open workspace",
+      "openMenu": "Open navigation menu",
+      "closeMenu": "Close navigation menu"
+    },
+    "hero": {
+      "kicker": "A focused workspace for serious prompt creators",
+      "title": "Manage, refine, and test prompts like part of your writing flow.",
+      "subtitle": "From first draft to versioned experiments and multi-model comparisons, Ink & Prompt turns scattered prompt attempts into reusable creative assets.",
+      "primary": "Start for free",
+      "primaryLoggedIn": "Open prompt workspace",
+      "secondary": "See the workflow",
+      "pills": [
+        "Organize prompts cleanly",
+        "Roll back any version",
+        "Use AI-driven refinement",
+        "Compare multiple models live"
+      ],
+      "stats": [
+        {
+          "value": "60 sec",
+          "label": "to your first prompt"
+        },
+        {
+          "value": "4 core flows",
+          "label": "from drafting to validation"
+        },
+        {
+          "value": "Built to compound",
+          "label": "turn experiments into assets"
+        }
+      ],
+      "preview": {
+        "label": "Live Workspace",
+        "title": "A prompt workbench that feels closer to editing than babysitting tabs",
+        "badge": "Preview",
+        "promptTitle": "Brand content strategy assistant",
+        "promptMeta": "Updated today · connected to version history",
+        "version": "v12",
+        "promptBody": "You are a senior content strategy consultant. Combine brand tone, channel nuance, and user intent into an execution-ready outline, then add tone guidance for each section.",
+        "tags": [
+          "Content strategy",
+          "Brand voice",
+          "Social copy",
+          "Long-form output"
+        ],
+        "optimizeTitle": "Optimization hints",
+        "optimizeItems": [
+          "Add an output format to reduce rework",
+          "Clarify audience and channel constraints",
+          "Save refinements directly as a new version"
+        ],
+        "testTitle": "Model comparison",
+        "models": [
+          {
+            "name": "GPT-4.1",
+            "score": "92%"
+          },
+          {
+            "name": "Claude 3.7",
+            "score": "86%"
+          },
+          {
+            "name": "Gemini 2.0",
+            "score": "78%"
+          }
+        ]
+      }
+    },
+    "features": {
+      "kicker": "Core capabilities",
+      "title": "Stop leaving your best prompts buried in chat history",
+      "subtitle": "Every part of the product is built around making prompts easier to keep, iterate, and prove before you ship them into real work.",
+      "explore": "Open feature",
+      "items": [
+        {
+          "id": "management",
+          "title": "Prompt management",
+          "description": "Organize prompts the way you organize drafts, with folders, tags, search history, and quick retrieval.",
+          "badge": "Manage",
+          "target": "/prompts",
+          "items": [
+            "Tag and folder organization",
+            "Search, filter, and sort in one place",
+            "Keep frequently used prompts within reach"
+          ]
+        },
+        {
+          "id": "versioning",
+          "title": "Version control",
+          "description": "Every refinement is tracked. Review diffs, annotate changes, and roll back without fear.",
+          "badge": "Version",
+          "target": "/prompts",
+          "items": [
+            "Automatic version history",
+            "Clearer version diff views",
+            "Safer experimentation and rollback"
+          ]
+        },
+        {
+          "id": "optimization",
+          "title": "Smart optimization",
+          "description": "Get AI suggestions on structure, tone, clarity, and edge-case handling so you can tighten prompts faster.",
+          "badge": "Optimize",
+          "target": "/prompts/new",
+          "items": [
+            "Multi-angle refinement guidance",
+            "Bring your own optimization goal",
+            "Save refined results as a fresh version"
+          ]
+        },
+        {
+          "id": "testing",
+          "title": "Multi-model testing",
+          "description": "Run the same prompt across multiple models at once and compare style, quality, and expected cost.",
+          "badge": "Test",
+          "target": "/prompts/new",
+          "items": [
+            "Concurrent streaming model output",
+            "See quality differences side by side",
+            "Keep test history for later review"
+          ]
+        }
+      ]
+    },
+    "steps": {
+      "kicker": "How it works",
+      "title": "Three steps from rough prompt to repeatable workflow",
+      "subtitle": "You do not need a complex system first. Start writing, refine the weak spots, then compare outputs before committing.",
+      "items": [
+        {
+          "step": "1",
+          "title": "Create your first prompt",
+          "description": "Sign in and save the prompts you already rely on. Everything else builds from this first versioned draft.",
+          "items": [
+            "Quick Google sign-in supported",
+            "Add tags and folders from the start",
+            "Ideal for building a personal prompt library"
+          ]
+        },
+        {
+          "step": "2",
+          "title": "Refine with the optimization assistant",
+          "description": "Describe your goal or pain point and get practical suggestions around structure, tone, formatting, and constraints.",
+          "items": [
+            "Surface ambiguity faster",
+            "Keep the original while generating a new version",
+            "Useful for content, product, and engineering workflows"
+          ]
+        },
+        {
+          "step": "3",
+          "title": "Test multiple models in parallel",
+          "description": "Let multiple models answer the same prompt so you can judge quality, voice, and stability before shipping.",
+          "items": [
+            "Save time with concurrent output",
+            "Review differences on the same screen",
+            "Keep test sessions as reusable evidence"
+          ]
+        }
+      ]
+    },
+    "testimonials": {
+      "kicker": "Real feedback",
+      "title": "Used as a daily workspace by creators, PMs, and developers",
+      "subtitle": "The product turns prompts from disposable experiments into durable assets that can be iterated, reviewed, and trusted.",
+      "cardLabel": "User note",
+      "items": [
+        {
+          "quote": "My prompts used to live across docs, chats, and notes. Now I can finally organize, compare, and roll them back in one place.",
+          "name": "Lin Qi",
+          "role": "AI content designer"
+        },
+        {
+          "quote": "The multi-model testing flow is excellent. One run is enough to tell which model fits the job best.",
+          "name": "Zhou Bo",
+          "role": "Indie developer"
+        },
+        {
+          "quote": "The optimization assistant does more than rewrite. It catches missing goals, formatting gaps, and unclear boundaries.",
+          "name": "Yvonne",
+          "role": "Product strategy consultant"
+        },
+        {
+          "quote": "Version control is the part I rely on most. I can experiment aggressively without losing the version that already worked.",
+          "name": "Chen Yu",
+          "role": "Full-stack engineer"
+        }
+      ]
+    },
+    "footer": {
+      "brandKicker": "Let prompt writing feel as natural as flowing ink.",
+      "description": "Ink & Prompt turns scattered prompt experiments into a sustainable workflow for creators, developers, and anyone who cares about shaping AI output well.",
+      "groups": [
+        {
+          "title": "Product",
+          "links": [
+            {
+              "label": "Features",
+              "href": "#features"
+            },
+            {
+              "label": "Workflow",
+              "href": "#workflow"
+            },
+            {
+              "label": "Prompt workspace",
+              "href": "/prompts"
+            }
+          ]
+        },
+        {
+          "title": "Resources",
+          "links": [
+            {
+              "label": "Docs",
+              "href": "/docs"
+            },
+            {
+              "label": "Sign in / Sign up",
+              "href": "/login"
+            },
+            {
+              "label": "Home",
+              "href": "/"
+            }
+          ]
+        },
+        {
+          "title": "More",
+          "links": [
+            {
+              "label": "Testing flow",
+              "href": "#features"
+            },
+            {
+              "label": "User flow",
+              "href": "#workflow"
+            },
+            {
+              "label": "Open docs",
+              "href": "/docs"
+            }
+          ]
+        }
+      ],
+      "copyright": "© 2026 Ink & Prompt. All rights reserved."
+    }
+  }
+}

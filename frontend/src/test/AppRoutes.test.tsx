@@ -21,6 +21,10 @@ vi.mock('@/pages/Login', () => ({
   Login: () => <div data-testid="login-page">Login Page</div>,
 }))
 
+vi.mock('@/pages/LandingPage', () => ({
+  LandingPage: () => <div data-testid="landing-page">Landing Page</div>,
+}))
+
 vi.mock('@/pages/AuthCallback', () => ({
   AuthCallback: () => <div data-testid="auth-callback-page">Auth Callback</div>,
 }))
@@ -42,6 +46,16 @@ describe('App routes', () => {
     window.history.pushState({}, '', path)
     return render(<App />)
   }
+
+  it('should map / to the landing page', () => {
+    renderAt('/')
+    expect(screen.getByTestId('landing-page')).toBeInTheDocument()
+  })
+
+  it('should map /landing to the landing page', () => {
+    renderAt('/landing')
+    expect(screen.getByTestId('landing-page')).toBeInTheDocument()
+  })
 
   it('should map /prompts to the prompt list page', () => {
     renderAt('/prompts')

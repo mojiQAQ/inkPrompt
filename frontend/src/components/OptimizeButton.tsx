@@ -17,6 +17,7 @@ export function OptimizeButton({ promptId, onOptimized }: OptimizeButtonProps) {
   const [isOptimizing, setIsOptimizing] = useState(false)
   const [showScenarios, setShowScenarios] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const isMountedRef = useRef(true)
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 })
 
   const scenarios: { value: OptimizationScenario; label: string; icon: string }[] = [
@@ -71,6 +72,12 @@ export function OptimizeButton({ promptId, onOptimized }: OptimizeButtonProps) {
     }
   }, [showScenarios])
 
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
   const handleButtonClick = () => {
     console.log('[OptimizeButton] Button clicked, showScenarios will become:', !showScenarios)
     setShowScenarios(!showScenarios)
@@ -97,6 +104,8 @@ export function OptimizeButton({ promptId, onOptimized }: OptimizeButtonProps) {
 
       console.log('[OptimizeButton] Optimization result:', result)
 
+      if (!isMountedRef.current) return
+
       onOptimized(result.optimized_content)
 
       toast.success(
@@ -110,6 +119,8 @@ export function OptimizeButton({ promptId, onOptimized }: OptimizeButtonProps) {
       )
     } catch (error) {
       console.error('[OptimizeButton] Optimization error:', error)
+
+      if (!isMountedRef.current) return
 
       // Get detailed error message
       let errorMessage = '优化失败，请稍后重试'
@@ -128,7 +139,9 @@ export function OptimizeButton({ promptId, onOptimized }: OptimizeButtonProps) {
         { duration: 5000 }
       )
     } finally {
-      setIsOptimizing(false)
+      if (isMountedRef.current) {
+        setIsOptimizing(false)
+      }
     }
   }
 

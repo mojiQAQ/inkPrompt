@@ -39,6 +39,16 @@ class TestLangChainConfig:
         assert config.default_temperature == 0.7
         assert config.max_tokens == 4000
 
+    @patch.dict('os.environ', {
+        'OPENAI_API_KEY': 'test-key',
+        'OPENAI_API_BASE': 'https://api.modelverse.cn',
+    })
+    def test_config_normalizes_base_url(self):
+        """测试 base_url 自动补齐 /v1"""
+        config = LangChainConfig()
+
+        assert config.api_base == 'https://api.modelverse.cn/v1'
+
     def test_config_validation_missing_key(self):
         """测试缺少 API key 的验证"""
         config = LangChainConfig()

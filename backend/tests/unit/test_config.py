@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from app.core.config import Settings, load_available_models_config
+from app.core.config import Settings, load_available_models_config, normalize_openai_base_url
 
 
 @pytest.mark.unit
@@ -55,3 +55,22 @@ def test_settings_loads_available_models_from_config_file(tmp_path):
             "api_key": "{{OPENAI_API_KEY}}",
         }
     ]
+
+
+@pytest.mark.unit
+def test_normalize_openai_base_url_adds_v1_for_root_endpoint():
+    assert normalize_openai_base_url("https://api.modelverse.cn") == "https://api.modelverse.cn/v1"
+    assert normalize_openai_base_url("https://openrouter.ai/api") == "https://openrouter.ai/api/v1"
+
+
+@pytest.mark.unit
+def test_settings_normalizes_openai_api_base():
+    settings = Settings(
+        supabase_url="http://test.local",
+        supabase_jwt_secret="test-secret",
+        openai_api_key="test-openai-key",
+        openai_api_base="https://api.modelverse.cn",
+        AVAILABLE_MODELS=[],
+    )
+
+    assert settings.openai_api_base == "https://api.modelverse.cn/v1"

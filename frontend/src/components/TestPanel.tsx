@@ -3,6 +3,8 @@
  */
 import { useEffect, useMemo, useState } from 'react'
 
+import { useI18n } from '@/hooks/useI18n'
+
 export type ModelOutputStatus = 'idle' | 'streaming' | 'done' | 'error'
 
 export interface ModelOutputMessage {
@@ -63,22 +65,22 @@ interface TestPanelProps {
   onClear?: () => void
 }
 
-const statusMeta: Record<ModelOutputStatus, { label: string; className: string }> = {
-  idle: { label: '待测试', className: 'bg-ink-100 text-ink-600' },
-  streaming: { label: '测试中', className: 'bg-amber-100 text-amber-800' },
-  done: { label: '已完成', className: 'bg-emerald-100 text-emerald-800' },
-  error: { label: '失败', className: 'bg-rose-100 text-rose-800' },
+const statusMeta: Record<ModelOutputStatus, { key: string; className: string }> = {
+  idle: { key: 'testPanel.status.idle', className: 'bg-ink-100 text-ink-600' },
+  streaming: { key: 'testPanel.status.streaming', className: 'bg-amber-100 text-amber-800' },
+  done: { key: 'testPanel.status.done', className: 'bg-emerald-100 text-emerald-800' },
+  error: { key: 'testPanel.status.error', className: 'bg-rose-100 text-rose-800' },
 }
 
 function getOutputByModel(outputs: TestModelOutput[], modelId: string) {
   return outputs.find((item) => item.modelId === modelId)
 }
 
-function resolvePlaceholder(output?: TestModelOutput) {
-  if (!output) return '等待开始测试...'
-  if (output.status === 'streaming') return output.content || '正在生成输出...'
-  if (output.status === 'error') return output.error || '测试失败，请稍后重试。'
-  return output.content || '等待模型输出...'
+function resolvePlaceholder(t: (key: string) => string, output?: TestModelOutput) {
+  if (!output) return t('testPanel.placeholder.idle')
+  if (output.status === 'streaming') return output.content || t('testPanel.placeholder.streaming')
+  if (output.status === 'error') return output.error || t('testPanel.placeholder.error')
+  return output.content || t('testPanel.placeholder.done')
 }
 
 export function TestPanel({
@@ -96,6 +98,7 @@ export function TestPanel({
   onSend,
   onClear,
 }: TestPanelProps) {
+  const { t } = useI18n()
   const [showComposer, setShowComposer] = useState(false)
   const [composerMode, setComposerMode] = useState<'preset' | 'custom'>('preset')
   const [expandedModelIds, setExpandedModelIds] = useState<string[]>([])
@@ -163,7 +166,7 @@ export function TestPanel({
     const normalizedName = (customName.trim() || normalizedModel).trim()
 
     if (!normalizedModel || !normalizedBaseUrl || !normalizedApiKey) {
-      setCustomError('请填写模型名称、Base URL 和 API Key')
+      setCustomError(t('testPanel.customModelRequired'))
       return
     }
 
@@ -181,7 +184,7 @@ export function TestPanel({
     <section className="panel-shell h-full">
       <div className="panel-shell-header">
         <div>
-          <h3 className="text-xl font-semibold text-ink-900">提示词测试</h3>
+          <h3 className="text-xl font-semibold text-ink-900">{t('testPanel.title')}</h3>
         </div>
 
         <button type="button" onClick={onClose} className="icon-button">
@@ -194,10 +197,10 @@ export function TestPanel({
       <div className="panel-shell-body test-panel-body">
         <div className="panel-card">
           <div className="flex items-center justify-between gap-3">
-            <h4 className="panel-section-title">用户输入</h4>
+            <h4 className="panel-section-title">{t('testPanel.userInput')}</h4>
             {onClear && (
               <button type="button" onClick={onClear} className="btn btn-ghost btn-small">
-                清空
+                {t('testPanel.clear')}
               </button>
             )}
           </div>
@@ -206,7 +209,7 @@ export function TestPanel({
             value={userInput}
             onChange={(event) => onUserInputChange(event.target.value)}
             className="input mt-4 min-h-[120px] resize-none"
-            placeholder="请输入这轮想测试的用户问题或补充说明..."
+            placeholder={t('testPanel.inputPlaceholder')}
           />
         </div>
 
@@ -226,9 +229,9 @@ export function TestPanel({
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <h4 className="truncate text-sm font-semibold text-ink-900">{model.name}</h4>
-                      <span className={`status-pill ${meta.className}`}>{meta.label}</span>
+                      <span className={`status-pill ${meta.className}`}>{t(meta.key)}</span>
                       {model.isCustom ? (
-                        <span className="status-pill bg-slate-100 text-slate-700">自定义</span>
+                        <span className="status-pill bg-slate-100 text-slate-700">{t('testPanel.custom')}</span>
                       ) : null}
                     </div>
                   </button>
@@ -238,7 +241,7 @@ export function TestPanel({
                       type="button"
                       onClick={() => toggleOutput(model.id)}
                       className="icon-button h-9 w-9"
-                      title={expanded ? '收起输出' : '展开输出'}
+                      title={expanded ? t('testPanel.collapseOutput') : t('testPanel.expandOutput')}
                     >
                       <svg
                         className={`h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
@@ -254,7 +257,7 @@ export function TestPanel({
                       onClick={() => onRemoveModel(model.id)}
                       disabled={isSending}
                       className="icon-button h-9 w-9"
-                      title="移除模型"
+                      title={t('testPanel.removeModel')}
                     >
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -265,10 +268,10 @@ export function TestPanel({
 
                 {expanded ? (
                   <div className="test-model-output">
-                    <div className="test-model-output-label">模型输出</div>
+                    <div className="test-model-output-label">{t('testPanel.modelOutput')}</div>
                     <div className="test-model-output-body">
                       <pre className="whitespace-pre-wrap font-mono text-[13px] leading-6 text-ink-700">
-                        {resolvePlaceholder(output)}
+                        {resolvePlaceholder(t, output)}
                       </pre>
                     </div>
                   </div>
@@ -292,19 +295,19 @@ export function TestPanel({
                     onClick={() => setComposerMode('preset')}
                     className={`btn btn-small ${composerMode === 'preset' ? 'btn-primary' : 'btn-secondary'}`}
                   >
-                    配置模型
+                    {t('testPanel.presetModels')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setComposerMode('custom')}
                     className={`btn btn-small ${composerMode === 'custom' ? 'btn-primary' : 'btn-secondary'}`}
                   >
-                    自定义模型
+                    {t('testPanel.customModel')}
                   </button>
                 </div>
 
                 <button type="button" onClick={resetComposer} className="btn btn-ghost btn-small">
-                  取消
+                  {t('common.action.cancel')}
                 </button>
               </div>
 
@@ -312,7 +315,7 @@ export function TestPanel({
                 <div className="mt-4 space-y-2">
                   {availablePresetModels.length === 0 ? (
                     <div className="panel-empty">
-                      <p className="text-sm font-medium text-ink-700">当前没有可添加的系统预设模型了</p>
+                      <p className="text-sm font-medium text-ink-700">{t('testPanel.noPresetModels')}</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -330,7 +333,7 @@ export function TestPanel({
 
                       <div className="flex justify-end">
                         <button type="button" onClick={handleAddPreset} className="btn btn-primary btn-small">
-                          添加预设模型
+                          {t('testPanel.addPresetModel')}
                         </button>
                       </div>
                     </div>
@@ -342,25 +345,25 @@ export function TestPanel({
                     value={customName}
                     onChange={(event) => setCustomName(event.target.value)}
                     className="input"
-                    placeholder="展示名称，例如：我的 GPT-4.1"
+                    placeholder={t('testPanel.customNamePlaceholder')}
                   />
                   <input
                     value={customModel}
                     onChange={(event) => setCustomModel(event.target.value)}
                     className="input"
-                    placeholder="模型 ID，例如：gpt-4.1"
+                    placeholder={t('testPanel.customModelPlaceholder')}
                   />
                   <input
                     value={customBaseUrl}
                     onChange={(event) => setCustomBaseUrl(event.target.value)}
                     className="input"
-                    placeholder="Base URL，例如：https://api.openai.com/v1"
+                    placeholder={t('testPanel.customBaseUrlPlaceholder')}
                   />
                   <input
                     value={customApiKey}
                     onChange={(event) => setCustomApiKey(event.target.value)}
                     className="input"
-                    placeholder="API Key"
+                    placeholder={t('testPanel.customApiKeyPlaceholder')}
                     type="password"
                   />
 
@@ -372,7 +375,7 @@ export function TestPanel({
 
                   <div className="flex justify-end">
                     <button type="button" onClick={handleAddCustomModel} className="btn btn-primary btn-small">
-                      添加自定义模型
+                      {t('testPanel.addCustomModel')}
                     </button>
                   </div>
                 </div>
@@ -387,7 +390,7 @@ export function TestPanel({
             >
               <span className="text-2xl font-light leading-none">+</span>
               <span className="text-sm font-semibold">
-                {canAddMore ? '添加一个模型' : '已达到模型数量上限'}
+                {canAddMore ? t('testPanel.addModel') : t('testPanel.maxModelsReached')}
               </span>
             </button>
           )}
@@ -397,7 +400,9 @@ export function TestPanel({
       <div className="panel-shell-footer">
         <div className="flex items-center justify-between gap-3">
           <p className="text-xs text-ink-500">
-            已添加 {selectedCount} 个模型{maxSelectedModels ? ` / ${maxSelectedModels}` : ''}
+            {maxSelectedModels
+              ? t('testPanel.selectedModelsWithLimit', { count: selectedCount, max: maxSelectedModels })
+              : t('testPanel.selectedModels', { count: selectedCount })}
           </p>
           <button
             type="button"
@@ -405,7 +410,7 @@ export function TestPanel({
             disabled={testModels.length === 0 || !userInput.trim() || isSending}
             className="btn btn-primary"
           >
-            {isSending ? '测试中...' : '开始测试'}
+            {isSending ? t('testPanel.running') : t('testPanel.start')}
           </button>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { AuthProvider } from '@/hooks/useAuth'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Login } from '@/pages/Login'
 import { AuthCallback } from '@/pages/AuthCallback'
+import { LandingPage } from '@/pages/LandingPage'
 import { PromptList } from '@/pages/PromptList'
 import { PromptEditor } from '@/pages/PromptEditor'
 
@@ -39,7 +40,8 @@ function App() {
         />
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
 
@@ -78,7 +80,7 @@ function App() {
           />
 
           {/* Fallback */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

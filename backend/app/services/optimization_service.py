@@ -1,5 +1,6 @@
 """Prompt optimization service."""
 import json
+import logging
 import uuid
 from typing import Dict, Generator, List, Optional, Tuple
 
@@ -15,6 +16,7 @@ from app.services.prompt_service import PromptService
 from app.utils.token_counter import count_tokens
 
 SUGGESTION_DELIMITER = "---SUGGESTIONS---"
+logger = logging.getLogger(__name__)
 
 
 OPTIMIZATION_TEMPLATES = {
@@ -322,7 +324,7 @@ class OptimizationService:
         version: PromptVersion,
         user_idea: Optional[str] = None,
         selected_suggestions: Optional[Dict[str, List[str]]] = None,
-    ) -> Generator[dict, None, OptimizationRound]:
+    ) -> Generator[dict, None, Optional[OptimizationRound]]:
         """Run optimization and emit SSE-style events."""
         session = OptimizationService.get_or_create_session(db, prompt.id, user_id)
         round_number = len(session.rounds) + 1
@@ -346,66 +348,92 @@ class OptimizationService:
         streamed_content = ""
         delimiter_guard = max(len(SUGGESTION_DELIMITER) - 1, 0)
 
-        for chunk in llm.stream(prompt_text):
-            chunk_text = OptimizationService.extract_chunk_text(chunk)
-            if not chunk_text:
-                continue
+        try:
+            stream_error: Optional[Exception] = None
+            stream_method = getattr(llm, "stream", None)
 
-            full_response += chunk_text
+            if callable(stream_method):
+                try:
+                    for chunk in stream_method(prompt_text):
+                        chunk_text = OptimizationService.extract_chunk_text(chunk)
+                        if not chunk_text:
+                            continue
 
-            if SUGGESTION_DELIMITER in full_response:
-                content_part = full_response.split(SUGGESTION_DELIMITER, 1)[0].rstrip()
-                new_content = content_part[len(streamed_content):]
-                if new_content:
-                    streamed_content += new_content
-                    yield {"type": "content", "data": new_content}
-                continue
+                        full_response += chunk_text
 
-            safe_length = max(0, len(full_response) - delimiter_guard)
-            if safe_length <= len(streamed_content):
-                continue
+                        if SUGGESTION_DELIMITER in full_response:
+                            content_part = full_response.split(SUGGESTION_DELIMITER, 1)[0].rstrip()
+                            new_content = content_part[len(streamed_content):]
+                            if new_content:
+                                streamed_content += new_content
+                                yield {"type": "content", "data": new_content}
+                            continue
 
-            safe_content = full_response[:safe_length]
-            new_content = safe_content[len(streamed_content):]
-            if new_content:
-                streamed_content += new_content
-                yield {"type": "content", "data": new_content}
+                        safe_length = max(0, len(full_response) - delimiter_guard)
+                        if safe_length <= len(streamed_content):
+                            continue
 
-        optimized_content, domain_analysis, suggestions = OptimizationService.parse_structured_response(full_response)
-        if not optimized_content:
-            optimized_content = version.content
+                        safe_content = full_response[:safe_length]
+                        new_content = safe_content[len(streamed_content):]
+                        if new_content:
+                            streamed_content += new_content
+                            yield {"type": "content", "data": new_content}
+                except Exception as exc:
+                    if full_response:
+                        raise
+                    stream_error = exc
 
-        remaining_content = optimized_content[len(streamed_content):]
-        if remaining_content:
-            yield {"type": "content", "data": remaining_content}
+            if not full_response:
+                if stream_error is not None:
+                    raise stream_error
 
-        new_version = PromptService.create_prompt_version(
-            db=db,
-            prompt=prompt,
-            content=optimized_content,
-            change_note=f"优化第 {round_number} 轮",
-        )
+                response = llm.invoke(prompt_text)
+                full_response = OptimizationService.extract_chunk_text(response)
 
-        round_record = OptimizationRound(
-            id=str(uuid.uuid4()),
-            session_id=session.id,
-            round_number=round_number,
-            user_idea=user_idea,
-            selected_suggestions=selected_suggestions,
-            optimized_content=optimized_content,
-            suggestions=suggestions,
-            domain_analysis=domain_analysis,
-            version_id=new_version.id,
-        )
-        db.add(round_record)
-        db.commit()
-        db.refresh(round_record)
-        db.refresh(new_version)
+            optimized_content, domain_analysis, suggestions = OptimizationService.parse_structured_response(full_response)
+            if not optimized_content:
+                optimized_content = version.content
 
-        yield {"type": "suggestions", "data": {"questions": suggestions, "domain": domain_analysis}}
-        yield {"type": "version_saved", "data": {"version_id": new_version.id, "version_number": new_version.version_number}}
-        yield {"type": "complete", "data": {}}
-        return round_record
+            remaining_content = optimized_content[len(streamed_content):]
+            if remaining_content:
+                yield {"type": "content", "data": remaining_content}
+
+            new_version = PromptService.create_prompt_version(
+                db=db,
+                prompt=prompt,
+                content=optimized_content,
+                change_note=f"优化第 {round_number} 轮",
+            )
+
+            round_record = OptimizationRound(
+                id=str(uuid.uuid4()),
+                session_id=session.id,
+                round_number=round_number,
+                user_idea=user_idea,
+                selected_suggestions=selected_suggestions,
+                optimized_content=optimized_content,
+                suggestions=suggestions,
+                domain_analysis=domain_analysis,
+                version_id=new_version.id,
+            )
+            db.add(round_record)
+            db.commit()
+            db.refresh(round_record)
+            db.refresh(new_version)
+
+            yield {"type": "suggestions", "data": {"questions": suggestions, "domain": domain_analysis}}
+            yield {"type": "version_saved", "data": {"version_id": new_version.id, "version_number": new_version.version_number}}
+            yield {"type": "complete", "data": {}}
+            return round_record
+        except Exception as exc:
+            db.rollback()
+            logger.exception(
+                "Optimization stream failed for prompt %s version %s",
+                prompt.id,
+                version.id,
+            )
+            yield {"type": "error", "data": {"message": str(exc)}}
+            return None
 
     @staticmethod
     def chunk_text(text: str, chunk_size: int = 80) -> List[str]:

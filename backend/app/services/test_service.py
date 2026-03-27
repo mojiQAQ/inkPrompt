@@ -5,7 +5,7 @@ from typing import Dict, Generator, List, Optional
 from langchain_openai import ChatOpenAI
 from sqlalchemy.orm import Session, joinedload
 
-from app.core.config import get_settings
+from app.core.config import get_settings, normalize_openai_base_url
 from app.models.prompt_version import PromptVersion
 from app.models.test_session import TestModelConversation, TestSession
 
@@ -108,7 +108,7 @@ class TestService:
                 model=model_config.get("model") or "gpt-4",
                 temperature=model_config.get("temperature", 0.7),
                 openai_api_key=model_config.get("api_key") or settings.openai_api_key,
-                base_url=model_config.get("base_url"),
+                base_url=normalize_openai_base_url(model_config.get("base_url")) or settings.openai_api_base,
             )
             response = llm.invoke(messages)
             content = response.content if hasattr(response, "content") else str(response)

@@ -1,6 +1,7 @@
 /**
  * Version detail dialog component
  */
+import { useI18n } from '@/hooks/useI18n'
 import type { PromptVersion } from '@/types/prompt'
 
 interface VersionDetailDialogProps {
@@ -16,17 +17,19 @@ export function VersionDetailDialog({
   onClose,
   onRestore,
 }: VersionDetailDialogProps) {
+  const { t, language } = useI18n()
+
   if (!isOpen || !version) return null
 
   const handleRestore = () => {
-    if (onRestore && window.confirm(`确定要恢复到版本 ${version.version_number} 吗?`)) {
+    if (onRestore && window.confirm(t('promptEditor.restoreVersionConfirm', { version: version.version_number }))) {
       onRestore(version)
       onClose()
     }
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('zh-CN', {
+    return new Date(dateString).toLocaleString(language, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -45,7 +48,7 @@ export function VersionDetailDialog({
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-ink-900">
-                版本 {version.version_number}
+                {t('versionDetailDialog.title', { version: version.version_number })}
               </h2>
               <p className="text-sm text-ink-500 mt-1">{formatDate(version.created_at)}</p>
             </div>
@@ -66,12 +69,12 @@ export function VersionDetailDialog({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
               </svg>
               <span className="text-sm font-semibold text-ink-700">{version.token_count}</span>
-              <span className="text-xs text-ink-500">tokens</span>
+              <span className="text-xs text-ink-500">{t('common.tokens')}</span>
             </div>
 
             {version.change_note && (
               <div className="panel-card-muted text-sm text-ink-600">
-                <span className="font-medium">变更说明:</span> {version.change_note}
+                <span className="font-medium">{t('versionDetailDialog.changeNote')}</span> {version.change_note}
               </div>
             )}
           </div>
@@ -90,14 +93,14 @@ export function VersionDetailDialog({
             onClick={onClose}
             className="btn btn-secondary"
           >
-            关闭
+            {t('common.action.close')}
           </button>
           {onRestore && (
             <button
               onClick={handleRestore}
               className="btn btn-primary"
             >
-              恢复此版本
+              {t('versionDetailDialog.restore')}
             </button>
           )}
         </div>

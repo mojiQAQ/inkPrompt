@@ -1,12 +1,16 @@
 /**
  * Error message component for displaying error states
  */
+import { useI18n } from '@/hooks/useI18n'
+
 interface ErrorMessageProps {
   message: string
   onRetry?: () => void
 }
 
 export function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
+  const { t } = useI18n()
+
   return (
     <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
       <div className="flex items-start gap-3">
@@ -32,7 +36,7 @@ export function ErrorMessage({ message, onRetry }: ErrorMessageProps) {
               onClick={onRetry}
               className="mt-2 text-sm text-red-600 hover:text-red-800 font-medium"
             >
-              重试
+              {t('error.retry')}
             </button>
           )}
         </div>
